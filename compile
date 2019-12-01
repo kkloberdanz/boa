@@ -1,0 +1,5 @@
+#!/bin/bash
+
+make clean
+mkdir build
+yacc -y -d grammar/grammar.y -o build/y.tab.c && make debug -j
