@@ -25,6 +25,7 @@
 #include <stdbool.h>
 
 #include "src/ast.h"
+#include "src/util.h"
 
 #define YYSTYPE ASTNode *
 
@@ -71,12 +72,12 @@ static FILE *source_file = NULL;
 %right EXPONENT        /* exponentiation */
 
 %%
-prog        : stmts                 { puts("prog"); tree = $1 ; }
+prog        : stmts                 { debug_puts("prog"); tree = $1 ; }
             ;
 
-stmts       : stmt                  { puts("stmt"); $$ = $1 ; }
+stmts       : stmt                  { debug_puts("stmt"); $$ = $1 ; }
             | stmts stmt            {
-                                        puts("stmts");
+                                        debug_puts("stmts");
                                         YYSTYPE ast = $1;
                                         if (ast) {
                                             while (ast->sibling) {
@@ -151,7 +152,7 @@ args        : expr                  { $$ = $1 ; }
                                     }
             ;
 
-call_func   : id LPAREN args RPAREN { puts("call_func"); $$ = make_func_call_node($1, $3) ; }
+call_func   : id LPAREN args RPAREN { debug_puts("call_func"); $$ = make_func_call_node($1, $3) ; }
             ;
 
 id          : ID                    { $$ = make_id_node(token_string) ; }

@@ -48,7 +48,6 @@ whitespace  [ \t]+
 "if"          { return IF; }
 "then"        { return THEN; }
 "else"        { return ELSE; }
-"print"       { return PRINT; }
 "int"         { return INT; }
 "("           { return LPAREN; }
 ")"           { return RPAREN; }

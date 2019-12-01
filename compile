@@ -1,7 +1,18 @@
 #!/bin/bash
 
+BUILD_MODE=$1
+
+if [[ -z $BUILD_MODE ]] || [[ $BUILD_MODE == "debug" ]]; then
+    echo "DEBUG BUILD"
+elif [[ $BUILD_MODE == "release" ]]; then
+    echo "RELEASE BUILD"
+else
+    echo "INVALID BUILD"
+    exit 1
+fi
+
 make clean
 mkdir build
 yacc -y -d grammar/grammar.y || exit 1
 lex grammar/tokens.l || exit 1
-make debug -j
+make $BUILD_MODE -j
