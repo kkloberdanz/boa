@@ -7,6 +7,9 @@ build/
 .DS_Store
 .debug_time
 boa
+y.tab.c
+y.tab.h
+lex.yy.c
 
 # Prerequisites
 *.d

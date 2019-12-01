@@ -3,4 +3,6 @@
 
 #define UNUSED(X) (void)(X)
 
+char *make_string(char *str);
+
 #endif /* UTIL_H */

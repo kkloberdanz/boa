@@ -19,22 +19,12 @@
 #define AST_H
 
 #include <stdio.h>
-#include <stdbool.h>
+#include <stdlib.h>
 
 enum { MAX_TOKEN_SIZE = 100 };
 extern char token_string[MAX_TOKEN_SIZE + 1];
 
-void greet(void);
-
 /* enums */
-typedef enum {
-    VOID_TYPE,  /* voids must be resolved during type deduction */
-    NUMBER_TYPE,
-    REAL_TYPE,
-    BOOL_TYPE,
-    STRING_TYPE
-} MinicType;
-
 typedef enum {
     CONDITIONAL,
     OPERATOR,
@@ -64,24 +54,20 @@ typedef enum {
 enum ASTLiteralKind {
     AST_STRING,
     AST_INT,
-    AST_FLOAT
+    AST_FLOAT,
+    AST_BOOL,
+    AST_ID
 };
 
 /* structs */
-typedef struct MinicObject {
-    MinicType type;
-    union {
-        char *number_value;
-        char *real_value;
-        bool bool_value;
-        char *string_value;
-        char *symbol;
-    } value;
-} MinicObject;
+typedef struct ParseObj {
+    enum ASTLiteralKind kind;
+    char *repr;
+} ParseObj;
 
 typedef struct ASTNode {
     ASTkind kind;
-    MinicObject *obj;
+    ParseObj *obj;
     Operator op;
     struct ASTNode *left;
     struct ASTNode *condition;
@@ -89,23 +75,24 @@ typedef struct ASTNode {
     struct ASTNode *sibling;
 } ASTNode;
 
+ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);
+
 ASTNode *make_assign_node(ASTNode *leaf_obj, ASTNode *right);
 ASTNode *make_declare_node(ASTNode *leaf_obj);
 ASTNode *make_load_node(ASTNode *leaf_obj);
 ASTNode *make_function_node(ASTNode *leaf_obj, ASTNode *right);
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args);
-char *make_string(char *str);
 
 ASTNode *make_ast_node(
     ASTkind, /* base constructor */
-    MinicObject *,
+    ParseObj *,
     Operator,
     ASTNode *,
     ASTNode *,
     ASTNode *
 );
 
-ASTNode *make_leaf_node(MinicObject *); /* just holds minic object */
+ASTNode *make_leaf_node(ParseObj *); /* just holds minic object */
 
 ASTNode *make_operator_node(
     Operator,  /* holds operator and child items */
@@ -119,10 +106,12 @@ ASTNode *make_conditional_node(
     ASTNode *right
 );
 
-ASTNode *make_id_node(char *str);
+ASTNode *make_id_node(char *repr);
 
-ASTNode *make_literal_node(char *str, enum ASTLiteralKind kind);
+ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind);
 
 int get_token(FILE *source_file);
+
+ASTNode *parse(FILE *src_file);
 
 #endif /* AST_H */

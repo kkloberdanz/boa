@@ -42,6 +42,7 @@ static FILE *source_file = NULL;
 %token ELSE
 %token PRINT
 %token DEF
+%token INT
 %token ID
 %token INTEGER
 %token ASSIGN
@@ -62,6 +63,7 @@ static FILE *source_file = NULL;
 %token RBRACE
 %token SEMICOLON
 %token COMMA
+%token QUOTE
 %token NEWLINE
 
 %left MINUS PLUS
@@ -69,11 +71,12 @@ static FILE *source_file = NULL;
 %right EXPONENT        /* exponentiation */
 
 %%
-prog        : stmts                 { tree = $1 ; }
+prog        : stmts                 { puts("prog"); tree = $1 ; }
             ;
 
-stmts       : stmt                  { $$ = $1 ; }
+stmts       : stmt                  { puts("stmt"); $$ = $1 ; }
             | stmts stmt            {
+                                        puts("stmts");
                                         YYSTYPE ast = $1;
                                         if (ast) {
                                             while (ast->sibling) {
@@ -121,6 +124,7 @@ expr        : expr PLUS expr        { $$ = make_operator_node(OP_PLUS, $1, $3) ;
             | call_func             { $$ = $1 ; }
             | LPAREN expr RPAREN    { $$ = $2 ; }
             | INTEGER               { $$ = make_literal_node(token_string, AST_INT) ; }
+/*            | string                { $$ = $1 ; }*/
             | id                    { $$ = make_load_node($1) ; }
             ;
 
@@ -147,11 +151,17 @@ args        : expr                  { $$ = $1 ; }
                                     }
             ;
 
-call_func   : id LPAREN args RPAREN { $$ = make_func_call_node($1, $3) ; }
+call_func   : id LPAREN args RPAREN { puts("call_func"); $$ = make_func_call_node($1, $3) ; }
             ;
 
 id          : ID                    { $$ = make_id_node(token_string) ; }
             ;
+
+/*
+string      : QUOTE text QUOTE      { $$ = $2 ; }
+
+text        : .                     { $$ = make_literal_node($2, AST_STRING); }
+*/
 
 %%
 
@@ -163,5 +173,8 @@ ASTNode *parse(FILE *src_file) {
 
 static int yylex(void) {
     int token = get_token(source_file);
+#ifdef DEBUG
+    printf("token: '%s'\n", token_string);
+#endif
     return token;
 }

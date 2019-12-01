@@ -2,4 +2,6 @@
 
 make clean
 mkdir build
-yacc -y -d grammar/grammar.y -o build/y.tab.c && make debug -j
+yacc -y -d grammar/grammar.y || exit 1
+lex grammar/tokens.l || exit 1
+make debug -j
