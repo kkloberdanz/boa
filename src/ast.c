@@ -16,9 +16,99 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ast.h"
+#include "util.h"
+
+char token_string[MAX_TOKEN_SIZE + 1];
 
 void greet(void) {
     puts("hello world!");
+}
+
+ASTNode *make_ast_node(
+    ASTkind kind,
+    MinicObject *obj,
+    Operator op,
+    ASTNode *left,
+    ASTNode *condition,
+    ASTNode *right
+) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->kind = kind;
+    node->sibling = NULL;
+    node->obj = obj;
+    node->op = op;
+    node->left = left;
+    node->condition = condition;
+    node->right = right;
+    return node;
+}
+
+ASTNode *make_leaf_node(MinicObject *obj) {
+    ASTNode *node = make_ast_node(LEAF, obj, OP_NIL, NULL, NULL, NULL);
+    return node;
+}
+
+ASTNode *make_operator_node(Operator op, ASTNode *left, ASTNode *right) {
+    ASTNode *node = make_ast_node(OPERATOR, NULL, op, left, NULL, right);
+    return node;
+}
+
+ASTNode *make_conditional_node(
+    ASTNode *condition,
+    ASTNode *left,
+    ASTNode *right
+) {
+    ASTNode *node = make_ast_node(
+        CONDITIONAL,
+        NULL,
+        OP_NIL,
+        left,
+        condition,
+        right
+    );
+    return node;
+}
+
+ASTNode *make_assign_node(ASTNode *leaf_obj, ASTNode *right) {
+    MinicObject *obj = leaf_obj->obj;
+    ASTNode *node = make_ast_node(ASSIGN_EXPR, obj, OP_NIL, NULL, NULL, right);
+    return node;
+}
+
+ASTNode *make_declare_node(ASTNode *leaf_obj) {
+    MinicObject *obj = leaf_obj->obj;
+    ASTNode *node = make_ast_node(DECLARE_STMT, obj, OP_NIL, NULL, NULL, NULL);
+    return node;
+}
+
+ASTNode *make_load_node(ASTNode *leaf_obj) {
+    MinicObject *obj = leaf_obj->obj;
+    ASTNode *node = make_ast_node(LOAD_STMT, obj, OP_NIL, NULL, NULL, NULL);
+    return node;
+}
+
+ASTNode *make_function_node(ASTNode *leaf_obj, ASTNode *right) {
+    MinicObject *obj = leaf_obj->obj;
+    ASTNode *node = make_ast_node(FUNC_DEF, obj, OP_NIL, NULL, NULL, right);
+    return node;
+}
+
+ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
+    MinicObject *obj = leaf_obj->obj;
+    ASTNode *node = make_ast_node(FUNC_CALL, obj, OP_NIL, NULL, NULL, args);
+    return node;
+}
+
+ASTNode *make_literal_node(char *str, enum ASTLiteralKind kind) {
+    UNUSED(str);
+    UNUSED(kind);
+    /*
+    MinicObject *obj = leaf_obj->obj;
+    ASTNode *node = make_ast_node(FUNC_CALL, obj, OP_NIL, NULL, NULL, args);
+    return node;
+    */
+    return NULL;
 }

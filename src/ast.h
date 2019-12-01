@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-enum { MAX_TOKEN_SIZE=100 };
+enum { MAX_TOKEN_SIZE = 100 };
 extern char token_string[MAX_TOKEN_SIZE + 1];
 
 void greet(void);
@@ -35,7 +35,6 @@ typedef enum {
     STRING_TYPE
 } MinicType;
 
-
 typedef enum {
     CONDITIONAL,
     OPERATOR,
@@ -46,7 +45,6 @@ typedef enum {
     FUNC_DEF,
     FUNC_CALL
 } ASTkind;
-
 
 typedef enum {
     OP_NIL,
@@ -81,7 +79,6 @@ typedef struct MinicObject {
     } value;
 } MinicObject;
 
-
 typedef struct ASTNode {
     ASTkind kind;
     MinicObject *obj;
@@ -99,26 +96,32 @@ ASTNode *make_function_node(ASTNode *leaf_obj, ASTNode *right);
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args);
 char *make_string(char *str);
 
-ASTNode *make_ast_node(ASTkind, /* base constructor */
-                       MinicObject *,
-                       Operator,
-                       ASTNode *,
-                       ASTNode *,
-                       ASTNode *);
+ASTNode *make_ast_node(
+    ASTkind, /* base constructor */
+    MinicObject *,
+    Operator,
+    ASTNode *,
+    ASTNode *,
+    ASTNode *
+);
 
 ASTNode *make_leaf_node(MinicObject *); /* just holds minic object */
 
-ASTNode *make_operator_node(Operator,  /* holds operator and child items */
-                            ASTNode *, /* to operate on */
-                            ASTNode *);
+ASTNode *make_operator_node(
+    Operator,  /* holds operator and child items */
+    ASTNode *, /* to operate on */
+    ASTNode *
+);
 
-ASTNode *make_conditional_node(ASTNode *left,
-                               ASTNode *condition,
-                               ASTNode *right);
+ASTNode *make_conditional_node(
+    ASTNode *left,
+    ASTNode *condition,
+    ASTNode *right
+);
 
 ASTNode *make_id_node(char *str);
 
-ASTNode *make_literal_node(char *str, enum ASTLiteralKind);
+ASTNode *make_literal_node(char *str, enum ASTLiteralKind kind);
 
 int get_token(FILE *source_file);
 

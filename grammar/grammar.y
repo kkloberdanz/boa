@@ -18,19 +18,15 @@
 %{
 #define YYPARSER
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
 #include <stdbool.h>
 
-
 #include "src/ast.h"
 
-
 #define YYSTYPE ASTNode *
-
 
 static int yylex();
 void yyerror(const char *s);
@@ -67,7 +63,6 @@ static FILE *source_file = NULL;
 %token SEMICOLON
 %token COMMA
 %token NEWLINE
-
 
 %left MINUS PLUS
 %left TIMES OVER
@@ -160,13 +155,11 @@ id          : ID                    { $$ = make_id_node(token_string) ; }
 
 %%
 
-
 ASTNode *parse(FILE *src_file) {
     source_file = src_file;
     yyparse();
     return tree;
 }
-
 
 static int yylex(void) {
     int token = get_token(source_file);

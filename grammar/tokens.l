@@ -15,7 +15,6 @@
  *  along with Boa.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 %{
 #include <stdio.h>
 #include <string.h>
