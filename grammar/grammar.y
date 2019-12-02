@@ -66,6 +66,7 @@ static FILE *source_file = NULL;
 %token COMMA
 %token QUOTE
 %token NEWLINE
+%token STRING
 
 %left MINUS PLUS
 %left TIMES OVER
@@ -125,7 +126,7 @@ expr        : expr PLUS expr        { $$ = make_operator_node(OP_PLUS, $1, $3) ;
             | call_func             { $$ = $1 ; }
             | LPAREN expr RPAREN    { $$ = $2 ; }
             | INTEGER               { $$ = make_literal_node(make_string(token_string), AST_INT) ; }
-/*            | string                { $$ = $1 ; }*/
+            | STRING                { $$ = make_literal_node(make_string(token_string), AST_STRING); }
             | id                    { $$ = make_load_node($1) ; }
             ;
 
@@ -157,12 +158,6 @@ call_func   : id LPAREN args RPAREN { debug_puts("call_func"); $$ = make_func_ca
 
 id          : ID                    { $$ = make_id_node(make_string(token_string)) ; }
             ;
-
-/*
-string      : QUOTE text QUOTE      { $$ = $2 ; }
-
-text        : .                     { $$ = make_literal_node($2, AST_STRING); }
-*/
 
 %%
 

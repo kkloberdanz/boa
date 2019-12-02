@@ -35,6 +35,7 @@ letter      [a-zA-Z]
 identifier  {letter}+
 newline     \n
 whitespace  [ \t]+
+string      \"(\\.|[^"\\])*\"
 
 %%
 
@@ -64,6 +65,7 @@ whitespace  [ \t]+
 {identifier}  { return ID; }
 {newline}     { yylineno++; return NEWLINE; }
 {whitespace}  { /* do nothing */; }
+{string}      { return STRING; }
 .             { return ERROR; }
 
 %%

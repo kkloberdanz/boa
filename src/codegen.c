@@ -29,7 +29,11 @@ static void codegen(FILE *output_file, ASTNode *ast) {
              */
             char *s1 = ast->obj->repr;
             char *s2 = ast->right->obj->repr;
-            fprintf(output_file, "%s(\"%s\");\n", s1, s2);
+            if (ast->right->obj->kind == AST_STRING) {
+                fprintf(output_file, "%s(%s);\n", s1, s2);
+            } else {
+                fprintf(output_file, "%s(\"%s\");\n", s1, s2);
+            }
             puts("emiting func_call");
             break;
         }
