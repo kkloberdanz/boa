@@ -13,6 +13,7 @@ SRC_PATH = .
 # Space-separated pkg-config libraries used by this project
 LIBS =
 # General compiler flags
+# TODO: Compiler with -std=iso9899:1990
 COMPILE_FLAGS = -std=c99 -Wall -Wextra -Wpedantic -g
 # Additional release-specific flags
 RCOMPILE_FLAGS = -D NDEBUG

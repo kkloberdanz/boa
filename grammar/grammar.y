@@ -30,11 +30,14 @@
 #define YYSTYPE ASTNode *
 
 static int yylex();
-void yyerror(const char *s);
+void yyerror(const char *msg);
 static ASTNode *tree = NULL;
 static FILE *source_file = NULL;
 
 %}
+
+%define parse.error verbose
+%define parse.lac full
 
 %token ENDFILE
 %token ERROR

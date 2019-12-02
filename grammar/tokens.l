@@ -79,11 +79,14 @@ int get_token(FILE *source_file) {
     int current_token;
     if (first_time) {
         first_time = false;
-        yylineno++;
         yyin = source_file;
         yyout = stdout;
     }
     current_token = yylex();
     strncpy(token_string, yytext, MAX_TOKEN_SIZE);
     return current_token;
+}
+
+void yyerror(const char *msg) {
+    fprintf(stderr,"Error | Line: %d\n%s\n", yylineno, msg);
 }
