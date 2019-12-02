@@ -23,6 +23,8 @@
 
 char token_string[MAX_TOKEN_SIZE + 1];
 
+size_t node_id = 1;
+
 ASTNode *make_ast_node(
     ASTkind kind,
     ParseObj *obj,
@@ -31,6 +33,9 @@ ASTNode *make_ast_node(
     ASTNode *condition,
     ASTNode *right
 ) {
+    if (obj != NULL) {
+        printf("creating node: '%s'\n", obj->repr);
+    }
     ASTNode *node = malloc(sizeof(ASTNode));
     node->kind = kind;
     node->sibling = NULL;
@@ -39,6 +44,8 @@ ASTNode *make_ast_node(
     node->left = left;
     node->condition = condition;
     node->right = right;
+    node->id = node_id;
+    node_id++;
     return node;
 }
 
@@ -70,47 +77,55 @@ ASTNode *make_conditional_node(
 
 ASTNode *make_assign_node(ASTNode *leaf_obj, ASTNode *right) {
     ParseObj *obj = leaf_obj->obj;
+    printf("assign node: '%s'\n", obj->repr);
     ASTNode *node = make_ast_node(ASSIGN_EXPR, obj, OP_NIL, NULL, NULL, right);
     return node;
 }
 
 ASTNode *make_declare_node(ASTNode *leaf_obj) {
     ParseObj *obj = leaf_obj->obj;
+    printf("declare node: '%s'\n", obj->repr);
     ASTNode *node = make_ast_node(DECLARE_STMT, obj, OP_NIL, NULL, NULL, NULL);
     return node;
 }
 
 ASTNode *make_load_node(ASTNode *leaf_obj) {
     ParseObj *obj = leaf_obj->obj;
+    printf("load node: '%s'\n", obj->repr);
     ASTNode *node = make_ast_node(LOAD_STMT, obj, OP_NIL, NULL, NULL, NULL);
     return node;
 }
 
 ASTNode *make_function_node(ASTNode *leaf_obj, ASTNode *right) {
     ParseObj *obj = leaf_obj->obj;
+    printf("function node: '%s'\n", obj->repr);
     ASTNode *node = make_ast_node(FUNC_DEF, obj, OP_NIL, NULL, NULL, right);
     return node;
 }
 
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
     ParseObj *obj = leaf_obj->obj;
+    printf("func node: '%s'\n", obj->repr);
     ASTNode *node = make_ast_node(FUNC_CALL, obj, OP_NIL, NULL, NULL, args);
     return node;
 }
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
     ParseObj *obj = malloc(sizeof(ParseObj));
-    obj->repr = repr;
+    printf("parseobj node: '%s'\n", obj->repr);
+    obj->repr = make_string(repr);
     obj->kind = kind;
     return obj;
 }
 
 ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
     ParseObj *obj = make_parseobj(repr, kind);
+    printf("literal node: '%s'\n", obj->repr);
     ASTNode *node = make_ast_node(LEAF, obj, OP_NIL, NULL, NULL, NULL);
     return node;
 }
 
 ASTNode *make_id_node(char *repr) {
+    printf("id node: '%s'\n", repr);
     return make_literal_node(repr, AST_ID);
 }

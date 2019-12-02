@@ -1,11 +1,11 @@
 #!/bin/bash
 
-BUILD_MODE=$1
-
-if [[ -z $BUILD_MODE ]] || [[ $BUILD_MODE == "debug" ]]; then
+if [[ -z $1 ]] || [[ $1 == "debug" ]]; then
     echo "DEBUG BUILD"
-elif [[ $BUILD_MODE == "release" ]]; then
+    BUILD_MODE=debug
+elif [[ $1 == "release" ]]; then
     echo "RELEASE BUILD"
+    BUILD_MODE=release
 else
     echo "INVALID BUILD"
     exit 1

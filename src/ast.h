@@ -73,6 +73,7 @@ typedef struct ASTNode {
     struct ASTNode *condition;
     struct ASTNode *right;
     struct ASTNode *sibling;
+    size_t id;
 } ASTNode;
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);

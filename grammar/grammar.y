@@ -124,7 +124,7 @@ expr        : expr PLUS expr        { $$ = make_operator_node(OP_PLUS, $1, $3) ;
             | bool_expr             { $$ = $1 ; }
             | call_func             { $$ = $1 ; }
             | LPAREN expr RPAREN    { $$ = $2 ; }
-            | INTEGER               { $$ = make_literal_node(token_string, AST_INT) ; }
+            | INTEGER               { $$ = make_literal_node(make_string(token_string), AST_INT) ; }
 /*            | string                { $$ = $1 ; }*/
             | id                    { $$ = make_load_node($1) ; }
             ;
@@ -155,7 +155,7 @@ args        : expr                  { $$ = $1 ; }
 call_func   : id LPAREN args RPAREN { debug_puts("call_func"); $$ = make_func_call_node($1, $3) ; }
             ;
 
-id          : ID                    { $$ = make_id_node(token_string) ; }
+id          : ID                    { $$ = make_id_node(make_string(token_string)) ; }
             ;
 
 /*

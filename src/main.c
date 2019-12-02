@@ -68,7 +68,8 @@ int main(int argc, char **argv) {
         }
 
         output_filename = make_string(source_filename);
-        output_filename[len] = 's';
+        output_filename[len - 2] = 'c';
+        output_filename[len - 1] = '\0';
         output = fopen(output_filename, "w");
         free(output_filename);
 

@@ -199,6 +199,7 @@ clean:
 	@$(RM) -r build
 	@$(RM) -r bin
 	@$(RM) -f y.tab.c y.tab.h lex.yy.c
+	@$(RM) -f example/*.c
 
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)
