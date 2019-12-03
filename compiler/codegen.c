@@ -25,15 +25,15 @@
 static void write_start(FILE *output_file) {
     /* TODO: instead of using strings, build boilerplate into
      * an archive (*.a) and link to the generated code */
-
     fprintf(output_file, "#include <stdio.h>\n");
     fprintf(output_file, "void print(char *str) {\n");
     fprintf(output_file, "    printf(\"%%s\\n\", str);\n");
     fprintf(output_file, "}\n");
-    fprintf(output_file, "int main(int argc, char *argv[]) {\n");
+    fprintf(output_file, "int main() {\n");
 }
 
 static void write_end(FILE *output_file) {
+    fprintf(output_file, "return 0;\n");
     fprintf(output_file, "}\n");
 }
 

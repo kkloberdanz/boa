@@ -13,8 +13,7 @@ SRC_PATH = .
 # Space-separated pkg-config libraries used by this project
 LIBS =
 # General compiler flags
-# TODO: Compiler with -std=iso9899:1990
-COMPILE_FLAGS = -std=c99 -Wall -Wextra -Wpedantic -g
+COMPILE_FLAGS = -std=iso9899:1990 -Wall -Wextra -Wpedantic -g
 # Additional release-specific flags
 RCOMPILE_FLAGS = -D NDEBUG
 # Additional debug-specific flags
@@ -71,8 +70,8 @@ ifeq ($(V),true)
 endif
 
 # Combine compiler and linker flags
-release: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(RCOMPILE_FLAGS) -Os -flto
-release: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(RLINK_FLAGS) -Os -flto
+release: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(RCOMPILE_FLAGS) -Os -flto -Werror
+release: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(RLINK_FLAGS) -Os -flto -Werror
 debug: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(DCOMPILE_FLAGS) -O0 -Werror
 debug: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(DLINK_FLAGS) -O0 -Werror
 

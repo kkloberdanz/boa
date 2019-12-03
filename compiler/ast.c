@@ -110,6 +110,8 @@ ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
 }
 
 ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
+    ParseObj *obj;
+    ASTNode *node;
     switch (kind) {
         case AST_STRING: {
             size_t i = 1;
@@ -122,8 +124,8 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
         default:
             break;
     }
-    ParseObj *obj = make_parseobj(repr, kind);
-    ASTNode *node = make_ast_node(LEAF, obj, OP_NIL, NULL, NULL, NULL);
+    obj = make_parseobj(repr, kind);
+    node = make_ast_node(LEAF, obj, OP_NIL, NULL, NULL, NULL);
     return node;
 }
 

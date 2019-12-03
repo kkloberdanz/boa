@@ -83,8 +83,9 @@ prog        : stmts                 { debug_puts("prog"); tree = $1 ; }
 stmts       : stmt                  { debug_puts("stmt"); $$ = $1 ; }
             | stmt newlines         { debug_puts("stmt"); $$ = $1 ; }
             | stmts stmt            {
+                                        YYSTYPE ast;
                                         debug_puts("stmts");
-                                        YYSTYPE ast = $1;
+                                        ast = $1;
                                         if (ast) {
                                             while (ast->sibling) {
                                                 ast = ast->sibling;
