@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "codegen.h"
 #include "ast.h"
@@ -25,13 +26,9 @@ static void codegen(FILE *output_file, ASTNode *ast) {
              * eval each arg and store in register
              * call function with each arg
              */
-            char *s1 = ast->obj->repr;
-            char *s2 = ast->right->obj->repr;
-            if (ast->right->obj->kind == AST_STRING) {
-                fprintf(output_file, "%s(%s);\n", s1, s2);
-            } else {
-                fprintf(output_file, "%s(\"%s\");\n", s1, s2);
-            }
+            char *func_name = ast->obj->repr;
+            char *arg = ast->right->obj->repr;
+            fprintf(output_file, "%s(\"%s\");\n", func_name, arg);
             break;
         }
 

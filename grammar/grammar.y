@@ -24,8 +24,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-#include "src/ast.h"
-#include "src/util.h"
+#include "compiler/ast.h"
+#include "compiler/util.h"
 
 #define YYSTYPE ASTNode *
 #define YYERROR_VERBOSE

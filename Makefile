@@ -201,6 +201,8 @@ clean:
 	@$(RM) -r bin
 	@$(RM) -f y.tab.c y.tab.h lex.yy.c
 	@$(RM) -f example/*.c
+	@$(RM) -f a.out
+	@$(RM) -f core
 
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)

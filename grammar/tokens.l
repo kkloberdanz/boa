@@ -21,8 +21,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "src/ast.h"
-#include "src/util.h"
+#include "compiler/ast.h"
+#include "compiler/util.h"
 #include "y.tab.h"
 
 int fileno(FILE *stream);
@@ -35,7 +35,7 @@ letter      [a-zA-Z]
 identifier  {letter}+
 newline     \n
 whitespace  [ \t]+
-string      \"(\\.|[^"\\])*\"
+string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 
 %%
 
