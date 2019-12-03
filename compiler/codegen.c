@@ -49,7 +49,7 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
     fprintf(output_file, "%s(\"%s\");\n", func_name, arg);
 }
 
-static void decide_instruction(FILE *output_file, ASTNode *ast) {
+static void codegen_node(FILE *output_file, ASTNode *ast) {
     switch (ast->kind) {
         case FUNC_CALL:
             emit_func_call(output_file, ast);
@@ -66,7 +66,7 @@ static void decide_instruction(FILE *output_file, ASTNode *ast) {
 
 static void codegen(FILE *output_file, ASTNode *ast) {
     while (ast) {
-        decide_instruction(output_file, ast);
+        codegen_node(output_file, ast);
         ast = ast->sibling;
     }
 }
