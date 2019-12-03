@@ -6,6 +6,9 @@
 #include "util.h"
 
 static void write_start(FILE *output_file) {
+    /* TODO: instead of using strings, build boilerplate into
+     * an archive (*.a) and link to the generated code */
+
     fprintf(output_file, "#include <stdio.h>\n");
     fprintf(output_file, "void print(char *str) {\n");
     fprintf(output_file, "    printf(\"%%s\\n\", str);\n");
@@ -17,7 +20,7 @@ static void write_end(FILE *output_file) {
     fprintf(output_file, "}\n");
 }
 
-static void codegen(FILE *output_file, ASTNode *ast) {
+static void decide_instruction(FILE *output_file, ASTNode *ast) {
     switch (ast->kind) {
         case FUNC_CALL: {
             /*
@@ -37,10 +40,14 @@ static void codegen(FILE *output_file, ASTNode *ast) {
     }
 }
 
-int emit(FILE *output_file, ASTNode *ast) {
-    UNUSED(output_file);
-    UNUSED(ast);
+static void codegen(FILE *output_file, ASTNode *ast) {
+    while (ast) {
+        decide_instruction(output_file, ast);
+        ast = ast->sibling;
+    }
+}
 
+int emit(FILE *output_file, ASTNode *ast) {
     write_start(output_file);
     codegen(output_file, ast);
     write_end(output_file);
