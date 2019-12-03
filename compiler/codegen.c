@@ -37,20 +37,27 @@ static void write_end(FILE *output_file) {
     fprintf(output_file, "}\n");
 }
 
+static void emit_func_call(FILE *output_file, ASTNode *ast) {
+    /*
+     * TODO:
+     * ast->right contains the args list
+     * eval each arg and store in register
+     * call function with each arg
+     */
+    char *func_name = ast->obj->repr;
+    char *arg = ast->right->obj->repr;
+    fprintf(output_file, "%s(\"%s\");\n", func_name, arg);
+}
+
 static void decide_instruction(FILE *output_file, ASTNode *ast) {
     switch (ast->kind) {
-        case FUNC_CALL: {
-            /*
-             * TODO:
-             * ast->right contains the args list
-             * eval each arg and store in register
-             * call function with each arg
-             */
-            char *func_name = ast->obj->repr;
-            char *arg = ast->right->obj->repr;
-            fprintf(output_file, "%s(\"%s\");\n", func_name, arg);
+        case FUNC_CALL:
+            emit_func_call(output_file, ast);
             break;
-        }
+
+        case ASSIGN_EXPR:
+            /* TODO */
+            break;
 
         default:
             break;
