@@ -28,6 +28,7 @@
 #include "src/util.h"
 
 #define YYSTYPE ASTNode *
+#define YYERROR_VERBOSE
 
 static int yylex();
 void yyerror(const char *msg);
@@ -80,6 +81,7 @@ prog        : stmts                 { debug_puts("prog"); tree = $1 ; }
             ;
 
 stmts       : stmt                  { debug_puts("stmt"); $$ = $1 ; }
+            | stmt newlines         { debug_puts("stmt"); $$ = $1 ; }
             | stmts stmt            {
                                         debug_puts("stmts");
                                         YYSTYPE ast = $1;
@@ -96,9 +98,13 @@ stmts       : stmt                  { debug_puts("stmt"); $$ = $1 ; }
 
             ;
 
-stmt        : expr NEWLINE          { $$ = $1 ; }
+newlines    : NEWLINE
+            | NEWLINE newlines
+            ;
+
+stmt        : expr newlines         { $$ = $1 ; }
             | if_stmt               { $$ = $1 ; }
-            | assign_expr NEWLINE   { $$ = $1 ; }
+            | assign_expr newlines  { $$ = $1 ; }
             | decl_func             { $$ = $1 ; }
             ;
 
@@ -128,8 +134,8 @@ expr        : expr PLUS expr        { $$ = make_operator_node(OP_PLUS, $1, $3) ;
             | bool_expr             { $$ = $1 ; }
             | call_func             { $$ = $1 ; }
             | LPAREN expr RPAREN    { $$ = $2 ; }
-            | INTEGER               { $$ = make_literal_node(make_string(token_string), AST_INT) ; }
-            | STRING                { $$ = make_literal_node(make_string(token_string), AST_STRING); }
+            | INTEGER               { $$ = make_literal_node(make_string(token_string), AST_INT);}
+            | STRING                { $$ = make_literal_node(make_string(token_string), AST_STRING);}
             | id                    { $$ = make_load_node($1) ; }
             ;
 

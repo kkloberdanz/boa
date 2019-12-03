@@ -17,8 +17,6 @@ static void write_end(FILE *output_file) {
 }
 
 static void codegen(FILE *output_file, ASTNode *ast) {
-    printf("node id: %zu\n", ast->id);
-
     switch (ast->kind) {
         case FUNC_CALL: {
             /*
@@ -34,12 +32,10 @@ static void codegen(FILE *output_file, ASTNode *ast) {
             } else {
                 fprintf(output_file, "%s(\"%s\");\n", s1, s2);
             }
-            puts("emiting func_call");
             break;
         }
 
         default:
-            puts("default");
             break;
     }
 }
