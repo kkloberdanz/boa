@@ -23,7 +23,7 @@
 #include "util.h"
 
 static void codegen_node(FILE *output_file, ASTNode *ast);
-static char reg = 'a' - 1;
+static unsigned long reg = 0;
 
 static void write_start(FILE *output_file) {
     /* TODO: instead of using strings, build boilerplate into
@@ -58,7 +58,7 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
 static void emit_assign_expr(FILE *output_file, ASTNode *ast) {
     char *variable_name = ast->obj->repr;
     codegen_node(output_file, ast->right);
-    fprintf(output_file, "int %s = %c;\n", variable_name, reg);
+    fprintf(output_file, "int %s = r%lu;\n", variable_name, reg);
 }
 
 static char *get_operator(Operator op) {
@@ -119,8 +119,9 @@ static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
     const char *operand_1 = ast->left->obj->repr;
     const char *operand_2 = ast->right->obj->repr;
     const char *operator = get_operator(ast->op);
+    /* TODO: use strings for register, simulate infinite registers */
     reg++;
-    fprintf(output_file, "int %c = %s %s %s;\n", reg, operand_1, operator, operand_2);
+    fprintf(output_file, "int r%lu = %s %s %s;\n", reg, operand_1, operator, operand_2);
 }
 
 static void codegen_node(FILE *output_file, ASTNode *ast) {
