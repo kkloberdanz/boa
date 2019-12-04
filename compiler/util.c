@@ -24,10 +24,8 @@ void string_replace_single_quote_with_double(char *str) {
     for (i = 0; i < len; i++) {
         if ((i == 0) || (i == (len - 1))){
             if (str[i] == '\'') {
-                putchar(str[i]);
                 str[i] = '"';
             }
         }
     }
-    printf("str = %s\n", str);
 }
