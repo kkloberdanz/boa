@@ -22,12 +22,18 @@
 #include "ast.h"
 #include "util.h"
 
+static void codegen_node(FILE *output_file, ASTNode *ast);
+static char reg = 'a' - 1;
+
 static void write_start(FILE *output_file) {
     /* TODO: instead of using strings, build boilerplate into
      * an archive (*.a) and link to the generated code */
     fprintf(output_file, "#include <stdio.h>\n");
     fprintf(output_file, "void print(char *str) {\n");
     fprintf(output_file, "    printf(\"%%s\\n\", str);\n");
+    fprintf(output_file, "}\n");
+    fprintf(output_file, "void printd(int n) {\n");
+    fprintf(output_file, "    printf(\"%%d\\n\", n);\n");
     fprintf(output_file, "}\n");
     fprintf(output_file, "int main() {\n");
 }
@@ -46,14 +52,46 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
      */
     char *func_name = ast->obj->repr;
     char *arg = ast->right->obj->repr;
-    switch (ast->right->obj->kind) {
-        case AST_STRING:
-            fprintf(output_file, "%s(%s);\n", func_name, arg);
+    fprintf(output_file, "%s(%s);\n", func_name, arg);
+}
+
+static void emit_assign_expr(FILE *output_file, ASTNode *ast) {
+    char *variable_name = ast->obj->repr;
+    codegen_node(output_file, ast->right);
+    fprintf(output_file, "int %s = %c;\n", variable_name, reg);
+}
+
+static char *get_operator(Operator op) {
+    /* TODO: fill in all ops */
+    switch (op) {
+        case OP_PLUS:
+            return "+";
             break;
+
+        case OP_TIMES:
+            return "*";
+            break;
+
+        case OP_MINUS:
+            return "-";
+            break;
+
+        case OP_DIVIDE:
+            return "/";
+            break;
+
         default:
-            fprintf(output_file, "%s(\"%s\");\n", func_name, arg);
-            break;
+            fprintf(stderr, "unhandled op: %d\n", op);
+            exit(EXIT_FAILURE);
     }
+}
+
+static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
+    const char *operand_1 = ast->left->obj->repr;
+    const char *operand_2 = ast->right->obj->repr;
+    const char *operator = get_operator(ast->op);
+    reg++;
+    fprintf(output_file, "int %c = %s %s %s;\n", reg, operand_1, operator, operand_2);
 }
 
 static void codegen_node(FILE *output_file, ASTNode *ast) {
@@ -64,6 +102,11 @@ static void codegen_node(FILE *output_file, ASTNode *ast) {
 
         case ASSIGN_EXPR:
             /* TODO */
+            emit_assign_expr(output_file, ast);
+            break;
+
+        case OPERATOR:
+            emit_operation_expr(output_file, ast);
             break;
 
         default:
