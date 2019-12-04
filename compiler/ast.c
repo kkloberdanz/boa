@@ -114,11 +114,7 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
     ASTNode *node;
     switch (kind) {
         case AST_STRING: {
-            size_t i = 1;
-            for (i = 1; repr[i] != '\0'; i++) {
-                repr[i - 1] = repr[i];
-            }
-            repr[i - 2] = '\0';
+            string_replace_single_quote_with_double(repr);
             break;
         }
         default:

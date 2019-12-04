@@ -46,7 +46,14 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
      */
     char *func_name = ast->obj->repr;
     char *arg = ast->right->obj->repr;
-    fprintf(output_file, "%s(\"%s\");\n", func_name, arg);
+    switch (ast->right->obj->kind) {
+        case AST_STRING:
+            fprintf(output_file, "%s(%s);\n", func_name, arg);
+            break;
+        default:
+            fprintf(output_file, "%s(\"%s\");\n", func_name, arg);
+            break;
+    }
 }
 
 static void codegen_node(FILE *output_file, ASTNode *ast) {

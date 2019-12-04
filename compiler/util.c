@@ -17,3 +17,17 @@ void debug_puts(char *str) {
     puts(str);
 #endif
 }
+
+void string_replace_single_quote_with_double(char *str) {
+    size_t i;
+    size_t len = strlen(str);
+    for (i = 0; i < len; i++) {
+        if ((i == 0) || (i == (len - 1))){
+            if (str[i] == '\'') {
+                putchar(str[i]);
+                str[i] = '"';
+            }
+        }
+    }
+    printf("str = %s\n", str);
+}

@@ -18,7 +18,10 @@
 #include <stdio.h>
 
 #include "runtime.h"
-#include "../compiler/util.h"
+
+#ifndef UNUSED
+#define UNUSED(X) (void)(X)
+#endif
 
 void print(char *str) {
     printf("%s\n", str);
