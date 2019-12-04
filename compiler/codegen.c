@@ -119,7 +119,6 @@ static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
     const char *operand_1 = ast->left->obj->repr;
     const char *operand_2 = ast->right->obj->repr;
     const char *operator = get_operator(ast->op);
-    /* TODO: use strings for register, simulate infinite registers */
     reg++;
     fprintf(output_file, "int r%lu = %s %s %s;\n", reg, operand_1, operator, operand_2);
 }
