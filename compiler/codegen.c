@@ -62,28 +62,57 @@ static void emit_assign_expr(FILE *output_file, ASTNode *ast) {
 }
 
 static char *get_operator(Operator op) {
-    /* TODO: fill in all ops */
+    char *op_repr = NULL;
     switch (op) {
         case OP_PLUS:
-            return "+";
+            op_repr = "+";
             break;
 
         case OP_TIMES:
-            return "*";
+            op_repr = "*";
             break;
 
         case OP_MINUS:
-            return "-";
+            op_repr = "-";
             break;
 
         case OP_DIVIDE:
-            return "/";
+            op_repr = "/";
             break;
 
-        default:
-            fprintf(stderr, "unhandled op: %d\n", op);
-            exit(EXIT_FAILURE);
+        case OP_EQ:
+            op_repr = "==";
+            break;
+
+        case OP_LT:
+            op_repr = "<";
+            break;
+
+        case OP_LE:
+            op_repr = "<=";
+            break;
+
+        case OP_GT:
+            op_repr = ">";
+            break;
+
+        case OP_GE:
+            op_repr = ">=";
+            break;
+
+        case OP_NE:
+            op_repr = "!=";
+            break;
+
+        case OP_NOT:
+            op_repr = "!";
+            break;
+
+        case OP_NIL:
+            op_repr = NULL;
+            break;
     }
+    return op_repr;
 }
 
 static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
