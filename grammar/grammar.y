@@ -128,9 +128,9 @@ if_stmt     : IF expr LBRACE
               RBRACE                { $$ = make_conditional_node($2, $4, NULL) ; }
             ;
 
-expr        : expr PLUS expr        { $$ = make_operator_node(OP_PLUS, $1, $3) ; }
-            | expr MINUS expr       { $$ = make_operator_node(OP_MINUS, $1, $3) ; }
-            | expr TIMES expr       { $$ = make_operator_node(OP_TIMES, $1, $3) ; }
+expr        : expr PLUS expr        { debug_puts("making OP_PLUS"); $$ = make_operator_node(OP_PLUS, $1, $3) ; }
+            | expr MINUS expr       { debug_puts("making OP_MINUS"); $$ = make_operator_node(OP_MINUS, $1, $3) ; }
+            | expr TIMES expr       { debug_puts("making OP_TIMES"); $$ = make_operator_node(OP_TIMES, $1, $3) ; }
             | expr OVER expr        { $$ = make_operator_node(OP_DIVIDE, $1, $3) ; }
             | bool_expr             { $$ = $1 ; }
             | call_func             { $$ = $1 ; }

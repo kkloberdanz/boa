@@ -1,3 +1,4 @@
 myvar = 4 + 5
 xyz = 11 + 54
+print("some text")
 printd(myvar)

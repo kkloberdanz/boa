@@ -116,11 +116,37 @@ static char *get_operator(Operator op) {
 }
 
 static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
-    const char *operand_1 = ast->left->obj->repr;
-    const char *operand_2 = ast->right->obj->repr;
+    char buf1[255];
+    char buf2[255];
+    char *operand_1;
+    char *operand_2;
     const char *operator = get_operator(ast->op);
+
+    if (ast->left->obj == NULL) {
+        emit_operation_expr(output_file, ast->left);
+        sprintf(buf1, "r%lu", reg);
+        operand_1 = buf1;
+    } else {
+        operand_1 = ast->left->obj->repr;
+    }
+
+    if (ast->right->obj == NULL) {
+        emit_operation_expr(output_file, ast->right);
+        sprintf(buf2, "r%lu", reg);
+        operand_2 = buf2;
+    } else {
+        operand_2 = ast->right->obj->repr;
+    }
+
     reg++;
-    fprintf(output_file, "int r%lu = %s %s %s;\n", reg, operand_1, operator, operand_2);
+    fprintf(
+        output_file,
+        "int r%lu = %s %s %s;\n",
+        reg,
+        operand_1,
+        operator,
+        operand_2
+    );
 }
 
 static void codegen_node(FILE *output_file, ASTNode *ast) {

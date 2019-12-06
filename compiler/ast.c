@@ -104,6 +104,10 @@ ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
     ParseObj *obj = malloc(sizeof(ParseObj));
+    if (obj == NULL) {
+        fprintf(stderr, "out of memory");
+        exit(EXIT_FAILURE);
+    }
     obj->repr = make_string(repr);
     obj->kind = kind;
     return obj;
