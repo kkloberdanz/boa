@@ -116,8 +116,8 @@ static char *get_operator(Operator op) {
 }
 
 static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
-    char buf1[255];
-    char buf2[255];
+    char buf1[100];
+    char buf2[100];
     char *operand_1;
     char *operand_2;
     const char *operator = get_operator(ast->op);
@@ -141,7 +141,7 @@ static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
     reg++;
     fprintf(
         output_file,
-        "int r%lu = %s %s %s;\n",
+        "const int r%lu = %s %s %s;\n",
         reg,
         operand_1,
         operator,
