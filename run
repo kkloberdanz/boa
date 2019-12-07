@@ -2,6 +2,12 @@
 
 PROG_NAME=$1
 
+if [[ -z $CC ]]; then
+    CC=gcc
+fi
+
+echo "CC=${CC}"
+
 ./boa example/$PROG_NAME.boa \
-    && gcc example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME \
+    && $CC -Os example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME \
     && ./bin/$PROG_NAME
