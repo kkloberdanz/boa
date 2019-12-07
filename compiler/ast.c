@@ -23,8 +23,6 @@
 
 char token_string[MAX_TOKEN_SIZE + 1];
 
-size_t node_id = 1;
-
 ASTNode *make_ast_node(
     ASTkind kind,
     ParseObj *obj,
@@ -41,8 +39,6 @@ ASTNode *make_ast_node(
     node->left = left;
     node->condition = condition;
     node->right = right;
-    node->id = node_id;
-    node_id++;
     return node;
 }
 
@@ -115,7 +111,11 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
             string_replace_single_quote_with_double(repr);
             break;
         }
-        default:
+
+        case AST_INT:
+        case AST_FLOAT:
+        case AST_BOOL:
+        case AST_ID:
             break;
     }
     obj = make_parseobj(repr, kind);

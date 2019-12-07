@@ -5,14 +5,14 @@
 # The name of the executable to be created
 BIN_NAME := boa
 # Compiler used
-CC = gcc
-#CC = clang -Weverything
+CC = clang
 # Extension of source files used in the project
 SRC_EXT = c
 # Path to the source directory, relative to the makefile
 SRC_PATH = .
 # Space-separated pkg-config libraries used by this project
 LIBS =
+SRC_ONLY_FLAGS = -Weverything
 # General compiler flags
 COMPILE_FLAGS = -std=iso9899:1990 -Wall -Wextra -Wpedantic -Wswitch -ggdb
 # Additional release-specific flags
@@ -222,7 +222,7 @@ all: $(BIN_PATH)/$(BIN_NAME)
 $(BIN_PATH)/$(BIN_NAME): $(OBJECTS) lexer parser
 	@echo "Linking: $@"
 	@$(START_TIME)
-	$(CMD_PREFIX)$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(CMD_PREFIX)$(CC) $(SRC_ONLY_FLAGS) $(OBJECTS) $(LDFLAGS) -o $@
 	@echo -en "\t Link time: "
 	@$(END_TIME)
 
@@ -235,7 +235,7 @@ $(BIN_PATH)/$(BIN_NAME): $(OBJECTS) lexer parser
 $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
 	@echo "Compiling: $< -> $@"
 	@$(START_TIME)
-	$(CMD_PREFIX)$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CMD_PREFIX)$(CC) $(SRC_ONLY_FLAGS) $(CFLAGS) $(INCLUDES) -c $< -o $@
 	@echo -en "\t Compile time: "
 	@$(END_TIME)
 

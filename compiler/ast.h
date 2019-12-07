@@ -60,19 +60,19 @@ enum ASTLiteralKind {
 
 /* structs */
 typedef struct ParseObj {
-    enum ASTLiteralKind kind;
     char *repr;
+    enum ASTLiteralKind kind;
+    int _pad; /* unused 4 byte padding for alignment */
 } ParseObj;
 
 typedef struct ASTNode {
-    ASTkind kind;
     ParseObj *obj;
-    Operator op;
     struct ASTNode *left;
     struct ASTNode *condition;
     struct ASTNode *right;
     struct ASTNode *sibling;
-    size_t id;
+    ASTkind kind;
+    Operator op;
 } ASTNode;
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);

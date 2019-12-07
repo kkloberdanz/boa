@@ -24,8 +24,8 @@
 #include "../util/util.h"
 #include "codegen.h"
 
-bool is_boa_src_file(char *filename) {
-    int len = strlen(filename) - 1;
+static bool is_boa_src_file(char *filename) {
+    unsigned long len = strlen(filename) - 1;
     if (len < 5) {
         return false;
     }
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     FILE *output;
     FILE *source_file;
     int exit_code;
-    int len = 0;
+    unsigned long len = 0;
     ASTNode *tree = NULL;
 
     if (argc != 2) {

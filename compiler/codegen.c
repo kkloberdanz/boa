@@ -188,7 +188,12 @@ static void codegen_defs_node(FILE *output_file, ASTNode *ast) {
             emit_func_def(output_file, ast);
             break;
 
-        default:
+        case FUNC_CALL:
+        case ASSIGN_EXPR:
+        case OPERATOR:
+        case CONDITIONAL:
+        case LEAF:
+        case LOAD_STMT:
             break;
     }
 }
