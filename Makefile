@@ -73,13 +73,17 @@ endif
 # Combine compiler and linker flags
 release: export CFLAGS := $(CFLAGS) \
 	$(COMPILE_FLAGS) \
-	$(RCOMPILE_FLAGS) \
-	-Os
+	$(RCOMPILE_FLAGS)
+
 release: export LDFLAGS := $(LDFLAGS) \
 	$(LINK_FLAGS) \
-	$(RLINK_FLAGS) \
-	-Os
+	$(RLINK_FLAGS)
+
 release: export BUILD_TYPE := release
+
+release: export OPTIM_FLAGS := -Os
+
+debug: export OPTIM_FLAGS := -O0
 
 debug: export CFLAGS := \
 	$(CFLAGS) \
@@ -221,19 +225,21 @@ clean:
 
 .PHONY: runtime
 runtime:
-	$(CC) $(CFLAGS) -c runtime/runtime.c -o build/$(BUILD_TYPE)/runtime.o
+	$(CC) $(OPTIM_FLAGS) $(CFLAGS) \
+		-c runtime/runtime.c \
+		-o build/$(BUILD_TYPE)/runtime.o
 	ar rcs libruntime.a build/$(BUILD_TYPE)/runtime.o
 
 
 .PHONY: lexer
 lexer: parser
 	lex grammar/tokens.l
-	$(CC) $(CFLAGS) -c lex.yy.c -o build/$(BUILD_TYPE)/lex.yy.o
+	$(CC) $(OPTIM_FLAGS) $(CFLAGS) -c lex.yy.c -o build/$(BUILD_TYPE)/lex.yy.o
 
 .PHONY: parser
 parser:
 	yacc -y -d grammar/grammar.y
-	$(CC) $(CFLAGS) -c y.tab.c -o build/$(BUILD_TYPE)/y.tab.o
+	$(CC) $(OPTIM_FLAGS) $(CFLAGS) -c y.tab.c -o build/$(BUILD_TYPE)/y.tab.o
 
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)
@@ -258,7 +264,8 @@ $(BIN_PATH)/$(BIN_NAME): $(OBJECTS) lexer parser runtime
 $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
 	@echo "Compiling: $< -> $@"
 	@$(START_TIME)
-	$(CMD_PREFIX)$(CC) $(SRC_ONLY_FLAGS) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CMD_PREFIX)$(CC) $(SRC_ONLY_FLAGS) $(OPTIM_FLAGS) \
+		$(CFLAGS) $(INCLUDES) -c $< -o $@
 	@echo -en "\t Compile time: "
 	@$(END_TIME)
 
