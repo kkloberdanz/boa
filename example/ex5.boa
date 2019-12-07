@@ -3,4 +3,6 @@ def myfunc() {
     printd(abc)
 }
 
+var = 4 + 19 * 8
+printd(var)
 myfunc()
