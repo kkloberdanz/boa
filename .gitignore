@@ -6,6 +6,7 @@ bin/
 build/
 .DS_Store
 .debug_time
+.release_time
 boa
 y.tab.c
 y.tab.h
