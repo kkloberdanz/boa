@@ -7,3 +7,4 @@ def myfunc() {
 var = myfunc()
 x = 77 * 19
 printd(var)
+printd(var + 1)
