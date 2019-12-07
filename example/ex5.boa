@@ -2,3 +2,5 @@ def myfunc() {
     abc = 5 + 1
     printd(abc)
 }
+
+myfunc()

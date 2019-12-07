@@ -164,6 +164,7 @@ args        : expr                  { $$ = $1 ; }
             ;
 
 call_func   : id LPAREN args RPAREN { debug_puts("call_func"); $$ = make_func_call_node($1, $3) ; }
+            | id LPAREN RPAREN      { debug_puts("call_func"); $$ = make_func_call_node($1, NULL) ; }
             ;
 
 id          : ID                    { $$ = make_id_node(make_string(token_string)) ; }

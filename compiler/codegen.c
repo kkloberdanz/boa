@@ -50,7 +50,12 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
      * call function with each arg
      */
     char *func_name = ast->obj->repr;
-    char *arg = ast->right->obj->repr;
+    char *arg;
+    if (ast->right != NULL) {
+        arg = ast->right->obj->repr;
+    } else {
+        arg = "";
+    }
     fprintf(output_file, "%s(%s);\n", func_name, arg);
 }
 
