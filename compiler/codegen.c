@@ -49,11 +49,12 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
      * call function with each arg
      */
     char *func_name = ast->obj->repr;
-    char *arg;
+    char *arg = "";
+    char reg_s[255];
     if (ast->right != NULL) {
-        arg = ast->right->obj->repr;
-    } else {
-        arg = "";
+        codegen(output_file, ast->right);
+        sprintf(reg_s, "r%lu", reg);
+        arg = reg_s;
     }
     fprintf(output_file, "%s(%s);\n", func_name, arg);
 }
@@ -159,7 +160,6 @@ static void codegen_node(FILE *output_file, ASTNode *ast) {
             break;
 
         case ASSIGN_EXPR:
-            /* TODO */
             emit_assign_expr(output_file, ast);
             break;
 
