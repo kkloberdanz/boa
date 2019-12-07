@@ -1,0 +1,6 @@
+#!/bin/bash
+
+PROG_NAME=$1
+MODE=$2
+
+reset && make $MODE && ./boa example/$PROG_NAME.boa && tcc -run example/$PROG_NAME.c
