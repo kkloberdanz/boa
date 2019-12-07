@@ -113,7 +113,7 @@ stmt        : expr newlines         {$$ = $1;}
 
 decl_func   : DEF id LPAREN RPAREN LBRACE NEWLINE
               stmts
-              RBRACE                {
+              RBRACE newlines       {
                                         debug_puts("decl_func");
                                         $$ = make_function_node($2, $7);
                                     }

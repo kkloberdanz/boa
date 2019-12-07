@@ -4,7 +4,13 @@ def myfunc() {
     return abc
 }
 
+def foobar() {
+    myvar = 5 * 8 + 99
+    printd(myvar)
+}
+
 var = myfunc()
 x = 77 * 19
 printd(var)
 printd(var + 1)
+foobar()
