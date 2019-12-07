@@ -1,4 +1,3 @@
 better error messages: https://developer.ibm.com/tutorials/l-flexbison/
 Fix memory leaks (change malloc to custom allocator)
-Have runtime code in sepperate .c files instead of in strings
 allow function arguments

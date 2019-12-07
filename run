@@ -2,4 +2,6 @@
 
 PROG_NAME=$1
 
-./boa example/$PROG_NAME.boa && tcc -run example/$PROG_NAME.c
+./boa example/$PROG_NAME.boa \
+    && tcc example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME \
+    && ./bin/$PROG_NAME

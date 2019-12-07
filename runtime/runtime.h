@@ -21,7 +21,6 @@
 #include <stdio.h>
 
 void print(char *str);
-
-int run(int argc, char *argv[]);
+void printd(int num);
 
 #endif /* RUNTIME_H */

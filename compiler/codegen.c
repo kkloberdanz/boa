@@ -29,17 +29,16 @@ static void codegen(FILE *output_file, ASTNode *ast);
 
 static void write_start(FILE *output_file) {
     fprintf(output_file, "#include <stdio.h>\n");
-    fprintf(output_file, "void print(char *str) {\n");
-    fprintf(output_file, "    printf(\"%%s\\n\", str);\n");
-    fprintf(output_file, "}\n");
-    fprintf(output_file, "void printd(int n) {\n");
-    fprintf(output_file, "    printf(\"%%d\\n\", n);\n");
-    fprintf(output_file, "}\n");
+    fprintf(output_file, "#include \"../runtime/runtime.h\"\n");
 }
 
 static void write_end(FILE *output_file) {
     fprintf(output_file, "return 0;\n");
     fprintf(output_file, "}\n");
+}
+
+static void write_main(FILE *output_file) {
+    fprintf(output_file, "int main() {\n");
 }
 
 static void emit_func_call(FILE *output_file, ASTNode *ast) {
@@ -215,7 +214,7 @@ static void codegen(FILE *output_file, ASTNode *ast) {
 int emit(FILE *output_file, ASTNode *ast) {
     write_start(output_file);
     codegen_defs(output_file, ast);
-    fprintf(output_file, "int main() {\n");
+    write_main(output_file);
     codegen(output_file, ast);
     write_end(output_file);
     return 0;

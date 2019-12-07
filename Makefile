@@ -74,13 +74,11 @@ endif
 release: export CFLAGS := $(CFLAGS) \
 	$(COMPILE_FLAGS) \
 	$(RCOMPILE_FLAGS) \
-	-Os \
-	-flto
+	-Os
 release: export LDFLAGS := $(LDFLAGS) \
 	$(LINK_FLAGS) \
 	$(RLINK_FLAGS) \
-	-Os \
-	-flto
+	-Os
 release: export BUILD_TYPE := release
 
 debug: export CFLAGS := \
@@ -219,6 +217,13 @@ clean:
 	@$(RM) -f example/*.c
 	@$(RM) -f a.out
 	@$(RM) -f core
+	@$(RM) -f libruntime.a runtime.o
+
+.PHONY: runtime
+runtime:
+	$(CC) $(CFLAGS) -c runtime/runtime.c -o build/$(BUILD_TYPE)/runtime.o
+	ar rcs libruntime.a build/$(BUILD_TYPE)/runtime.o
+
 
 .PHONY: lexer
 lexer: parser
@@ -237,7 +242,7 @@ all: $(BIN_PATH)/$(BIN_NAME)
 	@ln -s $(BIN_PATH)/$(BIN_NAME) $(BIN_NAME)
 
 # Link the executable
-$(BIN_PATH)/$(BIN_NAME): $(OBJECTS) lexer parser
+$(BIN_PATH)/$(BIN_NAME): $(OBJECTS) lexer parser runtime
 	@echo "Linking: $@"
 	@$(START_TIME)
 	$(CMD_PREFIX)$(CC) $(SRC_ONLY_FLAGS) $(OBJECTS) $(LDFLAGS) -o $@

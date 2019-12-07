@@ -5,4 +5,3 @@
 (5) type checking through traits (type classes)
 (6) no exceptions, errors are a part of the type system
 (7) first class functions
-(8) expressions over statements
