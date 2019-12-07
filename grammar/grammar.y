@@ -78,11 +78,11 @@ static FILE *source_file = NULL;
 %right EXPONENT        /* exponentiation */
 
 %%
-prog        : stmts                 { debug_puts("prog"); tree = $1 ; }
+prog        : stmts                 {debug_puts("prog"); tree = $1;}
             ;
 
-stmts       : stmt                  { debug_puts("stmt"); $$ = $1 ; }
-            | stmt newlines         { debug_puts("stmt"); $$ = $1 ; }
+stmts       : stmt                  {debug_puts("stmt"); $$ = $1;}
+            | stmt newlines         {debug_puts("stmt"); $$ = $1;}
             | stmts stmt            {
                                         YYSTYPE ast;
                                         debug_puts("stmts");
@@ -104,51 +104,91 @@ newlines    : NEWLINE
             | NEWLINE newlines
             ;
 
-stmt        : expr newlines         { $$ = $1 ; }
-            | if_stmt               { $$ = $1 ; }
-            | assign_expr newlines  { $$ = $1 ; }
-            | decl_func             { $$ = $1 ; }
+stmt        : expr newlines         {$$ = $1;}
+            | if_stmt               {$$ = $1;}
+            | assign_expr newlines  {$$ = $1;}
+            | decl_func             {$$ = $1;}
             ;
 
 decl_func   : DEF id LPAREN RPAREN LBRACE NEWLINE
               stmts
-              RBRACE                { debug_puts("decl_func"); $$ = make_function_node($2, $7); }
+              RBRACE                {
+                                        debug_puts("decl_func");
+                                        $$ = make_function_node($2, $7);
+                                    }
             ;
 
-assign_expr : id ASSIGN expr        { $$ = make_assign_node($1, $3); }
+assign_expr : id ASSIGN expr        {$$ = make_assign_node($1, $3);}
             ;
 
 if_stmt     : IF expr LBRACE
                   stmt
               RBRACE ELSE LBRACE
                   stmt
-              RBRACE                { $$ = make_conditional_node($2, $4, $8) ; }
+              RBRACE                {$$ = make_conditional_node($2, $4, $8);}
             | IF expr LBRACE
                   stmt
-              RBRACE                { $$ = make_conditional_node($2, $4, NULL) ; }
+              RBRACE                {$$ = make_conditional_node($2, $4, NULL);}
             ;
 
-expr        : expr PLUS expr        { debug_puts("making OP_PLUS"); $$ = make_operator_node(OP_PLUS, $1, $3) ; }
-            | expr MINUS expr       { debug_puts("making OP_MINUS"); $$ = make_operator_node(OP_MINUS, $1, $3) ; }
-            | expr TIMES expr       { debug_puts("making OP_TIMES"); $$ = make_operator_node(OP_TIMES, $1, $3) ; }
-            | expr OVER expr        { $$ = make_operator_node(OP_DIVIDE, $1, $3) ; }
-            | bool_expr             { $$ = $1 ; }
-            | call_func             { $$ = $1 ; }
-            | LPAREN expr RPAREN    { $$ = $2 ; }
-            | INTEGER               { $$ = make_literal_node(make_string(token_string), AST_INT);}
-            | STRING                { $$ = make_literal_node(make_string(token_string), AST_STRING);}
-            | id                    { $$ = make_load_node($1) ; }
+expr        : expr PLUS expr        {
+                                        debug_puts("making OP_PLUS");
+                                        $$ = make_operator_node(
+                                            OP_PLUS,
+                                            $1,
+                                            $3
+                                        );
+                                    }
+            | expr MINUS expr       {
+                                        debug_puts("making OP_MINUS");
+                                        $$ = make_operator_node(
+                                            OP_MINUS,
+                                            $1,
+                                            $3
+                                        );
+                                    }
+            | expr TIMES expr       {
+                                        debug_puts("making OP_TIMES");
+                                        $$ = make_operator_node(
+                                            OP_TIMES,
+                                            $1,
+                                            $3
+                                        );
+                                    }
+            | expr OVER expr        {
+                                        $$ = make_operator_node(
+                                            OP_DIVIDE,
+                                            $1,
+                                            $3
+                                        );
+                                    }
+            | bool_expr             {$$ = $1;}
+            | call_func             {$$ = $1;}
+            | LPAREN expr RPAREN    {$$ = $2;}
+            | INTEGER               {
+                                        $$ = make_literal_node(
+                                            make_string(token_string),
+                                            AST_INT
+                                        );
+                                    }
+            | STRING                {
+                                        $$ = make_literal_node(
+                                            make_string(token_string),
+                                            AST_STRING
+                                        );
+                                    }
+            | id                    {$$ = make_load_node($1);}
             ;
 
-bool_expr   : expr EQ expr          { $$ = make_operator_node(OP_EQ, $1, $3) ; }
-            | expr LT expr          { $$ = make_operator_node(OP_LT, $1, $3) ; }
-            | expr LE expr          { $$ = make_operator_node(OP_LE, $1, $3) ; }
-            | expr GT expr          { $$ = make_operator_node(OP_GT, $1, $3) ; }
-            | expr GE expr          { $$ = make_operator_node(OP_GE, $1, $3) ; }
-            | expr NE expr          { $$ = make_operator_node(OP_NE, $1, $3) ; }
+bool_expr   : expr EQ expr          {$$ = make_operator_node(OP_EQ, $1, $3);}
+            | expr LT expr          {$$ = make_operator_node(OP_LT, $1, $3);}
+            | expr LE expr          {$$ = make_operator_node(OP_LE, $1, $3);}
+            | expr GT expr          {$$ = make_operator_node(OP_GT, $1, $3);}
+            | expr GE expr          {$$ = make_operator_node(OP_GE, $1, $3);}
+            | expr NE expr          {$$ = make_operator_node(OP_NE, $1, $3);}
             ;
 
-args        : expr                  { $$ = $1 ; }
+args        : expr                  {$$ = $1;}
             | expr COMMA args       {
                                         YYSTYPE ast = $3;
                                         if (ast) {
@@ -163,11 +203,21 @@ args        : expr                  { $$ = $1 ; }
                                     }
             ;
 
-call_func   : id LPAREN args RPAREN { debug_puts("call_func"); $$ = make_func_call_node($1, $3) ; }
-            | id LPAREN RPAREN      { debug_puts("call_func"); $$ = make_func_call_node($1, NULL) ; }
+call_func   : id LPAREN args RPAREN {
+                                        debug_puts("call_func");
+                                        $$ = make_func_call_node($1, $3);
+                                    }
+            | id LPAREN RPAREN      {
+                                        debug_puts("call_func");
+                                        $$ = make_func_call_node($1, NULL);
+                                    }
             ;
 
-id          : ID                    { $$ = make_id_node(make_string(token_string)) ; }
+id          : ID                    {
+                                        $$ = make_id_node(
+                                            make_string(token_string)
+                                        );
+                                    }
             ;
 
 %%
