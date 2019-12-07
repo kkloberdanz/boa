@@ -20,7 +20,7 @@
 
 #include "codegen.h"
 #include "ast.h"
-#include "util.h"
+#include "../util/util.h"
 
 static void codegen_node(FILE *output_file, ASTNode *ast);
 static unsigned long reg = 0;

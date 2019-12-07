@@ -21,7 +21,7 @@
 #include <string.h>
 
 #include "ast.h"
-#include "util.h"
+#include "../util/util.h"
 #include "codegen.h"
 
 bool is_boa_src_file(char *filename) {

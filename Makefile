@@ -5,7 +5,8 @@
 # The name of the executable to be created
 BIN_NAME := boa
 # Compiler used
-CC ?= gcc
+CC = gcc
+#CC = clang -Weverything
 # Extension of source files used in the project
 SRC_EXT = c
 # Path to the source directory, relative to the makefile
@@ -13,7 +14,7 @@ SRC_PATH = .
 # Space-separated pkg-config libraries used by this project
 LIBS =
 # General compiler flags
-COMPILE_FLAGS = -std=iso9899:1990 -Wall -Wextra -Wpedantic -ggdb
+COMPILE_FLAGS = -std=iso9899:1990 -Wall -Wextra -Wpedantic -Wswitch -ggdb
 # Additional release-specific flags
 RCOMPILE_FLAGS = -D NDEBUG
 # Additional debug-specific flags
@@ -70,8 +71,8 @@ ifeq ($(V),true)
 endif
 
 # Combine compiler and linker flags
-release: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(RCOMPILE_FLAGS) -Os -flto -Werror
-release: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(RLINK_FLAGS) -Os -flto -Werror
+release: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(RCOMPILE_FLAGS) -Os -flto
+release: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(RLINK_FLAGS) -Os -flto
 debug: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(DCOMPILE_FLAGS) -O0 -Werror
 debug: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(DLINK_FLAGS) -O0 -Werror
 

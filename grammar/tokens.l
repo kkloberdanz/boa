@@ -22,7 +22,7 @@
 #include <stdbool.h>
 
 #include "compiler/ast.h"
-#include "compiler/util.h"
+#include "util/util.h"
 #include "y.tab.h"
 
 int fileno(FILE *stream);

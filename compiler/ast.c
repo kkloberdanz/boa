@@ -19,7 +19,7 @@
 #include <stdlib.h>
 
 #include "ast.h"
-#include "util.h"
+#include "../util/util.h"
 
 char token_string[MAX_TOKEN_SIZE + 1];
 
