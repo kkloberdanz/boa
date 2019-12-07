@@ -89,7 +89,6 @@ debug: export CFLAGS := \
 	$(CFLAGS) \
 	$(COMPILE_FLAGS) \
 	$(DCOMPILE_FLAGS) \
-	-O0 \
 	-Werror
 debug: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(DLINK_FLAGS) -O0 -Werror
 debug: export BUILD_TYPE := debug
