@@ -1,0 +1,9 @@
+def myfunc() {
+    abc = 5 + 1
+    printd(abc)
+    return abc
+}
+
+var = myfunc()
+x = 77 * 19
+printd(var)

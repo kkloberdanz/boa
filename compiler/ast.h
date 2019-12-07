@@ -32,6 +32,7 @@ typedef enum {
     ASSIGN_EXPR,
     FUNC_DEF,
     LOAD_STMT,
+    RETURN_STMT,
     FUNC_CALL
 } ASTkind;
 
@@ -113,5 +114,7 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind);
 int get_token(FILE *source_file);
 
 ASTNode *parse(FILE *src_file);
+
+ASTNode *make_return_node(ASTNode *expr_to_return);
 
 #endif /* AST_H */

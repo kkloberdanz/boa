@@ -23,10 +23,12 @@
 #define UNUSED(X) (void)(X)
 #endif
 
-void printd(int num) {
+int printd(int num) {
     printf("%d\n", num);
+    return 0;
 }
 
-void print(char *str) {
+int print(char *str) {
     printf("%s\n", str);
+    return 0;
 }

@@ -108,6 +108,7 @@ stmt        : expr newlines         {$$ = $1;}
             | if_stmt               {$$ = $1;}
             | assign_expr newlines  {$$ = $1;}
             | decl_func             {$$ = $1;}
+            | RETURN expr newlines  {$$ = make_return_node($2);}
             ;
 
 decl_func   : DEF id LPAREN RPAREN LBRACE NEWLINE

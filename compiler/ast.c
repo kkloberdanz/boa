@@ -126,3 +126,15 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
 ASTNode *make_id_node(char *repr) {
     return make_literal_node(repr, AST_ID);
 }
+
+ASTNode *make_return_node(ASTNode *expr_to_return) {
+    ASTNode *node = make_ast_node(
+        RETURN_STMT,
+        NULL,
+        OP_NIL,
+        NULL,
+        NULL,
+        expr_to_return
+    );
+    return node;
+}

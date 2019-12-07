@@ -50,13 +50,17 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
      */
     char *func_name = ast->obj->repr;
     char *arg = "";
-    char reg_s[255];
+    /*char reg_s[255];*/
     if (ast->right != NULL) {
+        /*
         codegen(output_file, ast->right);
         sprintf(reg_s, "r%lu", reg);
         arg = reg_s;
+        */
+        arg = ast->right->obj->repr;
     }
-    fprintf(output_file, "%s(%s);\n", func_name, arg);
+    reg++;
+    fprintf(output_file, "const int r%lu = %s(%s);\n", reg, func_name, arg);
 }
 
 static void emit_assign_expr(FILE *output_file, ASTNode *ast) {
@@ -153,6 +157,16 @@ static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
     );
 }
 
+static void emit_return_stmt(FILE *output_file, ASTNode *ast) {
+    codegen_node(output_file, ast->right);
+    fprintf(output_file, "return r%lu;\n", reg);
+}
+
+static void emit_load_stmt(FILE *output_file, ASTNode *ast) {
+    reg++;
+    fprintf(output_file, "const int r%lu = %s;\n", reg, ast->obj->repr);
+}
+
 static void codegen_node(FILE *output_file, ASTNode *ast) {
     switch (ast->kind) {
         case FUNC_CALL:
@@ -167,16 +181,23 @@ static void codegen_node(FILE *output_file, ASTNode *ast) {
             emit_operation_expr(output_file, ast);
             break;
 
+        case RETURN_STMT:
+            emit_return_stmt(output_file, ast);
+            break;
+
+        case LOAD_STMT:
+            emit_load_stmt(output_file, ast);
+            break;
+
         case CONDITIONAL:
         case LEAF:
         case FUNC_DEF:
-        case LOAD_STMT:
             break;
     }
 }
 
 static void emit_func_def(FILE *output_file, ASTNode *ast) {
-    fprintf(output_file, "void %s() {\n", ast->obj->repr);
+    fprintf(output_file, "int %s() {\n", ast->obj->repr);
     codegen(output_file, ast->right);
     fprintf(output_file, "}\n");
 }
@@ -193,6 +214,7 @@ static void codegen_defs_node(FILE *output_file, ASTNode *ast) {
         case CONDITIONAL:
         case LEAF:
         case LOAD_STMT:
+        case RETURN_STMT:
             break;
     }
 }

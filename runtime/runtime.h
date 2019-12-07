@@ -20,7 +20,7 @@
 
 #include <stdio.h>
 
-void print(char *str);
-void printd(int num);
+int print(char *str);
+int printd(int num);
 
 #endif /* RUNTIME_H */
