@@ -8,4 +8,4 @@ var = 4 + 19 * 8
 printd(var)
 myfunc()
 
-printd(9 + 9)
+printd(var + 9 * 11)
