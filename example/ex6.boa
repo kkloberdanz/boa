@@ -1,3 +1,7 @@
+foobar()
+y = myfunc()
+printd(y)
+
 def myfunc() {
     abc = 5 + 1
     printd(abc)
