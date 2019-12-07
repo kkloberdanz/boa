@@ -22,7 +22,7 @@ DCOMPILE_FLAGS = -D DEBUG
 # Add additional include paths
 INCLUDES = -I $(SRC_PATH)
 # General linker settings
-LINK_FLAGS = -lfl -ly
+LINK_FLAGS = -lfl -ly -flto
 # Additional release-specific linker settings
 RLINK_FLAGS =
 # Additional debug-specific linker settings
