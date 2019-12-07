@@ -73,8 +73,10 @@ endif
 # Combine compiler and linker flags
 release: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(RCOMPILE_FLAGS) -Os -flto
 release: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(RLINK_FLAGS) -Os -flto
+release: export BUILD_TYPE := release
 debug: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(DCOMPILE_FLAGS) -O0 -Werror
 debug: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(DLINK_FLAGS) -O0 -Werror
+debug: export BUILD_TYPE := debug
 
 # Build and output paths
 release: export BUILD_PATH := build/release
@@ -86,18 +88,14 @@ install: export BIN_PATH := bin/release
 # Find all source files in the source directory, sorted by most
 # recently modified
 ifeq ($(UNAME_S),Darwin)
-	SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' -not -path "./runtime/*" | sort -k 1nr | cut -f2-)
+	SRC1 = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' -not -path "./example/*" -not -path "./runtime/*" | sort -k 1nr | cut -f2-)
 else
-	SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' -not -path "./runtime/*" -printf '%T@\t%p\n' \
+	SRC1 = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' -not -path "./example/*" -not -path "./runtime/*" -printf '%T@\t%p\n' \
 						| sort -k 1nr | cut -f2-)
 endif
 
-# fallback in case the above fails
-rwildcard = $(foreach d, $(wildcard $1*), $(call rwildcard,$d/,$2) \
-						$(filter $(subst *,%,$2), $d))
-ifeq ($(SOURCES),)
-	SOURCES := $(call rwildcard, $(SRC_PATH), *.$(SRC_EXT))
-endif
+
+SOURCES = $(SRC1)
 
 # Set the object file names, with the source directory stripped
 # from the path, and the build path prepended in its place
@@ -204,6 +202,16 @@ clean:
 	@$(RM) -f a.out
 	@$(RM) -f core
 
+.PHONY: lexer
+lexer: parser
+	lex grammar/tokens.l
+	$(CC) $(CFLAGS) -c lex.yy.c -o build/$(BUILD_TYPE)/lex.yy.o
+
+.PHONY: parser
+parser:
+	yacc -y -d grammar/grammar.y
+	$(CC) $(CFLAGS) -c y.tab.c -o build/$(BUILD_TYPE)/y.tab.o
+
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)
 	@echo "Making symlink: $(BIN_NAME) -> $<"
@@ -211,7 +219,7 @@ all: $(BIN_PATH)/$(BIN_NAME)
 	@ln -s $(BIN_PATH)/$(BIN_NAME) $(BIN_NAME)
 
 # Link the executable
-$(BIN_PATH)/$(BIN_NAME): $(OBJECTS)
+$(BIN_PATH)/$(BIN_NAME): $(OBJECTS) lexer parser
 	@echo "Linking: $@"
 	@$(START_TIME)
 	$(CMD_PREFIX)$(CC) $(OBJECTS) $(LDFLAGS) -o $@
