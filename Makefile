@@ -71,10 +71,24 @@ ifeq ($(V),true)
 endif
 
 # Combine compiler and linker flags
-release: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(RCOMPILE_FLAGS) -Os -flto
-release: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(RLINK_FLAGS) -Os -flto
+release: export CFLAGS := $(CFLAGS) \
+	$(COMPILE_FLAGS) \
+	$(RCOMPILE_FLAGS) \
+	-Os \
+	-flto
+release: export LDFLAGS := $(LDFLAGS) \
+	$(LINK_FLAGS) \
+	$(RLINK_FLAGS) \
+	-Os \
+	-flto
 release: export BUILD_TYPE := release
-debug: export CFLAGS := $(CFLAGS) $(COMPILE_FLAGS) $(DCOMPILE_FLAGS) -O0 -Werror
+
+debug: export CFLAGS := \
+	$(CFLAGS) \
+	$(COMPILE_FLAGS) \
+	$(DCOMPILE_FLAGS) \
+	-O0 \
+	-Werror
 debug: export LDFLAGS := $(LDFLAGS) $(LINK_FLAGS) $(DLINK_FLAGS) -O0 -Werror
 debug: export BUILD_TYPE := debug
 
@@ -88,14 +102,14 @@ install: export BIN_PATH := bin/release
 # Find all source files in the source directory, sorted by most
 # recently modified
 ifeq ($(UNAME_S),Darwin)
-	SRC1 = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' -not -path "./example/*" -not -path "./runtime/*" | sort -k 1nr | cut -f2-)
+	SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' \
+	   -not -path "./example/*" \
+	   -not -path "./runtime/*" | sort -k 1nr | cut -f2-)
 else
-	SRC1 = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' -not -path "./example/*" -not -path "./runtime/*" -printf '%T@\t%p\n' \
-						| sort -k 1nr | cut -f2-)
+	SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' \
+	   -not -path "./example/*" -not -path "./runtime/*" \
+	   -printf '%T@\t%p\n' | sort -k 1nr | cut -f2-)
 endif
-
-
-SOURCES = $(SRC1)
 
 # Set the object file names, with the source directory stripped
 # from the path, and the build path prepended in its place
@@ -124,18 +138,22 @@ endif
 # Version macros
 # Comment/remove this section to remove versioning
 USE_VERSION := false
-# If this isn't a git repo or the repo has no tags, git describe will return non-zero
+# If this isn't a git repo or the repo has no tags,
+# git describe will return non-zero
+SED_EXPR = 's/v\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)\
+		   -\?.*-\([0-9]*\)-\(.*\)/\1 \2 \3 \4 \5/g'
 ifeq ($(shell git describe > /dev/null 2>&1 ; echo $$?), 0)
 	USE_VERSION := true
 	VERSION := $(shell git describe --tags --long --dirty --always | \
-		sed 's/v\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)-\?.*-\([0-9]*\)-\(.*\)/\1 \2 \3 \4 \5/g')
+		sed $(SED_EXPR))
 	VERSION_MAJOR := $(word 1, $(VERSION))
 	VERSION_MINOR := $(word 2, $(VERSION))
 	VERSION_PATCH := $(word 3, $(VERSION))
 	VERSION_REVISION := $(word 4, $(VERSION))
 	VERSION_HASH := $(word 5, $(VERSION))
 	VERSION_STRING := \
-		"$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH).$(VERSION_REVISION)-$(VERSION_HASH)"
+		"$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)\
+		.$(VERSION_REVISION)-$(VERSION_HASH)"
 	override CFLAGS := $(CFLAGS) \
 		-D VERSION_MAJOR=$(VERSION_MAJOR) \
 		-D VERSION_MINOR=$(VERSION_MINOR) \
