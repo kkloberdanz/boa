@@ -30,9 +30,8 @@ typedef enum {
     OPERATOR,
     LEAF,
     ASSIGN_EXPR,
-    DECLARE_STMT,
-    LOAD_STMT,
     FUNC_DEF,
+    LOAD_STMT,
     FUNC_CALL
 } ASTkind;
 

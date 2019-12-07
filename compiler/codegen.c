@@ -22,12 +22,12 @@
 #include "ast.h"
 #include "../util/util.h"
 
-static void codegen_node(FILE *output_file, ASTNode *ast);
 static unsigned long reg = 0;
 
+static void codegen_node(FILE *output_file, ASTNode *ast);
+static void codegen(FILE *output_file, ASTNode *ast);
+
 static void write_start(FILE *output_file) {
-    /* TODO: instead of using strings, build boilerplate into
-     * an archive (*.a) and link to the generated code */
     fprintf(output_file, "#include <stdio.h>\n");
     fprintf(output_file, "void print(char *str) {\n");
     fprintf(output_file, "    printf(\"%%s\\n\", str);\n");
@@ -35,7 +35,6 @@ static void write_start(FILE *output_file) {
     fprintf(output_file, "void printd(int n) {\n");
     fprintf(output_file, "    printf(\"%%d\\n\", n);\n");
     fprintf(output_file, "}\n");
-    fprintf(output_file, "int main() {\n");
 }
 
 static void write_end(FILE *output_file) {
@@ -164,8 +163,35 @@ static void codegen_node(FILE *output_file, ASTNode *ast) {
             emit_operation_expr(output_file, ast);
             break;
 
+        case CONDITIONAL:
+        case LEAF:
+        case FUNC_DEF:
+        case LOAD_STMT:
+            break;
+    }
+}
+
+static void emit_func_def(FILE *output_file, ASTNode *ast) {
+    fprintf(output_file, "void %s() {\n", ast->obj->repr);
+    codegen(output_file, ast->right);
+    fprintf(output_file, "}\n");
+}
+
+static void codegen_defs_node(FILE *output_file, ASTNode *ast) {
+    switch (ast->kind) {
+        case FUNC_DEF:
+            emit_func_def(output_file, ast);
+            break;
+
         default:
             break;
+    }
+}
+
+static void codegen_defs(FILE *output_file, ASTNode *ast) {
+    while (ast) {
+        codegen_defs_node(output_file, ast);
+        ast = ast->sibling;
     }
 }
 
@@ -178,6 +204,8 @@ static void codegen(FILE *output_file, ASTNode *ast) {
 
 int emit(FILE *output_file, ASTNode *ast) {
     write_start(output_file);
+    codegen_defs(output_file, ast);
+    fprintf(output_file, "int main() {\n");
     codegen(output_file, ast);
     write_end(output_file);
     return 0;

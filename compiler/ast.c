@@ -78,12 +78,6 @@ ASTNode *make_assign_node(ASTNode *leaf_obj, ASTNode *right) {
     return node;
 }
 
-ASTNode *make_declare_node(ASTNode *leaf_obj) {
-    ParseObj *obj = leaf_obj->obj;
-    ASTNode *node = make_ast_node(DECLARE_STMT, obj, OP_NIL, NULL, NULL, NULL);
-    return node;
-}
-
 ASTNode *make_load_node(ASTNode *leaf_obj) {
     ParseObj *obj = leaf_obj->obj;
     ASTNode *node = make_ast_node(LOAD_STMT, obj, OP_NIL, NULL, NULL, NULL);

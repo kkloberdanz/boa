@@ -50,6 +50,8 @@ string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 "then"        { return THEN; }
 "else"        { return ELSE; }
 "int"         { return INT; }
+"def"         { return DEF; }
+"return"      { return RETURN; }
 "("           { return LPAREN; }
 ")"           { return RPAREN; }
 "+"           { return PLUS; }

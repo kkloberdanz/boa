@@ -71,6 +71,7 @@ static FILE *source_file = NULL;
 %token QUOTE
 %token NEWLINE
 %token STRING
+%token RETURN
 
 %left MINUS PLUS
 %left TIMES OVER
@@ -109,10 +110,9 @@ stmt        : expr newlines         { $$ = $1 ; }
             | decl_func             { $$ = $1 ; }
             ;
 
-decl_func   : DEF id LPAREN RPAREN
-              LBRACE
+decl_func   : DEF id LPAREN RPAREN LBRACE NEWLINE
               stmts
-              RBRACE                { $$ = make_function_node($2, $6); }
+              RBRACE                { debug_puts("decl_func"); $$ = make_function_node($2, $7); }
             ;
 
 assign_expr : id ASSIGN expr        { $$ = make_assign_node($1, $3); }
