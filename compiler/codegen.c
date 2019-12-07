@@ -50,14 +50,11 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
      */
     char *func_name = ast->obj->repr;
     char *arg = "";
-    /*char reg_s[255];*/
+    char reg_s[255];
     if (ast->right != NULL) {
-        /*
         codegen(output_file, ast->right);
         sprintf(reg_s, "r%lu", reg);
         arg = reg_s;
-        */
-        arg = ast->right->obj->repr;
     }
     reg++;
     fprintf(output_file, "const int r%lu = %s(%s);\n", reg, func_name, arg);
