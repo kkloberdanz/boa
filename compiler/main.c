@@ -37,19 +37,19 @@ static bool is_boa_src_file(char *filename) {
 }
 
 int main(int argc, char **argv) {
-    char *output_filename = NULL;
-    FILE *output;
-    FILE *source_file;
-    int exit_code;
-    unsigned long len = 0;
-    ASTNode *tree = NULL;
+    int exit_code = 1;
 
     if (argc != 2) {
         fprintf(stderr, "usage: %s FILENAME\n", argv[0]);
         return 1;
     } else {
         char *source_filename = argv[1];
-        len = strlen(source_filename) - 1;
+        char *output_filename = NULL;
+        FILE *source_file = NULL;
+        FILE *output = NULL;
+        unsigned long len = strlen(source_filename) - 1;
+        ASTNode *tree = NULL;
+
         if (!is_boa_src_file(source_filename)) {
             fprintf(stderr, "not a Boa source file: %s\n", source_filename);
             exit(EXIT_FAILURE);
