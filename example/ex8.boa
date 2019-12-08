@@ -1,0 +1,6 @@
+y = 7
+if y == 7 {
+    printd(10)
+} else {
+    printd(11)
+}

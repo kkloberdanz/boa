@@ -42,11 +42,6 @@ ASTNode *make_ast_node(
     return node;
 }
 
-ASTNode *make_leaf_node(ParseObj *obj) {
-    ASTNode *node = make_ast_node(LEAF, obj, OP_NIL, NULL, NULL, NULL);
-    return node;
-}
-
 ASTNode *make_operator_node(Operator op, ASTNode *left, ASTNode *right) {
     ASTNode *node = make_ast_node(OPERATOR, NULL, op, left, NULL, right);
     return node;
@@ -119,7 +114,7 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
             break;
     }
     obj = make_parseobj(repr, kind);
-    node = make_ast_node(LEAF, obj, OP_NIL, NULL, NULL, NULL);
+    node = make_ast_node(LOAD_STMT, obj, OP_NIL, NULL, NULL, NULL);
     return node;
 }
 
