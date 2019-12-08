@@ -12,6 +12,8 @@ echo "CC=${CC}"
 
 ./boa example/$PROG_NAME.boa
 
+clang-format -i example/$PROG_NAME.c || true
+
 $CC -Os -Wall -Wextra -Wpedantic -Werror -Wno-unused-variable \
     example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME
 

@@ -202,7 +202,7 @@ static void codegen_node(FILE *output_file, ASTNode *ast) {
             emit_conditional_expr(output_file, ast);
             break;
 
-        case LEAF:
+        /* definitions are handled in first pass, skip for second pass */
         case FUNC_DEF:
             break;
     }
@@ -220,11 +220,11 @@ static void codegen_defs_node(FILE *output_file, ASTNode *ast) {
             emit_func_def(output_file, ast);
             break;
 
+        /* only handle definitions in first pass */
         case FUNC_CALL:
         case ASSIGN_EXPR:
         case OPERATOR:
         case CONDITIONAL:
-        case LEAF:
         case LOAD_STMT:
         case RETURN_STMT:
             break;

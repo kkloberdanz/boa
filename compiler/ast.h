@@ -28,7 +28,6 @@ extern char token_string[MAX_TOKEN_SIZE + 1];
 typedef enum {
     CONDITIONAL,
     OPERATOR,
-    LEAF,
     ASSIGN_EXPR,
     FUNC_DEF,
     LOAD_STMT,
