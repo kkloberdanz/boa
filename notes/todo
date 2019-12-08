@@ -1,5 +1,4 @@
 better error messages: https://developer.ibm.com/tutorials/l-flexbison/
-Fix memory leaks (change malloc to custom allocator)
 allow function arguments
 
 logo:
