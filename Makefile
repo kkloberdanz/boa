@@ -224,7 +224,7 @@ clean:
 
 .PHONY: runtime
 runtime:
-	$(CC) $(OPTIM_FLAGS) $(CFLAGS) \
+	$(CC) $(OPTIM_FLAGS) $(CFLAGS) $(SRC_ONLY_FLAGS) \
 		-c runtime/runtime.c \
 		-o build/$(BUILD_TYPE)/runtime.o
 	ar rcs libruntime.a build/$(BUILD_TYPE)/runtime.o

@@ -19,10 +19,6 @@
 
 #include "runtime.h"
 
-#ifndef UNUSED
-#define UNUSED(X) (void)(X)
-#endif
-
 int printd(int num) {
     printf("%d\n", num);
     return 0;
