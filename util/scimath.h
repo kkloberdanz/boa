@@ -26,10 +26,6 @@
 #define ksm_VECTOR_GROW_RATE 2
 #endif
 
-#ifndef kk_BTREE_SIZE
-#define kk_BTREE_SIZE 2
-#endif
-
 /******************************************************************************
  * By default use libc malloc, realloc, and free.
  * These can be overridden with custom implementations if desired.
@@ -79,23 +75,6 @@ struct Arena {
     pthread_mutex_t _mtx;
     struct MemoryPoolNode *_pool;
     struct MemoryPoolNode *_full_pool;
-};
-
-struct BTreeNode {
-    char *key;
-    double value;
-};
-
-struct BTreeBlock {
-    struct BTreeNode data[kk_BTREE_SIZE];
-    struct BTreeNode *ptrs[kk_BTREE_SIZE + 1];
-    size_t index;
-};
-
-struct BTree {
-    int (*compare_keys)(void *, void *);
-    size_t size;
-    struct BTreeBlock *block;
 };
 
 /******************************************************************************

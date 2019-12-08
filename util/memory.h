@@ -4,6 +4,6 @@
 #include <stdio.h>
 
 void *boa_malloc(size_t num_bytes);
-void boa_free_all();
+void boa_free_all(void);
 
 #endif /* MEMORY_H */

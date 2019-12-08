@@ -14,11 +14,6 @@
 
 ksm_GENERIC_VECTOR_IMPL(void_ptr)
 
-__attribute__((__noreturn__)) void greetings() {
-    printf("hello world!\n");
-    exit(0);
-}
-
 double ksm_first_deriv(double (*f)(double), double x) {
     return (f(x + ksm_DERIV_H_CONST) - f(x - ksm_DERIV_H_CONST)) /
            (2 * ksm_DERIV_H_CONST);
@@ -126,34 +121,3 @@ void kk_track_free(struct ksm_void_ptr_Vector *vec) {
     }
     ksm_void_ptr_vector_free(vec);
 }
-
-void kk_btree_init(struct BTree *btree, int (*compare_keys)(void *, void *)) {
-    btree->compare_keys = compare_keys;
-    btree->block = malloc(sizeof(struct BTreeBlock));
-    btree->size = kk_BTREE_SIZE;
-}
-
-static void kk_btree_do_insertion(
-    struct BTreeBlock *block,
-    char *key,
-    double value,
-    size_t btree_size
-) {
-    /* if there is room, just insert it */
-    if (block->index < btree_size) {
-        struct BTreeNode *new_node;
-        block->index++;
-        new_node = &block->data[block->index];
-        new_node->key = key;
-        new_node->value = value;
-        /* now sort */
-    }
-}
-
-void kk_btree_insert(struct BTree *btree, char *key, double value) {
-    kk_btree_do_insertion(btree->block, key, value, btree->size);
-}
-
-
-
-

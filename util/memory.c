@@ -1,4 +1,5 @@
 #include "scimath.h"
+#include "memory.h"
 
 static MemoryVec memory;
 
