@@ -12,7 +12,7 @@ echo "CC=${CC}"
 
 ./boa example/$PROG_NAME.boa
 
-$CC -Os -Wall -Wextra -Wpedantic -Werror \
+$CC -Os -Wall -Wextra -Wpedantic -Werror -Wno-unused-variable \
     example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME
 
 ./bin/$PROG_NAME
