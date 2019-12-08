@@ -1,0 +1,16 @@
+y = 9 + 8
+if y == 17 {
+    printd(10 + 0)
+}
+
+if y == 10 {
+    printd(11 + 0)
+} else {
+    printd(12 + 0)
+}
+
+if y == 17 {
+    printd(11 + 0)
+} else {
+    printd(12 + 0)
+}

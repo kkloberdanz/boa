@@ -111,7 +111,7 @@ stmt        : expr newlines         {$$ = $1;}
             | RETURN expr newlines  {$$ = make_return_node($2);}
             ;
 
-decl_func   : DEF id LPAREN RPAREN LBRACE NEWLINE
+decl_func   : DEF id LPAREN RPAREN LBRACE newlines
               stmts
               RBRACE newlines       {
                                         debug_puts("decl_func");
@@ -122,14 +122,14 @@ decl_func   : DEF id LPAREN RPAREN LBRACE NEWLINE
 assign_expr : id ASSIGN expr        {$$ = make_assign_node($1, $3);}
             ;
 
-if_stmt     : IF expr LBRACE
+if_stmt     : IF expr LBRACE newlines
                   stmt
-              RBRACE ELSE LBRACE
+              RBRACE ELSE LBRACE newlines
                   stmt
-              RBRACE                {$$ = make_conditional_node($2, $4, $8);}
-            | IF expr LBRACE
+              RBRACE newlines       {$$ = make_conditional_node($2, $5, $10);}
+            | IF expr LBRACE newlines
                   stmt
-              RBRACE                {$$ = make_conditional_node($2, $4, NULL);}
+              RBRACE newlines       {$$ = make_conditional_node($2, $5, NULL);}
             ;
 
 expr        : expr PLUS expr        {

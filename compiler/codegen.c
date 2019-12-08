@@ -164,6 +164,18 @@ static void emit_load_stmt(FILE *output_file, ASTNode *ast) {
     fprintf(output_file, "const int r%lu = %s;\n", reg, ast->obj->repr);
 }
 
+static void emit_conditional_expr(FILE *output_file, ASTNode *ast) {
+    codegen(output_file, ast->condition);
+    fprintf(output_file, "if (r%lu) {\n", reg);
+    codegen(output_file, ast->left);
+    fprintf(output_file, "}\n");
+    if (ast->right != NULL) {
+        fprintf(output_file, "else {\n");
+        codegen(output_file, ast->right);
+        fprintf(output_file, "}\n");
+    }
+}
+
 static void codegen_node(FILE *output_file, ASTNode *ast) {
     switch (ast->kind) {
         case FUNC_CALL:
@@ -187,6 +199,9 @@ static void codegen_node(FILE *output_file, ASTNode *ast) {
             break;
 
         case CONDITIONAL:
+            emit_conditional_expr(output_file, ast);
+            break;
+
         case LEAF:
         case FUNC_DEF:
             break;
