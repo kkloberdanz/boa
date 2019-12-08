@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include "ast.h"
+#include "../util/memory.h"
 #include "../util/util.h"
 
 char token_string[MAX_TOKEN_SIZE + 1];
@@ -31,7 +32,7 @@ ASTNode *make_ast_node(
     ASTNode *condition,
     ASTNode *right
 ) {
-    ASTNode *node = malloc(sizeof(ASTNode));
+    ASTNode *node = boa_malloc(sizeof(ASTNode));
     node->kind = kind;
     node->sibling = NULL;
     node->obj = obj;
@@ -88,7 +89,7 @@ ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
 }
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
-    ParseObj *obj = malloc(sizeof(ParseObj));
+    ParseObj *obj = boa_malloc(sizeof(ParseObj));
     if (obj == NULL) {
         fprintf(stderr, "out of memory");
         exit(EXIT_FAILURE);

@@ -3,10 +3,11 @@
 #include <string.h>
 
 #include "util.h"
+#include "../util/memory.h"
 
 char *make_string(char *str) {
     unsigned long len = strlen(str);
-    char *buf = malloc((1 + len) * sizeof(char));
+    char *buf = boa_malloc((1 + len) * sizeof(char));
     memcpy(buf, str, len);
     return buf;
 }

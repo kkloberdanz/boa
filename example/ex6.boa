@@ -11,6 +11,7 @@ def myfunc() {
 def foobar() {
     myvar = 5 * 8 + 99
     printd(myvar)
+    return 0
 }
 
 var = myfunc()

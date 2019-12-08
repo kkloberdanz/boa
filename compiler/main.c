@@ -22,6 +22,7 @@
 
 #include "ast.h"
 #include "../util/util.h"
+#include "../util/memory.h"
 #include "codegen.h"
 
 static bool is_boa_src_file(char *filename) {
@@ -37,7 +38,6 @@ static bool is_boa_src_file(char *filename) {
 
 int main(int argc, char **argv) {
     char *output_filename = NULL;
-    char *source_filename = NULL;
     FILE *output;
     FILE *source_file;
     int exit_code;
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "usage: %s FILENAME\n", argv[0]);
         return 1;
     } else {
-        source_filename = argv[1];
+        char *source_filename = argv[1];
         len = strlen(source_filename) - 1;
         if (!is_boa_src_file(source_filename)) {
             fprintf(stderr, "not a Boa source file: %s\n", source_filename);
@@ -71,7 +71,6 @@ int main(int argc, char **argv) {
         output_filename[len - 2] = 'c';
         output_filename[len - 1] = '\0';
         output = fopen(output_filename, "w");
-        free(output_filename);
 
         if (output == NULL) {
             fprintf(stderr, "%s\n", "failed to open output file");
@@ -83,6 +82,7 @@ int main(int argc, char **argv) {
             fprintf(stderr, "%s\n", "failed to close output file");
             exit(EXIT_FAILURE);
         }
+        boa_free_all();
         return exit_code;
     }
 }
