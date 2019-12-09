@@ -14,6 +14,9 @@ SRC_PATH = .
 LIBS =
 SRC_ONLY_FLAGS =
 # General compiler flags
+
+STATIC = -static
+
 COMPILE_FLAGS = \
 	-std=iso9899:1990 \
 	-Wall \
@@ -21,7 +24,7 @@ COMPILE_FLAGS = \
 	-Wpedantic \
 	-Wswitch \
 	-ggdb \
-	-static
+	$(STATIC)
 
 # Additional release-specific flags
 RCOMPILE_FLAGS = -D NDEBUG
@@ -30,7 +33,7 @@ DCOMPILE_FLAGS = -D DEBUG
 # Add additional include paths
 INCLUDES = -I $(SRC_PATH)
 # General linker settings
-LINK_FLAGS = -lfl -flto -static
+LINK_FLAGS = -lfl -flto $(STATIC)
 # Additional release-specific linker settings
 RLINK_FLAGS =
 # Additional debug-specific linker settings
