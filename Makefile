@@ -239,7 +239,7 @@ runtime:
 		-c runtime/runtime.c \
 		-o build/$(BUILD_TYPE)/runtime.o
 	ar rcs bin/$(BUILD_TYPE)/libruntime.a build/$(BUILD_TYPE)/runtime.o
-	ln -s bin/$(BUILD_TYPE)/libruntime.a libruntime.a
+	rm -f libruntime.a && ln -s bin/$(BUILD_TYPE)/libruntime.a libruntime.a
 
 
 .PHONY: lexer
