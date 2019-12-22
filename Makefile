@@ -5,14 +5,15 @@
 # The name of the executable to be created
 BIN_NAME := boa
 # Compiler used
-CC = gcc
+#CC = gcc
+CC = clang
 # Extension of source files used in the project
 SRC_EXT = c
 # Path to the source directory, relative to the makefile
 SRC_PATH = .
 # Space-separated pkg-config libraries used by this project
 LIBS =
-SRC_ONLY_FLAGS =
+SRC_ONLY_FLAGS = -Weverything
 # General compiler flags
 
 STATIC = -static
