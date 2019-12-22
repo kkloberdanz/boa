@@ -45,27 +45,40 @@ static void write_main(struct CodegenState *state) {
 }
 
 static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
-    /*
-     * TODO:
-     * ast->right contains the args list
-     * eval each arg and store in register
-     * call function with each arg
-     */
     char *func_name = ast->obj->repr;
-    char *arg = "";
-    char reg_s[255];
-    if (ast->right != NULL) {
-        codegen(state, ast->right);
-        sprintf(reg_s, "r%lu", state->reg);
-        arg = reg_s;
+    unsigned long argument_regs[20];
+    struct ASTNode *args_list = ast->right;
+    char args_str[255] = {0};
+    int num_args = 0;
+    int i = 0;
+    size_t len = 0;
+
+    /* solve each argument expression, and store the result in
+     * argument_regs */
+    for (num_args = 0; args_list != NULL; num_args++) {
+        codegen_node(state, args_list);
+        argument_regs[num_args] = state->reg;
+        args_list = args_list->sibling;
     }
+
+    /* argument_regs contains the result of each argument expr.
+     * pass each of the results to the function when calling it */
+    for (i = num_args - 1; i >= 0; i--) {
+        if (i > 0) {
+            sprintf(args_str + len, "r%lu, ", argument_regs[i]);
+        } else {
+            sprintf(args_str + len, "r%lu", argument_regs[i]);
+        }
+        len = strlen(args_str);
+    }
+
     state->reg++;
     fprintf(
         state->outf,
         "const int r%lu = %s(%s);\n",
         state->reg,
         func_name,
-        arg
+        args_str
     );
 }
 
@@ -258,7 +271,6 @@ int emit(FILE *output_file, ASTNode *ast) {
     struct CodegenState state;
     state.outf = output_file;
     state.reg = 0;
-
     write_start(&state);
     codegen_defs(&state, ast);
     write_main(&state);

@@ -1,6 +1,6 @@
 def myfunc() {
     abc = 5 + 1
-    printd(abc)
+    return printd(abc)
 }
 
 myfunc()
