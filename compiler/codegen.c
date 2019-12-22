@@ -22,26 +22,29 @@
 #include "ast.h"
 #include "../util/util.h"
 
-static unsigned long reg = 0;
+struct CodegenState {
+    FILE *outf;
+    unsigned long reg;
+};
 
-static void codegen_node(FILE *output_file, ASTNode *ast);
-static void codegen(FILE *output_file, ASTNode *ast);
+static void codegen_node(struct CodegenState *state, ASTNode *ast);
+static void codegen(struct CodegenState *state, ASTNode *ast);
 
-static void write_start(FILE *output_file) {
-    fprintf(output_file, "#include <stdio.h>\n");
-    fprintf(output_file, "#include \"../runtime/runtime.h\"\n");
+static void write_start(struct CodegenState *state) {
+    fprintf(state->outf, "#include <stdio.h>\n");
+    fprintf(state->outf, "#include \"../runtime/runtime.h\"\n");
 }
 
-static void write_end(FILE *output_file) {
-    fprintf(output_file, "return 0;\n");
-    fprintf(output_file, "}\n");
+static void write_end(struct CodegenState *state) {
+    fprintf(state->outf, "return 0;\n");
+    fprintf(state->outf, "}\n");
 }
 
-static void write_main(FILE *output_file) {
-    fprintf(output_file, "int main() {\n");
+static void write_main(struct CodegenState *state) {
+    fprintf(state->outf, "int main() {\n");
 }
 
-static void emit_func_call(FILE *output_file, ASTNode *ast) {
+static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
     /*
      * TODO:
      * ast->right contains the args list
@@ -52,18 +55,24 @@ static void emit_func_call(FILE *output_file, ASTNode *ast) {
     char *arg = "";
     char reg_s[255];
     if (ast->right != NULL) {
-        codegen(output_file, ast->right);
-        sprintf(reg_s, "r%lu", reg);
+        codegen(state, ast->right);
+        sprintf(reg_s, "r%lu", state->reg);
         arg = reg_s;
     }
-    reg++;
-    fprintf(output_file, "const int r%lu = %s(%s);\n", reg, func_name, arg);
+    state->reg++;
+    fprintf(
+        state->outf,
+        "const int r%lu = %s(%s);\n",
+        state->reg,
+        func_name,
+        arg
+    );
 }
 
-static void emit_assign_expr(FILE *output_file, ASTNode *ast) {
+static void emit_assign_expr(struct CodegenState *state, ASTNode *ast) {
     char *variable_name = ast->obj->repr;
-    codegen_node(output_file, ast->right);
-    fprintf(output_file, "int %s = r%lu;\n", variable_name, reg);
+    codegen_node(state, ast->right);
+    fprintf(state->outf, "int %s = r%lu;\n", variable_name, state->reg);
 }
 
 static char *get_operator(Operator op) {
@@ -120,7 +129,7 @@ static char *get_operator(Operator op) {
     return op_repr;
 }
 
-static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
+static void emit_operation_expr(struct CodegenState *state, ASTNode *ast) {
     char buf1[100];
     char buf2[100];
     char *operand_1;
@@ -128,78 +137,78 @@ static void emit_operation_expr(FILE *output_file, ASTNode *ast) {
     const char *operator = get_operator(ast->op);
 
     if (ast->left->obj == NULL) {
-        emit_operation_expr(output_file, ast->left);
-        sprintf(buf1, "r%lu", reg);
+        emit_operation_expr(state, ast->left);
+        sprintf(buf1, "r%lu", state->reg);
         operand_1 = buf1;
     } else {
         operand_1 = ast->left->obj->repr;
     }
 
     if (ast->right->obj == NULL) {
-        emit_operation_expr(output_file, ast->right);
-        sprintf(buf2, "r%lu", reg);
+        emit_operation_expr(state, ast->right);
+        sprintf(buf2, "r%lu", state->reg);
         operand_2 = buf2;
     } else {
         operand_2 = ast->right->obj->repr;
     }
 
-    reg++;
+    state->reg++;
     fprintf(
-        output_file,
+        state->outf,
         "const int r%lu = %s %s %s;\n",
-        reg,
+        state->reg,
         operand_1,
         operator,
         operand_2
     );
 }
 
-static void emit_return_stmt(FILE *output_file, ASTNode *ast) {
-    codegen_node(output_file, ast->right);
-    fprintf(output_file, "return r%lu;\n", reg);
+static void emit_return_stmt(struct CodegenState *state, ASTNode *ast) {
+    codegen_node(state, ast->right);
+    fprintf(state->outf, "return r%lu;\n", state->reg);
 }
 
-static void emit_load_stmt(FILE *output_file, ASTNode *ast) {
-    reg++;
-    fprintf(output_file, "const int r%lu = %s;\n", reg, ast->obj->repr);
+static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
+    state->reg++;
+    fprintf(state->outf, "const int r%lu = %s;\n", state->reg, ast->obj->repr);
 }
 
-static void emit_conditional_expr(FILE *output_file, ASTNode *ast) {
-    codegen(output_file, ast->condition);
-    fprintf(output_file, "if (r%lu) {\n", reg);
-    codegen(output_file, ast->left);
-    fprintf(output_file, "}\n");
+static void emit_conditional_expr(struct CodegenState *state, ASTNode *ast) {
+    codegen(state, ast->condition);
+    fprintf(state->outf, "if (r%lu) {\n", state->reg);
+    codegen(state, ast->left);
+    fprintf(state->outf, "}\n");
     if (ast->right != NULL) {
-        fprintf(output_file, "else {\n");
-        codegen(output_file, ast->right);
-        fprintf(output_file, "}\n");
+        fprintf(state->outf, "else {\n");
+        codegen(state, ast->right);
+        fprintf(state->outf, "}\n");
     }
 }
 
-static void codegen_node(FILE *output_file, ASTNode *ast) {
+static void codegen_node(struct CodegenState *state, ASTNode *ast) {
     switch (ast->kind) {
         case FUNC_CALL:
-            emit_func_call(output_file, ast);
+            emit_func_call(state, ast);
             break;
 
         case ASSIGN_EXPR:
-            emit_assign_expr(output_file, ast);
+            emit_assign_expr(state, ast);
             break;
 
         case OPERATOR:
-            emit_operation_expr(output_file, ast);
+            emit_operation_expr(state, ast);
             break;
 
         case RETURN_STMT:
-            emit_return_stmt(output_file, ast);
+            emit_return_stmt(state, ast);
             break;
 
         case LOAD_STMT:
-            emit_load_stmt(output_file, ast);
+            emit_load_stmt(state, ast);
             break;
 
         case CONDITIONAL:
-            emit_conditional_expr(output_file, ast);
+            emit_conditional_expr(state, ast);
             break;
 
         /* definitions are handled in first pass, skip for second pass */
@@ -208,16 +217,16 @@ static void codegen_node(FILE *output_file, ASTNode *ast) {
     }
 }
 
-static void emit_func_def(FILE *output_file, ASTNode *ast) {
-    fprintf(output_file, "int %s() {\n", ast->obj->repr);
-    codegen(output_file, ast->right);
-    fprintf(output_file, "}\n");
+static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
+    fprintf(state->outf, "int %s() {\n", ast->obj->repr);
+    codegen(state, ast->right);
+    fprintf(state->outf, "}\n");
 }
 
-static void codegen_defs_node(FILE *output_file, ASTNode *ast) {
+static void codegen_defs_node(struct CodegenState *state, ASTNode *ast) {
     switch (ast->kind) {
         case FUNC_DEF:
-            emit_func_def(output_file, ast);
+            emit_func_def(state, ast);
             break;
 
         /* only handle definitions in first pass */
@@ -231,25 +240,29 @@ static void codegen_defs_node(FILE *output_file, ASTNode *ast) {
     }
 }
 
-static void codegen_defs(FILE *output_file, ASTNode *ast) {
+static void codegen_defs(struct CodegenState *state, ASTNode *ast) {
     while (ast) {
-        codegen_defs_node(output_file, ast);
+        codegen_defs_node(state, ast);
         ast = ast->sibling;
     }
 }
 
-static void codegen(FILE *output_file, ASTNode *ast) {
+static void codegen(struct CodegenState *state, ASTNode *ast) {
     while (ast) {
-        codegen_node(output_file, ast);
+        codegen_node(state, ast);
         ast = ast->sibling;
     }
 }
 
 int emit(FILE *output_file, ASTNode *ast) {
-    write_start(output_file);
-    codegen_defs(output_file, ast);
-    write_main(output_file);
-    codegen(output_file, ast);
-    write_end(output_file);
+    struct CodegenState state;
+    state.outf = output_file;
+    state.reg = 0;
+
+    write_start(&state);
+    codegen_defs(&state, ast);
+    write_main(&state);
+    codegen(&state, ast);
+    write_end(&state);
     return 0;
 }
