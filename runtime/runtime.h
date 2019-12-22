@@ -23,5 +23,6 @@
 int print(char *str);
 int printd(int num);
 int printtwod(int n1, int n2);
+int print2d(int n1, int n2);
 
 #endif /* RUNTIME_H */
