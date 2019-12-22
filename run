@@ -5,7 +5,7 @@ PROG_NAME=$1
 set -e
 
 if [[ -z $CC ]]; then
-    CC=gcc
+    CC='cc -static'
 fi
 
 echo "CC=${CC}"
