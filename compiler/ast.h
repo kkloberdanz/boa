@@ -80,7 +80,13 @@ ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);
 ASTNode *make_assign_node(ASTNode *leaf_obj, ASTNode *right);
 ASTNode *make_declare_node(ASTNode *leaf_obj);
 ASTNode *make_load_node(ASTNode *leaf_obj);
-ASTNode *make_function_node(ASTNode *leaf_obj, ASTNode *right);
+
+ASTNode *make_function_node(
+    ASTNode *leaf_obj,
+    ASTNode *right,
+    ASTNode *params
+);
+
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args);
 
 ASTNode *make_ast_node(

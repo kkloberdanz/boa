@@ -1,0 +1,5 @@
+def add(a, b) {
+    return a + b
+}
+
+printd(add(4 + 9, 44 * 8))

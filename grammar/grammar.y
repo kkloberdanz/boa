@@ -111,11 +111,33 @@ stmt        : expr newlines         {$$ = $1;}
             | RETURN expr newlines  {$$ = make_return_node($2);}
             ;
 
-decl_func   : DEF id LPAREN RPAREN LBRACE newlines
+decl_func   : DEF id LPAREN params RPAREN LBRACE newlines
               stmts
               RBRACE newlines       {
                                         debug_puts("decl_func");
-                                        $$ = make_function_node($2, $7);
+                                        $$ = make_function_node($2, $8, $4);
+                                    }
+
+            | DEF id LPAREN RPAREN LBRACE newlines
+              stmts
+              RBRACE newlines       {
+                                        debug_puts("decl_func");
+                                        $$ = make_function_node($2, $7, NULL);
+                                    }
+            ;
+
+params      : expr                  {$$ = $1;}
+            | expr COMMA params     {
+                                        YYSTYPE ast = $3;
+                                        if (ast) {
+                                            while (ast->sibling) {
+                                                ast = ast->sibling;
+                                            }
+                                            ast->sibling = $1;
+                                            $$ = $3;
+                                        } else {
+                                            $$ = $1;
+                                        }
                                     }
             ;
 

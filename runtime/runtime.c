@@ -29,11 +29,6 @@ int print2d(int n1, int n2) {
     return 0;
 }
 
-int printtwod(int n1, int n2) {
-    printf("%d %d\n", n1, n2);
-    return 0;
-}
-
 int print(char *str) {
     printf("%s\n", str);
     return 0;

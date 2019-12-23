@@ -76,9 +76,20 @@ ASTNode *make_load_node(ASTNode *leaf_obj) {
     return node;
 }
 
-ASTNode *make_function_node(ASTNode *leaf_obj, ASTNode *right) {
-    ParseObj *obj = leaf_obj->obj;
-    ASTNode *node = make_ast_node(FUNC_DEF, obj, OP_NIL, NULL, NULL, right);
+ASTNode *make_function_node(
+    ASTNode *func_name,
+    ASTNode *func_body,
+    ASTNode *params
+) {
+    ParseObj *obj = func_name->obj;
+    ASTNode *node = make_ast_node(
+        FUNC_DEF,
+        obj,
+        OP_NIL,
+        params,
+        NULL,
+        func_body
+    );
     return node;
 }
 
