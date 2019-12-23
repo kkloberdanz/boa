@@ -1,6 +1,7 @@
+automatic type deduction
 better error messages: https://developer.ibm.com/tutorials/l-flexbison/
-allow function arguments
 switch parser generator to lemon: https://www.sqlite.org/src/doc/trunk/doc/lemon.html
+
 logo:
     blue snake
     white bow tie red polka dots
