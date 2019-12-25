@@ -36,53 +36,61 @@ static bool is_boa_src_file(char *filename) {
            && filename[len] == 'a';
 }
 
+static int compile_boa(int argc, char **argv, char *output_filename) {
+    char *source_filename = argv[1];
+    FILE *source_file = NULL;
+    FILE *output = NULL;
+    unsigned long len = strlen(source_filename) - 1;
+    int exit_code = 1;
+    ASTNode *tree = NULL;
+
+    UNUSED(argc);
+
+    if (!is_boa_src_file(source_filename)) {
+        fprintf(stderr, "not a Boa source file: %s\n", source_filename);
+        exit(EXIT_FAILURE);
+    }
+    source_file = fopen(source_filename, "r");
+    if (source_file == NULL) {
+        fprintf(stderr, "no such file:%s\n", source_filename);
+        exit(EXIT_FAILURE);
+    }
+    tree = parse(source_file);
+    fclose(source_file);
+
+    if (tree == NULL) {
+        fprintf(stderr, "%s\n", "failed to parse input");
+        exit(EXIT_FAILURE);
+    }
+
+    memcpy(output_filename, source_filename, len);
+    output_filename[len - 2] = 'c';
+    output_filename[len - 1] = '\0';
+    output = fopen(output_filename, "w");
+
+    if (output == NULL) {
+        fprintf(stderr, "%s\n", "failed to open output file");
+        exit(EXIT_FAILURE);
+    }
+
+    exit_code = emit(output, tree);
+    if (fclose(output) != 0) {
+        fprintf(stderr, "%s\n", "failed to close output file");
+        exit(EXIT_FAILURE);
+    }
+    boa_free_all();
+    return exit_code;
+}
+
 int main(int argc, char **argv) {
     int exit_code = 1;
-
     if (argc != 2) {
         fprintf(stderr, "usage: %s FILENAME\n", argv[0]);
         return 1;
     } else {
-        char *source_filename = argv[1];
-        char *output_filename = NULL;
-        FILE *source_file = NULL;
-        FILE *output = NULL;
-        unsigned long len = strlen(source_filename) - 1;
-        ASTNode *tree = NULL;
-
-        if (!is_boa_src_file(source_filename)) {
-            fprintf(stderr, "not a Boa source file: %s\n", source_filename);
-            exit(EXIT_FAILURE);
-        }
-        source_file = fopen(source_filename, "r");
-        if (source_file == NULL) {
-            fprintf(stderr, "no such file:%s\n", source_filename);
-            exit(EXIT_FAILURE);
-        }
-        tree = parse(source_file);
-        fclose(source_file);
-
-        if (tree == NULL) {
-            fprintf(stderr, "%s\n", "failed to parse input");
-            exit(EXIT_FAILURE);
-        }
-
-        output_filename = make_string(source_filename);
-        output_filename[len - 2] = 'c';
-        output_filename[len - 1] = '\0';
-        output = fopen(output_filename, "w");
-
-        if (output == NULL) {
-            fprintf(stderr, "%s\n", "failed to open output file");
-            exit(EXIT_FAILURE);
-        }
-
-        exit_code = emit(output, tree);
-        if (fclose(output) != 0) {
-            fprintf(stderr, "%s\n", "failed to close output file");
-            exit(EXIT_FAILURE);
-        }
-        boa_free_all();
+        char c_filename[1000];
+        exit_code = compile_boa(argc, argv, c_filename);
+        /* TODO: compile and run *.c program */
         return exit_code;
     }
 }
