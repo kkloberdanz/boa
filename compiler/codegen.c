@@ -243,16 +243,16 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
         size_t len = 0;
         size_t num_params = 0;
         size_t i = 0;
-        ASTNode *reverse_params[20] = {NULL};
+        ASTNode *params_arr[20] = {NULL};
         while (params) {
-            reverse_params[num_params] = params;
+            params_arr[num_params] = params;
             params = params->sibling;
             num_params++;
         }
 
         i = num_params;
         while (i --> 0) {
-            sprintf(params_str + len, "int %s, ", reverse_params[i]->obj->repr);
+            sprintf(params_str + len, "int %s, ", params_arr[i]->obj->repr);
             len = strlen(params_str);
         }
         params_str[len - 2] = '\0';
