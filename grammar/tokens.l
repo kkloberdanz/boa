@@ -58,6 +58,7 @@ string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 "-"           { return MINUS; }
 "*"           { return TIMES; }
 "/"           { return OVER; }
+"%"           { return PERCENT; }
 "{"           { return LBRACE; }
 "}"           { return RBRACE; }
 ";"           { return SEMICOLON; }

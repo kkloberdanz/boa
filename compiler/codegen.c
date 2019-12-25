@@ -107,6 +107,10 @@ static char *get_operator(Operator op) {
             op_repr = "/";
             break;
 
+        case OP_MOD:
+            op_repr = "%";
+            break;
+
         case OP_EQ:
             op_repr = "==";
             break;
@@ -237,10 +241,19 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
     } else {
         char params_str[255];
         size_t len = 0;
+        size_t num_params = 0;
+        size_t i = 0;
+        ASTNode *reverse_params[20] = {NULL};
         while (params) {
-            sprintf(params_str + len, "int %s, ", params->obj->repr);
-            len = strlen(params_str);
+            reverse_params[num_params] = params;
             params = params->sibling;
+            num_params++;
+        }
+
+        i = num_params;
+        while (i --> 0) {
+            sprintf(params_str + len, "int %s, ", reverse_params[i]->obj->repr);
+            len = strlen(params_str);
         }
         params_str[len - 2] = '\0';
         fprintf(state->outf, "int %s(%s) {\n", ast->obj->repr, params_str);

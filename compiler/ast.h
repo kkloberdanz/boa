@@ -41,6 +41,7 @@ typedef enum {
     OP_MINUS,
     OP_TIMES,
     OP_DIVIDE,
+    OP_MOD,
     OP_EQ,
     OP_LT,
     OP_LE,

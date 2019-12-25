@@ -61,6 +61,7 @@ static FILE *source_file = NULL;
 %token MINUS
 %token TIMES
 %token OVER
+%token PERCENT
 %token EXPONENT
 %token LPAREN
 %token RPAREN
@@ -74,7 +75,7 @@ static FILE *source_file = NULL;
 %token RETURN
 
 %left MINUS PLUS
-%left TIMES OVER
+%left TIMES OVER PERCENT
 %right EXPONENT        /* exponentiation */
 
 %%
@@ -181,6 +182,13 @@ expr        : expr PLUS expr        {
             | expr OVER expr        {
                                         $$ = make_operator_node(
                                             OP_DIVIDE,
+                                            $1,
+                                            $3
+                                        );
+                                    }
+            | expr PERCENT expr     {
+                                        $$ = make_operator_node(
+                                            OP_MOD,
                                             $1,
                                             $3
                                         );

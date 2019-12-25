@@ -1,3 +1,4 @@
+add garbage collector
 automatic type deduction
 better error messages: https://developer.ibm.com/tutorials/l-flexbison/
 switch parser generator to lemon: https://www.sqlite.org/src/doc/trunk/doc/lemon.html
