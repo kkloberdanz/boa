@@ -31,9 +31,9 @@ static bool is_boa_src_file(char *filename) {
         return false;
     }
     return filename[len - 3] == '.' \
-           && filename[len - 2] == 'b' \
-           && filename[len - 1] == 'o' \
-           && filename[len] == 'a';
+        && filename[len - 2] == 'b' \
+        && filename[len - 1] == 'o' \
+        && filename[len] == 'a';
 }
 
 static int compile_boa(int argc, char **argv, char *output_filename) {
