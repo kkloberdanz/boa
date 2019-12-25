@@ -18,6 +18,8 @@ SRC_ONLY_FLAGS = -Weverything
 
 STATIC = -static
 
+CFLAGS = -fPIC
+
 COMPILE_FLAGS = \
 	-std=iso9899:1990 \
 	-Wall \
