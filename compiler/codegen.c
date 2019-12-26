@@ -63,7 +63,8 @@ static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
 
     /* argument_regs contains the result of each argument expr.
      * pass each of the results to the function when calling it */
-    for (i = num_args - 1; i >= 0; i--) {
+    i = num_args;
+    while (i --> 0) {
         if (i > 0) {
             sprintf(args_str + len, "r%lu, ", argument_regs[i]);
         } else {
@@ -237,7 +238,7 @@ static void codegen_node(struct CodegenState *state, ASTNode *ast) {
 static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
     ASTNode *params = ast->left;
     if (params == NULL) {
-        fprintf(state->outf, "int %s() {\n", ast->obj->repr);
+        fprintf(state->outf, "static int %s() {\n", ast->obj->repr);
     } else {
         char params_str[255];
         size_t len = 0;
@@ -256,7 +257,7 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
             len = strlen(params_str);
         }
         params_str[len - 2] = '\0';
-        fprintf(state->outf, "int %s(%s) {\n", ast->obj->repr, params_str);
+        fprintf(state->outf, "static int %s(%s) {\n", ast->obj->repr, params_str);
     }
     codegen(state, ast->right);
     fprintf(state->outf, "}\n");
