@@ -2,8 +2,6 @@
 
 PROG_NAME=$1
 
-set -e
-
 if [[ -z $CC ]]; then
     which musl-gcc
     FOUND_MUSL_GCC=$?
