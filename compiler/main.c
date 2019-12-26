@@ -48,19 +48,19 @@ static int compile_boa(int argc, char **argv, char *output_filename) {
 
     if (!is_boa_src_file(source_filename)) {
         fprintf(stderr, "not a Boa source file: %s\n", source_filename);
-        exit(EXIT_FAILURE);
+        return 2;
     }
     source_file = fopen(source_filename, "r");
     if (source_file == NULL) {
         fprintf(stderr, "no such file:%s\n", source_filename);
-        exit(EXIT_FAILURE);
+        return 3;
     }
     tree = parse(source_file);
     fclose(source_file);
 
     if (tree == NULL) {
         fprintf(stderr, "%s\n", "failed to parse input");
-        exit(EXIT_FAILURE);
+        return 4;
     }
 
     memcpy(output_filename, source_filename, len);
@@ -70,13 +70,13 @@ static int compile_boa(int argc, char **argv, char *output_filename) {
 
     if (output == NULL) {
         fprintf(stderr, "%s\n", "failed to open output file");
-        exit(EXIT_FAILURE);
+        return 5;
     }
 
     exit_code = emit(output, tree);
     if (fclose(output) != 0) {
         fprintf(stderr, "%s\n", "failed to close output file");
-        exit(EXIT_FAILURE);
+        return 6;
     }
     boa_free_all();
     return exit_code;
