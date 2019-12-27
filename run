@@ -6,9 +6,10 @@ if [[ -z $CC ]]; then
     which musl-gcc
     FOUND_MUSL_GCC=$?
     if [[ $FOUND_MUSL_GCC == 0 ]]; then
-       CC='musl-gcc -static'
-   else
-       CC='cc'
+        FLAGS=-'static -Wall -Wextra -Werror -Wno-unused-variable -std=c89'
+        CC="musl-gcc $FLAGS"
+    else
+        CC='cc'
     fi
 fi
 
@@ -18,7 +19,6 @@ echo "CC=${CC}"
 
 clang-format -i example/$PROG_NAME.c || true
 
-$CC -Os -Wall -Wextra -Wpedantic -Werror -Wno-unused-variable \
-    example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME
+$CC -Os example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME
 
 ./bin/$PROG_NAME

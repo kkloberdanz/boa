@@ -40,6 +40,7 @@ ASTNode *make_ast_node(
     node->left = left;
     node->condition = condition;
     node->right = right;
+    node->type = TYPE_NOT_CHECKED;
     return node;
 }
 

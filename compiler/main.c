@@ -24,6 +24,7 @@
 #include "../util/util.h"
 #include "../util/memory.h"
 #include "codegen.h"
+#include "typecheck.h"
 
 static bool is_boa_src_file(char *filename) {
     unsigned long len = strlen(filename) - 1;
@@ -36,15 +37,12 @@ static bool is_boa_src_file(char *filename) {
         && filename[len] == 'a';
 }
 
-static int compile_boa(int argc, char **argv, char *output_filename) {
-    char *source_filename = argv[1];
+static int compile_boa(char *source_filename, char *output_filename) {
     FILE *source_file = NULL;
     FILE *output = NULL;
     unsigned long len = strlen(source_filename) - 1;
     int exit_code = 1;
     ASTNode *tree = NULL;
-
-    UNUSED(argc);
 
     if (!is_boa_src_file(source_filename)) {
         fprintf(stderr, "not a Boa source file: %s\n", source_filename);
@@ -61,6 +59,11 @@ static int compile_boa(int argc, char **argv, char *output_filename) {
     if (tree == NULL) {
         fprintf(stderr, "%s\n", "failed to parse input");
         return 4;
+    }
+
+    exit_code = typecheck(tree);
+    if (exit_code) {
+        return exit_code;
     }
 
     memcpy(output_filename, source_filename, len);
@@ -89,7 +92,8 @@ int main(int argc, char **argv) {
         return 1;
     } else {
         char c_filename[1000];
-        exit_code = compile_boa(argc, argv, c_filename);
+        char *source_filename = argv[1];
+        exit_code = compile_boa(source_filename, c_filename);
         /* TODO: compile and run *.c program */
         return exit_code;
     }

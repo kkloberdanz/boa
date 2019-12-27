@@ -59,6 +59,13 @@ enum ASTLiteralKind {
     AST_ID
 };
 
+enum BoaType {
+    TYPE_NOT_CHECKED,
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+};
+
 /* structs */
 typedef struct ParseObj {
     char *repr;
@@ -74,6 +81,8 @@ typedef struct ASTNode {
     struct ASTNode *sibling;
     ASTkind kind;
     Operator op;
+    enum BoaType type;
+    int _pad; /* pad for alignment */
 } ASTNode;
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);
