@@ -6,10 +6,26 @@ union MyType {
     Fizz(String, Float)
 }
 
-struct Point {
-    Int x
-    Int y
+struct Dict {
+    keys: [Any]
+    values: [Any]
 }
+
+enum LinkedList {
+    End
+    Node(Any)
+}
+
+struct Point {
+    x: Int
+    y: Int
+}
+
+struct Point3D {
+    x: Int
+    y: Int
+    z: Int
+} deriving repr, "+", "=="
 
 (Int, Int) -> Point
 fn new(x, y) {
@@ -24,7 +40,7 @@ fn repr(self) {
     match self {
         Foo(i) => {
             string.format("Foo({})", repr(i))
-        },
+        }
         Bar => "Bar"
     }
 }
