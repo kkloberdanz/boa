@@ -51,12 +51,12 @@ fn repr(self) {
 }
 
 (Point, Point) -> Bool
-fn infix "==" (self, other) {
+fn `==` (self, other) {
     return self.x == other.x and self.y == other.y
 }
 
 (Point, Point) -> Point
-fn infix "+" (self, other) {
+fn `+` (self, other) {
     return Point {
         .x = self.x + other.x
         .y = self.y + other.y
