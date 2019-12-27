@@ -25,7 +25,7 @@ struct Point3D {
     x: Int
     y: Int
     z: Int
-} deriving repr, "+", "=="
+} deriving repr, `+`, `==`
 
 (Int, Int) -> Point
 fn new(x, y) {
