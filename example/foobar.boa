@@ -11,7 +11,7 @@ struct Dict {
     values: [Any]
 }
 
-enum LinkedList {
+union LinkedList {
     End
     Node(Any)
 }
