@@ -71,7 +71,6 @@ fn my_func(my_var) {
     }
 }
 
-(Int) -> List(Int)
 fn lazy(max_n) {
     acc = 1
     prev = 0
