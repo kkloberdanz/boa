@@ -34,6 +34,7 @@ static int yylex();
 void yyerror(const char *msg);
 static ASTNode *tree = NULL;
 static FILE *source_file = NULL;
+char **all_types = NULL;
 
 %}
 
@@ -144,8 +145,19 @@ params      : expr                  {$$ = $1;}
                                     }
             ;
 
-assign_expr : id ASSIGN expr        {$$ = make_assign_node($1, $3, NULL);}
-            | id COLON type ASSIGN expr {$$ = make_assign_node($1, $5, $3);}
+assign_expr : id ASSIGN expr        {$$ = make_assign_node(
+                                        $1,
+                                        $3,
+                                        NULL,
+                                        all_types);
+                                    }
+            | id COLON type ASSIGN expr {$$ = make_assign_node(
+                                            $1,
+                                            $5,
+                                            $3,
+                                            all_types
+                                            );
+                                         }
             ;
 
 if_stmt     : IF expr LBRACE newlines
@@ -264,9 +276,25 @@ id          : ID                    {
 
 %%
 
+static char *builtin_types[] = {
+    "Void",
+    "Int",
+    "Float",
+    "String",
+    NULL
+};
+
 ASTNode *parse(FILE *src_file) {
+    int i = 0;
+    int num_builtins = 0;
+    for (num_builtins = 0; builtin_types[num_builtins]; num_builtins++);
+    all_types = malloc(sizeof(char *) * (20 + num_builtins));
+    for (i = 0; builtin_types[i] != NULL; i++) {
+        all_types[i] = builtin_types[i];
+    }
     source_file = src_file;
     yyparse();
+    free(all_types);
     return tree;
 }
 

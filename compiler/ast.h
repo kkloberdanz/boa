@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "types.h"
+
 enum { MAX_TOKEN_SIZE = 100 };
 extern char token_string[MAX_TOKEN_SIZE + 1];
 
@@ -60,13 +62,6 @@ enum ASTLiteralKind {
     AST_TYPE
 };
 
-enum BoaType {
-    TYPE_NOT_CHECKED,
-    TYPE_INT,
-    TYPE_FLOAT,
-    TYPE_STRING
-};
-
 /* structs */
 typedef struct ParseObj {
     char *repr;
@@ -82,7 +77,7 @@ typedef struct ASTNode {
     struct ASTNode *sibling;
     ASTkind kind;
     Operator op;
-    enum BoaType type;
+    struct BoaType type;
     int _pad; /* pad for alignment */
 } ASTNode;
 
@@ -91,7 +86,8 @@ ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);
 ASTNode *make_assign_node(
     ASTNode *leaf_obj,
     ASTNode *right,
-    ASTNode *type_node
+    ASTNode *type_node,
+    char **all_types
 );
 
 ASTNode *make_declare_node(ASTNode *leaf_obj);
@@ -112,7 +108,7 @@ ASTNode *make_ast_node(
     ASTNode *left,
     ASTNode *condition,
     ASTNode *right,
-    enum BoaType type
+    struct BoaType type
 );
 
 ASTNode *make_leaf_node(ParseObj *); /* just holds minic object */
