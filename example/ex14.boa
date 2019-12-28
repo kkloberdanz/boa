@@ -1,7 +1,7 @@
-def dosomething(str) {
+def do_something(str) {
     print(str)
     return 0
 }
 
 hello: String = "Hello world!"
-dosomething(hello)
+do_something(hello)

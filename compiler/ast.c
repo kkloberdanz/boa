@@ -20,7 +20,7 @@
 #include <string.h>
 
 #include "ast.h"
-#include "types.h"
+#include "typeinfo.h"
 #include "../util/memory.h"
 #include "../util/util.h"
 

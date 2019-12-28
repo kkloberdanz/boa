@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "types.h"
+#include "typeinfo.h"
 
 enum { MAX_TOKEN_SIZE = 100 };
 extern char token_string[MAX_TOKEN_SIZE + 1];

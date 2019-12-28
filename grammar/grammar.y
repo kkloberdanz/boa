@@ -25,7 +25,7 @@
 #include <stdbool.h>
 
 #include "compiler/ast.h"
-#include "compiler/types.h"
+#include "compiler/typeinfo.h"
 #include "util/util.h"
 
 #define YYSTYPE ASTNode *

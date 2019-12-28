@@ -19,7 +19,7 @@
 #include <string.h>
 
 #include "codegen.h"
-#include "types.h"
+#include "typeinfo.h"
 #include "ast.h"
 #include "../util/util.h"
 

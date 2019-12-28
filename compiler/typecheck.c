@@ -2,6 +2,7 @@
 
 #include "ast.h"
 #include "typecheck.h"
+#include "typeinfo.h"
 #include "../util/util.h"
 
 static void typecheck_node(ASTNode *ast) {

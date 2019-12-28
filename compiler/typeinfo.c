@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "types.h"
+#include "typeinfo.h"
 
 char *builtin_types[] = {
     "Void",
