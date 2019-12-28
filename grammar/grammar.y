@@ -50,6 +50,7 @@ static FILE *source_file = NULL;
 %token INT
 %token ID
 %token INTEGER
+%token TYPE
 %token ASSIGN
 %token EQ
 %token NE
@@ -68,6 +69,7 @@ static FILE *source_file = NULL;
 %token LBRACE
 %token RBRACE
 %token SEMICOLON
+%token COLON
 %token COMMA
 %token QUOTE
 %token NEWLINE
@@ -143,6 +145,7 @@ params      : expr                  {$$ = $1;}
             ;
 
 assign_expr : id ASSIGN expr        {$$ = make_assign_node($1, $3);}
+            | id COLON TYPE ASSIGN expr  {$$ = make_assign_node($1, $3);}
             ;
 
 if_stmt     : IF expr LBRACE newlines
@@ -206,6 +209,12 @@ expr        : expr PLUS expr        {
                                         $$ = make_literal_node(
                                             make_string(token_string),
                                             AST_STRING
+                                        );
+                                    }
+            | TYPE                  {
+                                        $$ = make_literal_node(
+                                            make_string(token_string),
+                                            AST_TYPE
                                         );
                                     }
             | id                    {$$ = make_load_node($1);}

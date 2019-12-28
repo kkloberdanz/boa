@@ -30,9 +30,10 @@ static void typecheck_node(ASTNode *ast) {
 }
 
 int typecheck(ASTNode *ast) {
-    for (; ast; ast = ast->sibling) {
+    while (ast) {
         puts("type checking");
         typecheck_node(ast);
+        ast = ast->sibling;
     }
     return 0;
 }

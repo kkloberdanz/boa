@@ -56,7 +56,8 @@ enum ASTLiteralKind {
     AST_INT,
     AST_FLOAT,
     AST_BOOL,
-    AST_ID
+    AST_ID,
+    AST_TYPE
 };
 
 enum BoaType {

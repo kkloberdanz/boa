@@ -32,7 +32,8 @@ char token_string[MAX_TOKEN_SIZE+1];
 digit       [0-9]
 number      {digit}+
 letter      [a-zA-Z]
-identifier  {letter}({letter}|{number})*
+identifier  [a-z]({letter}|{number})*
+type        [A-Z]({letter}|{number})*
 newline     \n
 whitespace  [ \t]+
 string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
@@ -62,10 +63,12 @@ string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 "{"           { return LBRACE; }
 "}"           { return RBRACE; }
 ";"           { return SEMICOLON; }
+":"           { return COLON; }
 ","           { return COMMA; }
 "\""          { return QUOTE; }
 {number}      { return INTEGER; }
 {identifier}  { return ID; }
+{type}        { return TYPE; }
 {newline}     { yylineno++; return NEWLINE; }
 {whitespace}  { /* do nothing */; }
 {string}      { return STRING; }

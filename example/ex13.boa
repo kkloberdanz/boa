@@ -1,0 +1,2 @@
+myvar: Int = 5
+printd(myvar)

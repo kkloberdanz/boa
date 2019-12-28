@@ -124,6 +124,7 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
         case AST_FLOAT:
         case AST_BOOL:
         case AST_ID:
+        case AST_TYPE:
             break;
     }
     obj = make_parseobj(repr, kind);
