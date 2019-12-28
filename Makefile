@@ -41,3 +41,4 @@ clean:
 	rm -f libruntime.a runtime.o
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
 	rm -f core
+	rm -f example/*.c
