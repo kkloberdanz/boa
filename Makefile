@@ -9,7 +9,7 @@ release: export OPTIM_FLAGS := -Os
 release: build
 
 .PHONY: debug
-debug: export OPTIM_FLAGS := -O0 -g
+debug: export OPTIM_FLAGS := -O0 -ggdb -Werror
 debug: build
 
 .PHONY: parser

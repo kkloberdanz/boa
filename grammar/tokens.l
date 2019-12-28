@@ -32,7 +32,7 @@ char token_string[MAX_TOKEN_SIZE+1];
 digit       [0-9]
 number      {digit}+
 letter      [a-zA-Z]
-identifier  [a-z]({letter}|{number})*
+identifier  ([a-z]|_)({letter}|{number}|_)*
 type        [A-Z]({letter}|{number})*
 newline     \n
 whitespace  [ \t]+

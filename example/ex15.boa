@@ -1,0 +1,13 @@
+def my_func(a) {
+    printd(a)
+    return 0
+}
+
+my_func(15)
+
+def _my_hidden_func(a) {
+    printd(a)
+    return 0
+}
+
+_my_hidden_func(123)
