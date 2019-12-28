@@ -48,11 +48,11 @@ ASTNode *make_ast_node(
 }
 
 ASTNode *make_operator_node(Operator op, ASTNode *left, ASTNode *right) {
-    struct BoaType type = {
-        .type_id = TYPE_NOT_CHECKED,
-        .repr = "Void"
-    };
-    ASTNode *node = make_ast_node(
+    ASTNode *node;
+    struct BoaType type;
+    type.id = TYPE_NOT_CHECKED;
+    type.repr = "Void";
+    node = make_ast_node(
         OPERATOR,
         NULL,
         op,
@@ -69,11 +69,11 @@ ASTNode *make_conditional_node(
     ASTNode *left,
     ASTNode *right
 ) {
-    struct BoaType type = {
-        .type_id = TYPE_NOT_CHECKED,
-        .repr = "Void"
-    };
-    ASTNode *node = make_ast_node(
+    struct BoaType type;
+    ASTNode *node;
+    type.id = TYPE_NOT_CHECKED;
+    type.repr = "Void";
+    node = make_ast_node(
         CONDITIONAL,
         NULL,
         OP_NIL,
@@ -91,6 +91,7 @@ ASTNode *make_assign_node(
     ASTNode *type_node,
     char **all_types
 ) {
+    ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
     struct BoaType type;
     int type_id = TYPE_NOT_CHECKED;
@@ -101,10 +102,10 @@ ASTNode *make_assign_node(
         type_id = string_repr_to_type_id(type_obj->repr, all_types);
     }
 
-    type.type_id = type_id;
+    type.id = type_id;
     type.repr = repr;
 
-    ASTNode *node = make_ast_node(
+    node = make_ast_node(
         ASSIGN_EXPR,
         obj,
         OP_NIL,
@@ -117,12 +118,12 @@ ASTNode *make_assign_node(
 }
 
 ASTNode *make_load_node(ASTNode *leaf_obj) {
+    ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    struct BoaType type = {
-        .type_id = TYPE_NOT_CHECKED,
-        .repr = "Void"
-    };
-    ASTNode *node = make_ast_node(
+    struct BoaType type;
+    type.id = TYPE_NOT_CHECKED;
+    type.repr = "Void";
+    node = make_ast_node(
         LOAD_STMT,
         obj,
         OP_NIL,
@@ -139,12 +140,12 @@ ASTNode *make_function_node(
     ASTNode *func_body,
     ASTNode *params
 ) {
+    ASTNode *node;
     ParseObj *obj = func_name->obj;
-    struct BoaType type = {
-        .type_id = TYPE_NOT_CHECKED,
-        .repr = "Void"
-    };
-    ASTNode *node = make_ast_node(
+    struct BoaType type;
+    type.id = TYPE_NOT_CHECKED;
+    type.repr = "Void";
+    node = make_ast_node(
         FUNC_DEF,
         obj,
         OP_NIL,
@@ -157,12 +158,12 @@ ASTNode *make_function_node(
 }
 
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
+    ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    struct BoaType type = {
-        .type_id = TYPE_NOT_CHECKED,
-        .repr = "Void"
-    };
-    ASTNode *node = make_ast_node(
+    struct BoaType type;
+    type.id = TYPE_NOT_CHECKED;
+    type.repr = "Void";
+    node = make_ast_node(
         FUNC_CALL,
         obj,
         OP_NIL,
@@ -188,10 +189,9 @@ ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
 ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
     ParseObj *obj;
     ASTNode *node;
-    struct BoaType type = {
-        .type_id = TYPE_NOT_CHECKED,
-        .repr = "Void"
-    };
+    struct BoaType type;
+    type.id = TYPE_NOT_CHECKED;
+    type.repr = "Void";
     switch (kind) {
         case AST_STRING: {
             string_replace_single_quote_with_double(repr);
@@ -223,11 +223,11 @@ ASTNode *make_id_node(char *repr) {
 }
 
 ASTNode *make_return_node(ASTNode *expr_to_return) {
-    struct BoaType type = {
-        .type_id = TYPE_NOT_CHECKED,
-        .repr = "Void"
-    };
-    ASTNode *node = make_ast_node(
+    ASTNode *node;
+    struct BoaType type;
+    type.id = TYPE_NOT_CHECKED;
+    type.repr = "Void";
+    node = make_ast_node(
         RETURN_STMT,
         NULL,
         OP_NIL,

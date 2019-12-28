@@ -25,6 +25,7 @@
 #include <stdbool.h>
 
 #include "compiler/ast.h"
+#include "compiler/types.h"
 #include "util/util.h"
 
 #define YYSTYPE ASTNode *
@@ -275,14 +276,6 @@ id          : ID                    {
             ;
 
 %%
-
-static char *builtin_types[] = {
-    "Void",
-    "Int",
-    "Float",
-    "String",
-    NULL
-};
 
 ASTNode *parse(FILE *src_file) {
     int i = 0;

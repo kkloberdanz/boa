@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "codegen.h"
+#include "types.h"
 #include "ast.h"
 #include "../util/util.h"
 
@@ -76,7 +77,7 @@ static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
     state->reg++;
     fprintf(
         state->outf,
-        "const int r%lu = %s(%s);\n",
+        "const long r%lu = %s(%s);\n",
         state->reg,
         func_name,
         args_str
@@ -86,7 +87,7 @@ static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
 static void emit_assign_expr(struct CodegenState *state, ASTNode *ast) {
     char *variable_name = ast->obj->repr;
     codegen_node(state, ast->right);
-    fprintf(state->outf, "int %s = r%lu;\n", variable_name, state->reg);
+    fprintf(state->outf, "const long %s = r%lu;\n", variable_name, state->reg);
 }
 
 static char *get_operator(Operator op) {
@@ -173,7 +174,7 @@ static void emit_operation_expr(struct CodegenState *state, ASTNode *ast) {
     state->reg++;
     fprintf(
         state->outf,
-        "const int r%lu = %s %s %s;\n",
+        "const long r%lu = %s %s %s;\n",
         state->reg,
         operand_1,
         operator,
@@ -188,7 +189,12 @@ static void emit_return_stmt(struct CodegenState *state, ASTNode *ast) {
 
 static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
     state->reg++;
-    fprintf(state->outf, "const int r%lu = %s;\n", state->reg, ast->obj->repr);
+    fprintf(
+        state->outf,
+        "const long r%lu = %s;\n",
+        state->reg,
+        ast->obj->repr
+    );
 }
 
 static void emit_conditional_expr(struct CodegenState *state, ASTNode *ast) {
@@ -253,11 +259,30 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
 
         i = num_params;
         while (i --> 0) {
-            sprintf(params_str + len, "int %s, ", params_arr[i]->obj->repr);
+            char *type;
+            int type_id = params_arr[i]->type.id;
+
+            /* TODO: temporary hack until typechecking works */
+            if (type_id == 0) {
+                type_id = 1;
+            }
+
+            type = boa_type_to_c_type(type_id);
+            sprintf(
+                params_str + len,
+                "%s %s, ",
+                type,
+                params_arr[i]->obj->repr
+            );
             len = strlen(params_str);
         }
         params_str[len - 2] = '\0';
-        fprintf(state->outf, "static int %s(%s) {\n", ast->obj->repr, params_str);
+        fprintf(
+            state->outf,
+            "static int %s(%s) {\n",
+            ast->obj->repr,
+            params_str
+        );
     }
     codegen(state, ast->right);
     fprintf(state->outf, "}\n");
