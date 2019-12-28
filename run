@@ -19,6 +19,8 @@ echo "CC=${CC}"
 
 clang-format -i example/$PROG_NAME.c || true
 
+mkdir bin 2> /dev/null
+
 $CC -Os example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME
 
 ./bin/$PROG_NAME
