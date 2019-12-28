@@ -88,7 +88,12 @@ typedef struct ASTNode {
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);
 
-ASTNode *make_assign_node(ASTNode *leaf_obj, ASTNode *right);
+ASTNode *make_assign_node(
+    ASTNode *leaf_obj,
+    ASTNode *right,
+    ASTNode *type_node
+);
+
 ASTNode *make_declare_node(ASTNode *leaf_obj);
 ASTNode *make_load_node(ASTNode *leaf_obj);
 
@@ -101,12 +106,13 @@ ASTNode *make_function_node(
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args);
 
 ASTNode *make_ast_node(
-    ASTkind, /* base constructor */
-    ParseObj *,
-    Operator,
-    ASTNode *,
-    ASTNode *,
-    ASTNode *
+    ASTkind kind,
+    ParseObj *obj,
+    Operator op,
+    ASTNode *left,
+    ASTNode *condition,
+    ASTNode *right,
+    enum BoaType type
 );
 
 ASTNode *make_leaf_node(ParseObj *); /* just holds minic object */

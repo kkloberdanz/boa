@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "ast.h"
 #include "../util/memory.h"
@@ -24,13 +25,22 @@
 
 char token_string[MAX_TOKEN_SIZE + 1];
 
+static char *boa_types[] = {
+    "Void",
+    "Int",
+    "Float",
+    "String",
+    NULL
+};
+
 ASTNode *make_ast_node(
     ASTkind kind,
     ParseObj *obj,
     Operator op,
     ASTNode *left,
     ASTNode *condition,
-    ASTNode *right
+    ASTNode *right,
+    enum BoaType type
 ) {
     ASTNode *node = boa_malloc(sizeof(ASTNode));
     node->kind = kind;
@@ -40,12 +50,20 @@ ASTNode *make_ast_node(
     node->left = left;
     node->condition = condition;
     node->right = right;
-    node->type = TYPE_NOT_CHECKED;
+    node->type = type;
     return node;
 }
 
 ASTNode *make_operator_node(Operator op, ASTNode *left, ASTNode *right) {
-    ASTNode *node = make_ast_node(OPERATOR, NULL, op, left, NULL, right);
+    ASTNode *node = make_ast_node(
+        OPERATOR,
+        NULL,
+        op,
+        left,
+        NULL,
+        right,
+        TYPE_NOT_CHECKED
+    );
     return node;
 }
 
@@ -60,20 +78,58 @@ ASTNode *make_conditional_node(
         OP_NIL,
         left,
         condition,
-        right
+        right,
+        TYPE_NOT_CHECKED
     );
     return node;
 }
 
-ASTNode *make_assign_node(ASTNode *leaf_obj, ASTNode *right) {
+static enum BoaType string_repr_to_type(char *repr) {
+    unsigned int i;
+    for (i = 0; boa_types[i] != NULL; i++) {
+        if (strcmp(repr, boa_types[i]) == 0) {
+            return i;
+        }
+    }
+    /* TODO: make this an error condition */
+    fprintf(stderr, "type: '%s' unkown\n", repr);
+    return TYPE_NOT_CHECKED;
+}
+
+ASTNode *make_assign_node(
+    ASTNode *leaf_obj,
+    ASTNode *right,
+    ASTNode *type_node
+) {
     ParseObj *obj = leaf_obj->obj;
-    ASTNode *node = make_ast_node(ASSIGN_EXPR, obj, OP_NIL, NULL, NULL, right);
+    enum BoaType type = TYPE_NOT_CHECKED;
+    if (type_node) {
+        ParseObj *type_obj = type_node->obj;
+        type = string_repr_to_type(type_obj->repr);
+    }
+    ASTNode *node = make_ast_node(
+        ASSIGN_EXPR,
+        obj,
+        OP_NIL,
+        NULL,
+        NULL,
+        right,
+        type
+    );
     return node;
 }
 
 ASTNode *make_load_node(ASTNode *leaf_obj) {
     ParseObj *obj = leaf_obj->obj;
-    ASTNode *node = make_ast_node(LOAD_STMT, obj, OP_NIL, NULL, NULL, NULL);
+    ASTNode *node = make_ast_node(
+        LOAD_STMT,
+        obj,
+        OP_NIL,
+        NULL,
+        NULL,
+        NULL,
+        TYPE_NOT_CHECKED
+    );
     return node;
 }
 
@@ -89,14 +145,23 @@ ASTNode *make_function_node(
         OP_NIL,
         params,
         NULL,
-        func_body
+        func_body,
+        TYPE_NOT_CHECKED
     );
     return node;
 }
 
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
     ParseObj *obj = leaf_obj->obj;
-    ASTNode *node = make_ast_node(FUNC_CALL, obj, OP_NIL, NULL, NULL, args);
+    ASTNode *node = make_ast_node(
+        FUNC_CALL,
+        obj,
+        OP_NIL,
+        NULL,
+        NULL,
+        args,
+        TYPE_NOT_CHECKED
+    );
     return node;
 }
 
@@ -120,15 +185,23 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
             break;
         }
 
+        case AST_TYPE:
         case AST_INT:
         case AST_FLOAT:
         case AST_BOOL:
         case AST_ID:
-        case AST_TYPE:
             break;
     }
     obj = make_parseobj(repr, kind);
-    node = make_ast_node(LOAD_STMT, obj, OP_NIL, NULL, NULL, NULL);
+    node = make_ast_node(
+        LOAD_STMT,
+        obj,
+        OP_NIL,
+        NULL,
+        NULL,
+        NULL,
+        TYPE_NOT_CHECKED
+    );
     return node;
 }
 
@@ -143,7 +216,8 @@ ASTNode *make_return_node(ASTNode *expr_to_return) {
         OP_NIL,
         NULL,
         NULL,
-        expr_to_return
+        expr_to_return,
+        TYPE_NOT_CHECKED
     );
     return node;
 }

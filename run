@@ -15,12 +15,10 @@ fi
 
 echo "CC=${CC}"
 
-./boa example/$PROG_NAME.boa
+./boa example/$PROG_NAME.boa || exit 1
 
 clang-format -i example/$PROG_NAME.c || true
 
 mkdir bin 2> /dev/null
 
-$CC -Os example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME
-
-./bin/$PROG_NAME
+$CC -Os example/$PROG_NAME.c libruntime.a -o bin/$PROG_NAME && ./bin/$PROG_NAME
