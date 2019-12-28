@@ -3,11 +3,11 @@ def my_func(a) {
     return 0
 }
 
-my_func(15)
+my_var = my_func(15)
 
 def _my_hidden_func(a) {
     printd(a)
     return 0
 }
 
-_my_hidden_func(123)
+_my_hidden_func(my_var)
