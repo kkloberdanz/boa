@@ -50,6 +50,7 @@ string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 "if"          { return IF; }
 "then"        { return THEN; }
 "else"        { return ELSE; }
+"elif"        { return ELIF; }
 "int"         { return INT; }
 "def"         { return DEF; }
 "return"      { return RETURN; }

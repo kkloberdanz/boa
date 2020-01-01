@@ -194,14 +194,28 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
     type.repr = "Void";
     switch (kind) {
         case AST_STRING: {
+            type.id = TYPE_STRING;
+            type.repr = "String";
             string_replace_single_quote_with_double(repr);
             break;
         }
 
-        case AST_TYPE:
         case AST_INT:
+            type.id = TYPE_INT;
+            type.repr = "Int";
+            break;
+
         case AST_FLOAT:
+            type.id = TYPE_FLOAT;
+            type.repr = "Float";
+            break;
+
         case AST_BOOL:
+            type.id = TYPE_BOOL;
+            type.repr = "Bool";
+            break;
+
+        case AST_TYPE:
         case AST_ID:
             break;
     }

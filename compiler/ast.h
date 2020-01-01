@@ -78,7 +78,6 @@ typedef struct ASTNode {
     ASTkind kind;
     Operator op;
     struct BoaType type;
-    int _pad; /* pad for alignment */
 } ASTNode;
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);

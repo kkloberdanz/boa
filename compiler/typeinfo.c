@@ -8,6 +8,7 @@ char *builtin_types[] = {
     "Int",
     "Float",
     "String",
+    "Bool",
     NULL
 };
 
@@ -16,11 +17,12 @@ static char *c_types[] = {
     "long",
     "double",
     "char *",
+    "char",
     NULL
 };
 
 int string_repr_to_type_id(char *repr, char *all_types[]) {
-    unsigned int i;
+    int i;
     for (i = 0; all_types[i] != NULL; i++) {
         if (strcmp(repr, all_types[i]) == 0) {
             return i;

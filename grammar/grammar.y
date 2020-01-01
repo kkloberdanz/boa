@@ -78,9 +78,10 @@ char **all_types = NULL;
 %token STRING
 %token RETURN
 
+%left EQ NE LT GE LE GT
 %left MINUS PLUS
 %left TIMES OVER PERCENT
-%right EXPONENT        /* exponentiation */
+%right EXPONENT
 
 %%
 prog        : stmts                 {debug_puts("prog"); tree = $1;}
