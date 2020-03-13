@@ -61,6 +61,7 @@ string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 "*"           { return TIMES; }
 "/"           { return OVER; }
 "%"           { return PERCENT; }
+"^"           { return CARROT; }
 "{"           { return LBRACE; }
 "}"           { return RBRACE; }
 ";"           { return SEMICOLON; }

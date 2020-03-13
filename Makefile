@@ -24,7 +24,8 @@ lexer: parser
 
 .PHONY: binary
 binary: parser lexer
-	$(CC) -std=$(STD) $(WARN_FLAGS) -o boa compiler/*.c util/*.c lex.yy.o y.tab.o \
+	$(CC) -std=$(STD) $(WARN_FLAGS) -o boa \
+		compiler/*.c util/*.c lex.yy.o y.tab.o \
 		$(OPTIM_FLAGS) $(CFLAGS) -lfl
 
 .PHONY: library

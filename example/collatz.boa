@@ -11,4 +11,4 @@ def collatz(n) {
     }
 }
 
-collatz(15)
+collatz(1000)

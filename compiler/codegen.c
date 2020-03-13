@@ -260,7 +260,7 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
         i = num_params;
         while (i --> 0) {
             char *type;
-            int type_id = params_arr[i]->type.id;
+            TypeId type_id = params_arr[i]->type.id;
 
             /* TODO: temporary hack until typechecking works */
             if (type_id == 0) {

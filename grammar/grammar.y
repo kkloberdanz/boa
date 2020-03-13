@@ -47,6 +47,7 @@ char **all_types = NULL;
 %token IF
 %token THEN
 %token ELSE
+%token ELIF
 %token PRINT
 %token DEF
 %token INT
@@ -65,7 +66,7 @@ char **all_types = NULL;
 %token TIMES
 %token OVER
 %token PERCENT
-%token EXPONENT
+%token CARROT
 %token LPAREN
 %token RPAREN
 %token LBRACE
@@ -81,7 +82,7 @@ char **all_types = NULL;
 %left EQ NE LT GE LE GT
 %left MINUS PLUS
 %left TIMES OVER PERCENT
-%right EXPONENT
+%right CARROT
 
 %%
 prog        : stmts                 {debug_puts("prog"); tree = $1;}

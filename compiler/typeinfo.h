@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+typedef long TypeId;
+
 extern char *builtin_types[];
 
 enum BuiltinType {
@@ -10,17 +12,17 @@ enum BuiltinType {
     TYPE_INT,
     TYPE_FLOAT,
     TYPE_STRING,
-    TYPE_BOOL
+    TYPE_BOOL,
+    TYPE_LASTTYPE /* always keep this last */
 };
 
 struct BoaType {
     char *repr;
-    int id;
-    int _pad; /* pad for alignment */
+    TypeId id;
 };
 
 int string_repr_to_type_id(char *repr, char *all_types[]);
 
-char *boa_type_to_c_type(int type_id);
+char *boa_type_to_c_type(TypeId type_id);
 
 #endif /* TYPES_H */
