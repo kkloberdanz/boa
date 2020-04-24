@@ -120,7 +120,7 @@ stmt        : expr newlines         {$$ = $1;}
             | if_stmt               {$$ = $1;}
             | assign_expr newlines  {$$ = $1;}
             | decl_func             {$$ = $1;}
-            | RETURN expr maybe_newlines  {$$ = make_return_node($2);}
+            | THEN expr maybe_newlines  {$$ = make_return_node($2);}
             ;
 
 decl_func   : id ASSIGN params FAT_ARROW LBRACE newlines
