@@ -21,9 +21,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "../compiler/ast.h"
-#include "../util/util.h"
-#include "../y.tab.h"
+#include <compiler/ast.h>
+#include <util/util.h>
+#include <y.tab.h>
 
 int fileno(FILE *stream);
 char token_string[MAX_TOKEN_SIZE+1];
