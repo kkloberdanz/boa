@@ -7,7 +7,7 @@
 
 char *make_string(char *str) {
     unsigned long len = strlen(str);
-    char *buf = boa_malloc((1 + len) * sizeof(char));
+    char *buf = iba_malloc((1 + len) * sizeof(char));
     memcpy(buf, str, len);
     return buf;
 }

@@ -20,7 +20,7 @@
 
 #include <stdio.h>
 
-void *boa_malloc(size_t num_bytes);
-void boa_free_all(void);
+void *iba_malloc(size_t num_bytes);
+void iba_free_all(void);
 
 #endif /* MEMORY_H */

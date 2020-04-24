@@ -24,7 +24,7 @@ lexer: parser
 
 .PHONY: binary
 binary: parser lexer
-	$(CC) -std=$(STD) $(WARN_FLAGS) -o boa \
+	$(CC) -std=$(STD) $(WARN_FLAGS) -o iba \
 		compiler/*.c util/*.c lex.yy.o y.tab.o \
 		$(OPTIM_FLAGS) $(CFLAGS) -lfl
 
@@ -40,7 +40,7 @@ build: binary library
 .PHONY: clean
 clean:
 	rm -rf bin
-	rm -f boa
+	rm -f iba
 	rm -f libruntime.a runtime.o
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
 	rm -f core

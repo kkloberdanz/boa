@@ -23,6 +23,6 @@ struct BoaType {
 
 int string_repr_to_type_id(char *repr, char *all_types[]);
 
-char *boa_type_to_c_type(TypeId type_id);
+char *iba_type_to_c_type(TypeId type_id);
 
 #endif /* TYPES_H */

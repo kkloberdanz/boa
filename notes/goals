@@ -1,7 +1,4 @@
-(1) compiled to native
-(2) static type system
-(3) automatic type deduction
-(4) garbage collected
-(5) type checking through traits (type classes)
-(6) no exceptions, errors are a part of the type system
-(7) first class functions
+1 first class functions
+2 selectively compile to SQL
+3 VM as compiler target
+4 dynamic typeing

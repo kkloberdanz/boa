@@ -47,13 +47,10 @@ string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 ">="          { return GE; }
 "<="          { return LE; }
 "!="          { return NE; }
+"=>"          { return FAT_ARROW; }
 "if"          { return IF; }
 "then"        { return THEN; }
 "else"        { return ELSE; }
-"elif"        { return ELIF; }
-"int"         { return INT; }
-"def"         { return DEF; }
-"return"      { return RETURN; }
 "("           { return LPAREN; }
 ")"           { return RPAREN; }
 "+"           { return PLUS; }

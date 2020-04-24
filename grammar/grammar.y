@@ -57,6 +57,7 @@ char **all_types = NULL;
 %token ASSIGN
 %token EQ
 %token NE
+%token FAT_ARROW
 %token LT
 %token GE
 %token LE
@@ -115,14 +116,14 @@ stmt        : expr newlines         {$$ = $1;}
             | if_stmt               {$$ = $1;}
             | assign_expr newlines  {$$ = $1;}
             | decl_func             {$$ = $1;}
-            | RETURN expr newlines  {$$ = make_return_node($2);}
+            | expr newlines         {$$ = make_return_node($2);}
             ;
 
-decl_func   : DEF id LPAREN params RPAREN LBRACE newlines
+decl_func   : id ASSIGN params FAT_ARROW LBRACE newlines
               stmts
               RBRACE newlines       {
                                         debug_puts("decl_func");
-                                        $$ = make_function_node($2, $8, $4);
+                                        $$ = make_function_node($1, $7, $3);
                                     }
 
             | DEF id LPAREN RPAREN LBRACE newlines

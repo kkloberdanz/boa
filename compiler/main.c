@@ -26,25 +26,25 @@
 #include "codegen.h"
 #include "typecheck.h"
 
-static bool is_boa_src_file(char *filename) {
+static bool is_iba_src_file(char *filename) {
     unsigned long len = strlen(filename) - 1;
     if (len < 5) {
         return false;
     }
     return filename[len - 3] == '.' \
-        && filename[len - 2] == 'b' \
-        && filename[len - 1] == 'o' \
+        && filename[len - 2] == 'i' \
+        && filename[len - 1] == 'b' \
         && filename[len] == 'a';
 }
 
-static int compile_boa(char *source_filename, char *output_filename) {
+static int compile_iba(char *source_filename, char *output_filename) {
     FILE *source_file = NULL;
     FILE *output = NULL;
     unsigned long len = strlen(source_filename) - 1;
     int exit_code = 1;
     ASTNode *tree = NULL;
 
-    if (!is_boa_src_file(source_filename)) {
+    if (!is_iba_src_file(source_filename)) {
         fprintf(stderr, "not a Boa source file: %s\n", source_filename);
         return 2;
     }
@@ -81,7 +81,7 @@ static int compile_boa(char *source_filename, char *output_filename) {
         fprintf(stderr, "%s\n", "failed to close output file");
         return 6;
     }
-    boa_free_all();
+    iba_free_all();
     return exit_code;
 }
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
     } else {
         char c_filename[1000];
         char *source_filename = argv[1];
-        exit_code = compile_boa(source_filename, c_filename);
+        exit_code = compile_iba(source_filename, c_filename);
         /* TODO: compile and run *.c program */
         return exit_code;
     }

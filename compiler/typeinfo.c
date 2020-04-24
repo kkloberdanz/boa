@@ -33,6 +33,6 @@ int string_repr_to_type_id(char *repr, char *all_types[]) {
     return TYPE_NOT_CHECKED;
 }
 
-char *boa_type_to_c_type(TypeId type_id) {
+char *iba_type_to_c_type(TypeId type_id) {
     return c_types[type_id];
 }

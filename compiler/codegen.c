@@ -267,7 +267,7 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
                 type_id = 1;
             }
 
-            type = boa_type_to_c_type(type_id);
+            type = iba_type_to_c_type(type_id);
             sprintf(
                 params_str + len,
                 "%s %s, ",

@@ -35,7 +35,7 @@ ASTNode *make_ast_node(
     ASTNode *right,
     struct BoaType type
 ) {
-    ASTNode *node = boa_malloc(sizeof(ASTNode));
+    ASTNode *node = iba_malloc(sizeof(ASTNode));
     node->kind = kind;
     node->sibling = NULL;
     node->obj = obj;
@@ -176,7 +176,7 @@ ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
 }
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
-    ParseObj *obj = boa_malloc(sizeof(ParseObj));
+    ParseObj *obj = iba_malloc(sizeof(ParseObj));
     if (obj == NULL) {
         fprintf(stderr, "out of memory");
         exit(EXIT_FAILURE);

@@ -20,7 +20,7 @@
 
 static MemoryVec memory;
 
-void *boa_malloc(size_t num_bytes) {
+void *iba_malloc(size_t num_bytes) {
     static char is_initialized = 0;
     void *bytes = NULL;
     if (!is_initialized) {
@@ -31,6 +31,6 @@ void *boa_malloc(size_t num_bytes) {
     return bytes;
 }
 
-void boa_free_all() {
+void iba_free_all() {
     kk_track_free(&memory);
 }
