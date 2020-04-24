@@ -37,11 +37,11 @@ type        [A-Z]({letter}|{number})*
 newline     \n
 whitespace  [ \t]+
 string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
+comment     (\*(.*\n)*.*\*)
+single_line_comment #(.*)
 
 %%
 
-"(*"          { return BEGIN_COMMENT; }
-"*)"          { return END_COMMENT; }
 "#"           { return HASH; }
 "="           { return ASSIGN; }
 "=="          { return EQ; }
@@ -74,6 +74,8 @@ string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 {newline}     { yylineno++; return NEWLINE; }
 {whitespace}  { /* do nothing */; }
 {string}      { return STRING; }
+{comment}     { /* do nothing */; }
+{single_line_comment}     { yylineno++; }
 .             { return ERROR; }
 
 %%

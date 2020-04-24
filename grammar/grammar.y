@@ -74,6 +74,7 @@ char **all_types = NULL;
 %token LBRACE
 %token RBRACE
 %token SEMICOLON
+%token COMMENT
 %token COLON
 %token COMMA
 %token QUOTE
@@ -86,7 +87,8 @@ char **all_types = NULL;
 %right CARROT
 
 %%
-prog        : stmts                 {debug_puts("prog"); tree = $1;}
+prog        : maybe_newlines
+            | stmts                 {debug_puts("prog"); tree = $1;}
             ;
 
 stmts       : stmt                  {debug_puts("stmt"); $$ = $1;}
@@ -112,6 +114,7 @@ newlines    : NEWLINE
             | NEWLINE newlines
             | SEMICOLON newlines
             | SEMICOLON
+            | COMMENT maybe_newlines
             ;
 
 maybe_newlines  : newlines
@@ -123,9 +126,6 @@ stmt        : expr newlines         {$$ = $1;}
             | assign_expr newlines  {$$ = $1;}
             | decl_func             {$$ = $1;}
             | THEN expr maybe_newlines  {$$ = make_return_node($2);}
-            ;
-
-comment:    | BEGIN_COMMENT END_COMMENT
             ;
 
 decl_func   : id ASSIGN params FAT_ARROW LBRACE newlines

@@ -3,10 +3,10 @@ collatz = n => {
     if n == 1:
         then 1
     else
-        if n % 2 == 0:
-            res = n / 2 (* This is a comment *)
+        if n % 2 == 0: # it's even
+            res = n / 2
             then collatz(res)
-        else
+        else # it's odd
             then collatz(3 * n + 1)
 }
 
