@@ -54,7 +54,6 @@ char **all_types = NULL;
 %token ID
 %token INTEGER
 %token TYPE
-%token HASH
 %token ASSIGN
 %token EQ
 %token NE
@@ -88,6 +87,7 @@ char **all_types = NULL;
 
 %%
 prog        : maybe_newlines
+            | maybe_newlines prog
             | stmts                 {debug_puts("prog"); tree = $1;}
             ;
 

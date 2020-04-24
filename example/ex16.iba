@@ -1,3 +1,8 @@
+#
+#   This is an exemple of an iba program
+#   Collatz Conjecture, see: https://en.wikipedia.org/wiki/Collatz_conjecture
+#
+
 collatz = n => {
     printd(n)
     if n == 1:

@@ -42,7 +42,6 @@ single_line_comment #(.*)
 
 %%
 
-"#"           { return HASH; }
 "="           { return ASSIGN; }
 "=="          { return EQ; }
 ">"           { return GT; }
