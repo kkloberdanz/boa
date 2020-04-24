@@ -1,18 +1,18 @@
 /*
- *     This file is part of Boa.
+ *     This file is part of iba.
  *
- *  Boa is free software: you can redistribute it and/or modify
+ *  iba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Boa is distributed in the hope that it will be useful,
+ *  iba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Boa.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with iba.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <stdio.h>
@@ -45,7 +45,7 @@ static int compile_iba(char *source_filename, char *output_filename) {
     ASTNode *tree = NULL;
 
     if (!is_iba_src_file(source_filename)) {
-        fprintf(stderr, "not a Boa source file: %s\n", source_filename);
+        fprintf(stderr, "not a iba source file: %s\n", source_filename);
         return 2;
     }
     source_file = fopen(source_filename, "r");

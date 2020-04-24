@@ -1,18 +1,18 @@
 /*
- *     This file is part of Boa.
+ *     This file is part of iba.
  *
- *  Boa is free software: you can redistribute it and/or modify
+ *  iba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Boa is distributed in the hope that it will be useful,
+ *  iba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Boa.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with iba.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <stdio.h>
@@ -33,7 +33,7 @@ ASTNode *make_ast_node(
     ASTNode *left,
     ASTNode *condition,
     ASTNode *right,
-    struct BoaType type
+    struct ibaType type
 ) {
     ASTNode *node = iba_malloc(sizeof(ASTNode));
     node->kind = kind;
@@ -49,7 +49,7 @@ ASTNode *make_ast_node(
 
 ASTNode *make_operator_node(Operator op, ASTNode *left, ASTNode *right) {
     ASTNode *node;
-    struct BoaType type;
+    struct ibaType type;
     type.id = TYPE_NOT_CHECKED;
     type.repr = "Void";
     node = make_ast_node(
@@ -69,7 +69,7 @@ ASTNode *make_conditional_node(
     ASTNode *left,
     ASTNode *right
 ) {
-    struct BoaType type;
+    struct ibaType type;
     ASTNode *node;
     type.id = TYPE_NOT_CHECKED;
     type.repr = "Void";
@@ -93,7 +93,7 @@ ASTNode *make_assign_node(
 ) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    struct BoaType type;
+    struct ibaType type;
     int type_id = TYPE_NOT_CHECKED;
     char *repr = "Void";
     if (type_node) {
@@ -120,7 +120,7 @@ ASTNode *make_assign_node(
 ASTNode *make_load_node(ASTNode *leaf_obj) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    struct BoaType type;
+    struct ibaType type;
     type.id = TYPE_NOT_CHECKED;
     type.repr = "Void";
     node = make_ast_node(
@@ -142,7 +142,7 @@ ASTNode *make_function_node(
 ) {
     ASTNode *node;
     ParseObj *obj = func_name->obj;
-    struct BoaType type;
+    struct ibaType type;
     type.id = TYPE_NOT_CHECKED;
     type.repr = "Void";
     node = make_ast_node(
@@ -160,7 +160,7 @@ ASTNode *make_function_node(
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    struct BoaType type;
+    struct ibaType type;
     type.id = TYPE_NOT_CHECKED;
     type.repr = "Void";
     node = make_ast_node(
@@ -189,7 +189,7 @@ ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
 ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
     ParseObj *obj;
     ASTNode *node;
-    struct BoaType type;
+    struct ibaType type;
     type.id = TYPE_NOT_CHECKED;
     type.repr = "Void";
     switch (kind) {
@@ -238,7 +238,7 @@ ASTNode *make_id_node(char *repr) {
 
 ASTNode *make_return_node(ASTNode *expr_to_return) {
     ASTNode *node;
-    struct BoaType type;
+    struct ibaType type;
     type.id = TYPE_NOT_CHECKED;
     type.repr = "Void";
     node = make_ast_node(

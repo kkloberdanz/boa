@@ -1,18 +1,18 @@
 /*
- *     This file is part of Boa.
+ *     This file is part of iba.
  *
- *  Boa is free software: you can redistribute it and/or modify
+ *  iba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Boa is distributed in the hope that it will be useful,
+ *  iba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Boa.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with iba.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 %{
@@ -54,6 +54,7 @@ char **all_types = NULL;
 %token ID
 %token INTEGER
 %token TYPE
+%token HASH
 %token ASSIGN
 %token EQ
 %token NE
@@ -78,7 +79,6 @@ char **all_types = NULL;
 %token QUOTE
 %token NEWLINE
 %token STRING
-%token RETURN
 
 %left EQ NE LT GE LE GT
 %left MINUS PLUS
@@ -110,6 +110,8 @@ stmts       : stmt                  {debug_puts("stmt"); $$ = $1;}
 
 newlines    : NEWLINE
             | NEWLINE newlines
+            | SEMICOLON newlines
+            | SEMICOLON
             ;
 
 maybe_newlines  : newlines
@@ -121,6 +123,9 @@ stmt        : expr newlines         {$$ = $1;}
             | assign_expr newlines  {$$ = $1;}
             | decl_func             {$$ = $1;}
             | THEN expr maybe_newlines  {$$ = make_return_node($2);}
+            ;
+
+comment:    | BEGIN_COMMENT END_COMMENT
             ;
 
 decl_func   : id ASSIGN params FAT_ARROW LBRACE newlines
@@ -153,11 +158,13 @@ params      : expr                  {$$ = $1;}
                                     }
             ;
 
-assign_expr : id ASSIGN expr        {$$ = make_assign_node(
-                                        $1,
-                                        $3,
-                                        NULL,
-                                        all_types);
+assign_expr : id ASSIGN expr        {
+                                        debug_puts("assign_expr");
+                                        $$ = make_assign_node(
+                                            $1,
+                                            $3,
+                                            NULL,
+                                            all_types);
                                     }
             | id COLON type ASSIGN expr {$$ = make_assign_node(
                                             $1,
@@ -169,9 +176,9 @@ assign_expr : id ASSIGN expr        {$$ = make_assign_node(
             ;
 
 if_stmt     : IF expr COLON maybe_newlines
-                  stmt
+                  stmts
               ELSE maybe_newlines
-                  stmt              {$$ = make_conditional_node($2, $5, $8);}
+                  stmts             {$$ = make_conditional_node($2, $5, $8);}
 
 expr        : expr PLUS expr        {
                                         debug_puts("making OP_PLUS");

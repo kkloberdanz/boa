@@ -16,7 +16,7 @@ enum BuiltinType {
     TYPE_LASTTYPE /* always keep this last */
 };
 
-struct BoaType {
+struct ibaType {
     char *repr;
     TypeId id;
 };

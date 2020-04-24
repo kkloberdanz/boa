@@ -1,18 +1,18 @@
 /*
- *     This file is part of Boa.
+ *     This file is part of iba.
  *
- *  Boa is free software: you can redistribute it and/or modify
+ *  iba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Boa is distributed in the hope that it will be useful,
+ *  iba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Boa.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with iba.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef AST_H
@@ -77,7 +77,7 @@ typedef struct ASTNode {
     struct ASTNode *sibling;
     ASTkind kind;
     Operator op;
-    struct BoaType type;
+    struct ibaType type;
 } ASTNode;
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);
@@ -107,7 +107,7 @@ ASTNode *make_ast_node(
     ASTNode *left,
     ASTNode *condition,
     ASTNode *right,
-    struct BoaType type
+    struct ibaType type
 );
 
 ASTNode *make_leaf_node(ParseObj *); /* just holds minic object */
