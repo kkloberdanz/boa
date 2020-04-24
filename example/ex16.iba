@@ -1,12 +1,12 @@
 collatz = n => {
     printd(n)
     if n == 1 {
-        1
+        return 1
     } else {
         if n % 2 == 0 {
-            collatz(n / 2)
+            return collatz(n / 2)
         } else {
-            collatz(3 * n + 1)
+            return collatz(3 * n + 1)
         }
     }
 }

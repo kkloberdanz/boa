@@ -51,6 +51,7 @@ string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
 "if"          { return IF; }
 "then"        { return THEN; }
 "else"        { return ELSE; }
+"return"      { return RETURN; }
 "("           { return LPAREN; }
 ")"           { return RPAREN; }
 "+"           { return PLUS; }
