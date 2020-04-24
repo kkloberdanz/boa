@@ -112,11 +112,15 @@ newlines    : NEWLINE
             | NEWLINE newlines
             ;
 
+maybe_newlines  : newlines
+                |
+                ;
+
 stmt        : expr newlines         {$$ = $1;}
             | if_stmt               {$$ = $1;}
             | assign_expr newlines  {$$ = $1;}
             | decl_func             {$$ = $1;}
-            | RETURN expr newlines  {$$ = make_return_node($2);}
+            | RETURN expr maybe_newlines  {$$ = make_return_node($2);}
             ;
 
 decl_func   : id ASSIGN params FAT_ARROW LBRACE newlines
@@ -164,15 +168,10 @@ assign_expr : id ASSIGN expr        {$$ = make_assign_node(
                                          }
             ;
 
-if_stmt     : IF expr LBRACE newlines
+if_stmt     : IF expr COLON maybe_newlines
                   stmt
-              RBRACE ELSE LBRACE newlines
-                  stmt
-              RBRACE newlines       {$$ = make_conditional_node($2, $5, $10);}
-            | IF expr LBRACE newlines
-                  stmt
-              RBRACE newlines       {$$ = make_conditional_node($2, $5, NULL);}
-            ;
+              ELSE maybe_newlines
+                  stmt              {$$ = make_conditional_node($2, $5, $8);}
 
 expr        : expr PLUS expr        {
                                         debug_puts("making OP_PLUS");
