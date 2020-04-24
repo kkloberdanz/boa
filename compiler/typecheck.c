@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <uthash.h>
 
 #include "ast.h"
 #include "typecheck.h"
 #include "typeinfo.h"
 #include "../util/util.h"
+#include "../util/uthash/include/uthash.h"
 
 struct EquivTypesSet {
     TypeId type_id; /* hash key */
