@@ -52,6 +52,7 @@ single_line_comment #(.*)
 "=>"          { return FAT_ARROW; }
 "if"          { return IF; }
 "then"        { return THEN; }
+"->"          { return SLIM_ARROW; }
 "else"        { return ELSE; }
 "("           { return LPAREN; }
 ")"           { return RPAREN; }

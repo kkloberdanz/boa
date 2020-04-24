@@ -42,10 +42,11 @@ char **all_types = NULL;
 %define parse.error verbose
 %define parse.lac full
 
+%token THEN
 %token ENDFILE
 %token ERROR
 %token IF
-%token THEN
+%token SLIM_ARROW
 %token ELSE
 %token ELIF
 %token PRINT
@@ -125,7 +126,7 @@ stmt        : expr newlines         {$$ = $1;}
             | if_stmt               {$$ = $1;}
             | assign_expr newlines  {$$ = $1;}
             | decl_func             {$$ = $1;}
-            | THEN expr maybe_newlines  {$$ = make_return_node($2);}
+            | SLIM_ARROW expr maybe_newlines  {$$ = make_return_node($2);}
             ;
 
 decl_func   : id ASSIGN params FAT_ARROW LBRACE newlines
