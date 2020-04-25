@@ -99,58 +99,91 @@ static int compile_iba(char *source_filename, char *output_filename) {
     return exit_code;
 }
 
+static int compile_c(const char *c_filename, char *exe_filename) {
+    int exit_code = 0;
+    const char *iba_cc = getenv("IBA_CC");
+    char buf[1500];
+
+    strcpy(exe_filename, c_filename);
+    c_filename_to_exe_filename(exe_filename);
+    if (!iba_cc) {
+        iba_cc = "cc";
+        fprintf(
+            stderr,
+            "\nenvironment variable IBA_CC not set, defaulting to cc\n\n"
+        );
+        sprintf(
+            buf,
+            "%s -fPIC -o %s %s libccruntime.a",
+            iba_cc,
+            exe_filename,
+            c_filename
+        );
+
+    } else if(!strcmp(iba_cc, "tcc")) {
+        sprintf(
+            buf,
+            "%s -fPIC -o %s %s libruntime.a",
+            iba_cc,
+            exe_filename,
+            c_filename
+        );
+
+    } else {
+        sprintf(
+            buf,
+            "%s -fPIC -static -o %s %s libruntime.a",
+            iba_cc,
+            exe_filename,
+            c_filename
+        );
+    }
+
+    exit_code = system(buf);
+    if (exit_code) {
+        fprintf(stderr, "failed to compile '%s'\n", exe_filename);
+        fprintf(stderr, "are you using the right C compiler?\n");
+        fprintf(stderr, "tried using: '%s'\n", iba_cc);
+        return exit_code;
+    }
+    return exit_code;
+}
+
+static int run_program(const char *exe_filename) {
+    char buf[1500];
+    int exit_code = 0;
+
+    sprintf(buf, "./%s", exe_filename);
+    exit_code = system(buf);
+    if (exit_code) {
+        perror("failed to run");
+        return exit_code;
+    }
+    return exit_code;
+}
+
 int main(int argc, char **argv) {
     int exit_code = 1;
     if (argc != 2) {
         fprintf(stderr, "usage: %s FILENAME\n", argv[0]);
         return 1;
     } else {
-        char buf[1500];
         char c_filename[500];
         char exe_filename[500];
         char *source_filename = argv[1];
-        const char *iba_cc = getenv("IBA_CC");
 
         exit_code = compile_iba(source_filename, c_filename);
         if (exit_code) {
-            fprintf(stderr, "failed to compiled\n");
+            fprintf(stderr, "failed to compile '%s'\n", source_filename);
             return exit_code;
         }
 
-        strcpy(exe_filename, c_filename);
-        c_filename_to_exe_filename(exe_filename);
-        if (!iba_cc) {
-            fprintf(
-                stderr,
-                "\nenvironment variable IBA_CC not set, defaulting to cc\n\n"
-            );
-            sprintf(
-                buf,
-                "cc -fPIC -o %s %s libccruntime.a",
-                exe_filename,
-                c_filename
-            );
-        } else {
-            sprintf(
-                buf,
-                "%s -fPIC -static -o %s %s libruntime.a",
-                iba_cc,
-                exe_filename,
-                c_filename
-            );
-        }
-        exit_code = system(buf);
+        exit_code = compile_c(c_filename, exe_filename);
         if (exit_code) {
-            perror("failed to compile");
-            exit(exit_code);
+            return exit_code;
         }
 
-        sprintf(buf, "./%s", exe_filename);
-        exit_code = system(buf);
-        if (exit_code) {
-            perror("failed to run");
-            exit(exit_code);
-        }
+        run_program(exe_filename);
         return exit_code;
     }
 }

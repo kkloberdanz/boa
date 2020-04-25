@@ -1,4 +1,5 @@
 CC ?= cc
+IBA_CC ?= cc
 
 STD ?= c89
 
@@ -11,6 +12,7 @@ CFLAGS ?= -fPIC
 .PHONY: release
 release: export OPTIM_FLAGS := -Os -static
 release: export CC := musl-gcc
+release: export IBA_CC := musl-gcc
 release: build
 
 .PHONY: dynamic
@@ -35,7 +37,7 @@ iba: y.tab.o lex.yy.o compiler/*.c util/*.c  compiler/*.h util/*.h
 		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
 
 libruntime.a: runtime/*.c runtime/*.h
-	$(CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
+	$(IBA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
 		-c runtime/runtime.c -o runtime.o
 	ar rcs libruntime.a runtime.o
 
