@@ -39,7 +39,10 @@ static bool is_iba_src_file(char *filename) {
 
 static void c_filename_to_exe_filename(char *filename) {
     while (*filename) {
-        if ((*filename == '.') && ((*(filename + 1)) == 'c') && ((*(filename + 2)) == '\0')) {
+        if ((*filename == '.') &&
+            ((*(filename + 1)) == 'c') &&
+            ((*(filename + 2)) == '\0')
+        ) {
             *filename = '\0';
             return;
         } else {
