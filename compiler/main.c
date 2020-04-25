@@ -80,19 +80,19 @@ static int compile_iba(char *source_filename, char *output_filename) {
         return exit_code;
     }
 
-    memcpy(output_filename, source_filename, len);
+    memcpy(output_filename, source_filename, len + 1);
     output_filename[len - 2] = 'c';
     output_filename[len - 1] = '\0';
-    output = fopen(output_filename, "w");
 
+    output = fopen(output_filename, "w");
     if (output == NULL) {
-        fprintf(stderr, "%s\n", "failed to open output file");
+        perror("failed to open output file");
         return 5;
     }
 
     exit_code = emit(output, tree);
     if (fclose(output) != 0) {
-        fprintf(stderr, "%s\n", "failed to close output file");
+        perror("failed to close output file");
         return 6;
     }
     iba_free_all();
@@ -109,16 +109,36 @@ int main(int argc, char **argv) {
         char c_filename[500];
         char exe_filename[500];
         char *source_filename = argv[1];
+        const char *iba_cc = getenv("IBA_CC");
+
         exit_code = compile_iba(source_filename, c_filename);
+        if (exit_code) {
+            fprintf(stderr, "failed to compiled\n");
+            return exit_code;
+        }
 
         strcpy(exe_filename, c_filename);
         c_filename_to_exe_filename(exe_filename);
-        sprintf(
-            buf,
-            "$IBA_CC -static -o %s %s libruntime.a",
-            exe_filename,
-            c_filename
-        );
+        if (!iba_cc) {
+            fprintf(
+                stderr,
+                "\nenvironment variable IBA_CC not set, defaulting to cc\n\n"
+            );
+            sprintf(
+                buf,
+                "cc -fPIC -o %s %s libccruntime.a",
+                exe_filename,
+                c_filename
+            );
+        } else {
+            sprintf(
+                buf,
+                "%s -fPIC -static -o %s %s libruntime.a",
+                iba_cc,
+                exe_filename,
+                c_filename
+            );
+        }
         exit_code = system(buf);
         if (exit_code) {
             perror("failed to compile");

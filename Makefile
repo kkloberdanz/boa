@@ -6,14 +6,16 @@ WARN_FLAGS ?= -Wall -Wextra -Wpedantic -Wno-padded
 
 INCLD ?= -I.
 
+CFLAGS ?= -fPIC
+
 .PHONY: release
-release: export OPTIM_FLAGS := -Os
+release: export OPTIM_FLAGS := -Os -static
+release: export CC := musl-gcc
 release: build
 
-.PHONY: static
-static: export OPTIM_FLAGS := -Os -static
-static: export CC := musl-gcc
-static: build
+.PHONY: dynamic
+dynamic: export OPTIM_FLAGS := -Os
+dynamic: build
 
 .PHONY: debug
 debug: export OPTIM_FLAGS := -O0 -ggdb -Werror
@@ -32,13 +34,18 @@ iba: y.tab.o lex.yy.o compiler/*.c util/*.c  compiler/*.h util/*.h
 		compiler/*.c util/*.c lex.yy.o y.tab.o \
 		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
 
-libruntime.a:
+libruntime.a: runtime/*.c runtime/*.h
 	$(CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
 		-c runtime/runtime.c -o runtime.o
 	ar rcs libruntime.a runtime.o
 
+libccruntime.a: runtime/*.c runtime/*.h
+	cc -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) -fPIC \
+		-c runtime/runtime.c -o ccruntime.o
+	ar rcs libccruntime.a ccruntime.o
+
 .PHONY: build
-build: iba libruntime.a
+build: iba libruntime.a libccruntime.a
 
 .PHONY: clean
 clean:
