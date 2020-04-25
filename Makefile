@@ -10,17 +10,17 @@ INCLD ?= -I.
 CFLAGS ?= -fPIC
 
 .PHONY: release
-release: export OPTIM_FLAGS := -Os -static
-release: export CC := musl-gcc
-release: export IBA_CC := musl-gcc
+release: export OPTIM_FLAGS ?= -Os -static
+release: export CC ?= musl-gcc
+release: export IBA_CC ?= musl-gcc
 release: build
 
 .PHONY: dynamic
-dynamic: export OPTIM_FLAGS := -Os
+dynamic: export OPTIM_FLAGS ?= -Os
 dynamic: build
 
 .PHONY: debug
-debug: export OPTIM_FLAGS := -O0 -ggdb -Werror
+debug: export OPTIM_FLAGS ?= -O0 -ggdb -Werror
 debug: build
 
 y.tab.o: grammar/grammar.y
@@ -53,7 +53,7 @@ build: iba libruntime.a libccruntime.a
 clean:
 	rm -rf bin
 	rm -f iba
-	rm -f libruntime.a runtime.o
+	rm -f libruntime.a runtime.o libccruntime.a
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
 	rm -f core
 	rm -f example/*.c
