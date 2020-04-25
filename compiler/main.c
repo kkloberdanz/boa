@@ -37,6 +37,17 @@ static bool is_iba_src_file(char *filename) {
         && filename[len] == 'a';
 }
 
+static void c_filename_to_exe_filename(char *filename) {
+    while (*filename) {
+        if ((*filename == '.') && ((*(filename + 1)) == 'c') && ((*(filename + 2)) == '\0')) {
+            *filename = '\0';
+            return;
+        } else {
+            filename++;
+        }
+    }
+}
+
 static int compile_iba(char *source_filename, char *output_filename) {
     FILE *source_file = NULL;
     FILE *output = NULL;
@@ -91,10 +102,19 @@ int main(int argc, char **argv) {
         fprintf(stderr, "usage: %s FILENAME\n", argv[0]);
         return 1;
     } else {
+        char buf[1500];
         char c_filename[1000];
+        char exe_filename[1000];
         char *source_filename = argv[1];
         exit_code = compile_iba(source_filename, c_filename);
-        /* TODO: compile and run *.c program */
+
+        strcpy(exe_filename, c_filename);
+        c_filename_to_exe_filename(exe_filename);
+        sprintf(buf, "tcc -o %s %s libruntime.a", exe_filename, c_filename);
+        system(buf);
+
+        sprintf(buf, "./%s", exe_filename);
+        system(buf);
         return exit_code;
     }
 }
