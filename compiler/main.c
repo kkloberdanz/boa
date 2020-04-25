@@ -26,7 +26,7 @@
 #include "codegen.h"
 #include "typecheck.h"
 
-static bool is_iba_src_file(char *filename) {
+static bool is_iba_src_file(const char *filename) {
     unsigned long len = strlen(filename) - 1;
     if (len < 5) {
         return false;
@@ -51,7 +51,7 @@ static void c_filename_to_exe_filename(char *filename) {
     }
 }
 
-static int compile_iba(char *source_filename, char *output_filename) {
+static int compile_iba(const char *source_filename, char *output_filename) {
     FILE *source_file = NULL;
     FILE *output = NULL;
     unsigned long len = strlen(source_filename) - 1;
@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
     } else {
         char c_filename[500];
         char exe_filename[500];
-        char *source_filename = argv[1];
+        const char *source_filename = argv[1];
 
         exit_code = compile_iba(source_filename, c_filename);
         if (exit_code) {
