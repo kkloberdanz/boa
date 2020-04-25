@@ -59,3 +59,4 @@ clean:
 	rm -f example/*.c
 	rm -f *.o
 	rm -f example/ex[0-9]+
+	rm -f ex[0-9]+

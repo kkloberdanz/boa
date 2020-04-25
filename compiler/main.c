@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <libgen.h>
 
 #include "ast.h"
 #include "../util/util.h"
@@ -37,16 +38,20 @@ static bool is_iba_src_file(const char *filename) {
         && filename[len] == 'a';
 }
 
-static void c_filename_to_exe_filename(char *filename) {
-    while (*filename) {
-        if ((*filename == '.') &&
-            ((*(filename + 1)) == 'c') &&
-            ((*(filename + 2)) == '\0')
+static void c_filename_to_exe_filename(char **filename) {
+    char *ptr;
+
+    *filename = basename(*filename);
+    ptr = *filename;
+    while (*ptr) {
+        if ((*ptr == '.') &&
+            ((*(ptr + 1)) == 'c') &&
+            ((*(ptr + 2)) == '\0')
         ) {
-            *filename = '\0';
+            *ptr = '\0';
             return;
         } else {
-            filename++;
+            ptr++;
         }
     }
 }
@@ -99,12 +104,12 @@ static int compile_iba(const char *source_filename, char *output_filename) {
     return exit_code;
 }
 
-static int compile_c(const char *c_filename, char *exe_filename) {
+static int compile_c(const char *c_filename, char **exe_filename) {
     int exit_code = 0;
     const char *iba_cc = getenv("IBA_CC");
     char buf[1500];
 
-    strcpy(exe_filename, c_filename);
+    strcpy(*exe_filename, c_filename);
     c_filename_to_exe_filename(exe_filename);
     if (!iba_cc) {
         iba_cc = "cc";
@@ -116,7 +121,7 @@ static int compile_c(const char *c_filename, char *exe_filename) {
             buf,
             "%s -fPIC -o %s %s libccruntime.a",
             iba_cc,
-            exe_filename,
+            *exe_filename,
             c_filename
         );
 
@@ -125,7 +130,7 @@ static int compile_c(const char *c_filename, char *exe_filename) {
             buf,
             "%s -fPIC -o %s %s libruntime.a",
             iba_cc,
-            exe_filename,
+            *exe_filename,
             c_filename
         );
 
@@ -134,14 +139,14 @@ static int compile_c(const char *c_filename, char *exe_filename) {
             buf,
             "%s -fPIC -static -o %s %s libruntime.a",
             iba_cc,
-            exe_filename,
+            *exe_filename,
             c_filename
         );
     }
 
     exit_code = system(buf);
     if (exit_code) {
-        fprintf(stderr, "failed to compile '%s'\n", exe_filename);
+        fprintf(stderr, "failed to compile '%s'\n", *exe_filename);
         fprintf(stderr, "are you using the right C compiler?\n");
         fprintf(stderr, "tried using: '%s'\n", iba_cc);
         return exit_code;
@@ -156,7 +161,7 @@ static int run_program(const char *exe_filename) {
     sprintf(buf, "./%s", exe_filename);
     exit_code = system(buf);
     if (exit_code) {
-        perror("failed to run");
+        fprintf(stderr, "failed to run: '%s'\n", exe_filename);
         return exit_code;
     }
     return exit_code;
@@ -169,7 +174,8 @@ int main(int argc, char **argv) {
         return 1;
     } else {
         char c_filename[500];
-        char exe_filename[500];
+        char buf[500];
+        char *exe_filename = buf;
         const char *source_filename = argv[1];
 
         exit_code = compile_iba(source_filename, c_filename);
@@ -178,7 +184,7 @@ int main(int argc, char **argv) {
             return exit_code;
         }
 
-        exit_code = compile_c(c_filename, exe_filename);
+        exit_code = compile_c(c_filename, &exe_filename);
         if (exit_code) {
             return exit_code;
         }
