@@ -29,6 +29,8 @@ int fileno(FILE *stream);
 char token_string[MAX_TOKEN_SIZE+1];
 %}
 
+%option noyywrap
+
 digit       [0-9]
 number      {digit}+
 letter      [a-zA-Z]

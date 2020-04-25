@@ -106,18 +106,31 @@ int main(int argc, char **argv) {
         return 1;
     } else {
         char buf[1500];
-        char c_filename[1000];
-        char exe_filename[1000];
+        char c_filename[500];
+        char exe_filename[500];
         char *source_filename = argv[1];
         exit_code = compile_iba(source_filename, c_filename);
 
         strcpy(exe_filename, c_filename);
         c_filename_to_exe_filename(exe_filename);
-        sprintf(buf, "tcc -o %s %s libruntime.a", exe_filename, c_filename);
-        system(buf);
+        sprintf(
+            buf,
+            "$IBA_CC -static -o %s %s libruntime.a",
+            exe_filename,
+            c_filename
+        );
+        exit_code = system(buf);
+        if (exit_code) {
+            perror("failed to compile");
+            exit(exit_code);
+        }
 
         sprintf(buf, "./%s", exe_filename);
-        system(buf);
+        exit_code = system(buf);
+        if (exit_code) {
+            perror("failed to run");
+            exit(exit_code);
+        }
         return exit_code;
     }
 }

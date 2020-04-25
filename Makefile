@@ -12,6 +12,7 @@ release: build
 
 .PHONY: static
 static: export OPTIM_FLAGS := -Os -static
+static: export CC := musl-gcc
 static: build
 
 .PHONY: debug
@@ -29,7 +30,7 @@ lex.yy.o: y.tab.o grammar/tokens.l
 iba: y.tab.o lex.yy.o compiler/*.c util/*.c  compiler/*.h util/*.h
 	$(CC) -std=$(STD) $(WARN_FLAGS) -o iba \
 		compiler/*.c util/*.c lex.yy.o y.tab.o \
-		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -lfl
+		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
 
 libruntime.a:
 	$(CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
