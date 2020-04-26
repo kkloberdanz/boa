@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-typedef long TypeId;
+typedef unsigned long TypeId;
 
 extern char *builtin_types[];
 
@@ -21,7 +21,7 @@ struct ibaType {
     TypeId id;
 };
 
-int string_repr_to_type_id(char *repr, char *all_types[]);
+TypeId string_repr_to_type_id(char *repr, char *all_types[]);
 
 char *iba_type_to_c_type(TypeId type_id);
 

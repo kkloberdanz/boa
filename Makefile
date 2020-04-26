@@ -15,6 +15,15 @@ static: export CC := musl-gcc
 static: export IBA_CC := musl-gcc
 static: build
 
+.PHONY: clang-warn-everything
+clang-warn-everything: export WARN_FLAGS := \
+	-Weverything \
+	-Wno-format-nonliteral \
+	-Wno-padded
+clang-warn-everything: export CC := clang
+clang-warn-everything: export IBA_CC := clang
+clang-warn-everything: dynamic
+
 .PHONY: dynamic
 dynamic: export OPTIM_FLAGS ?= -Os
 dynamic: export CC ?= cc
@@ -55,9 +64,6 @@ libruntime.a: runtime/*.c runtime/*.h
 	ar rcs libruntime.a runtime.o
 
 libccruntime.a: runtime/*.c runtime/*.h
-	cc -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) -fPIC \
-		-c runtime/runtime.c -o ccruntime.o
-	ar rcs libccruntime.a ccruntime.o
 
 .PHONY: build
 build: iba libruntime.a libccruntime.a

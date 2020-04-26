@@ -94,7 +94,7 @@ ASTNode *make_assign_node(
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
     struct ibaType type;
-    int type_id = TYPE_NOT_CHECKED;
+    TypeId type_id = TYPE_NOT_CHECKED;
     char *repr = "Void";
     if (type_node) {
         ParseObj *type_obj = type_node->obj;

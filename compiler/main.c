@@ -28,7 +28,7 @@
 #include "codegen.h"
 #include "typecheck.h"
 
-const char *program_name = "iba";
+static const char *program_name = "iba";
 
 static bool is_iba_src_file(const char *filename) {
     unsigned long len = strlen(filename) - 1;
@@ -225,8 +225,8 @@ static int run_program(const char *exe_filename) {
     return error_code;
 }
 
-static void print_usage(const char *program_name) {
-    fprintf(stderr, "%s: [-b] [-o outfile] infile\n\n", program_name);
+static void print_usage(const char *prg_name) {
+    fprintf(stderr, "%s: [-b] [-o outfile] infile\n\n", prg_name);
 
     fprintf(stderr, "        -b    Build only, don't run the iba program\n\n"
                     "        -o outfile\n"

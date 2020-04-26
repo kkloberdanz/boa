@@ -21,8 +21,8 @@ static char *c_types[] = {
     NULL
 };
 
-int string_repr_to_type_id(char *repr, char *all_types[]) {
-    int i;
+TypeId string_repr_to_type_id(char *repr, char *all_types[]) {
+    TypeId i;
     for (i = 0; all_types[i] != NULL; i++) {
         if (strcmp(repr, all_types[i]) == 0) {
             return i;
