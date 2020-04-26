@@ -114,7 +114,11 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     if (!iba_cc) {
         const char *fmt = "%s -fPIC -o %s %s libccruntime.a";
         buf = iba_malloc(
-            1 + strlen(fmt) + strlen(c_filename) + strlen(exe_filename)
+            1 +
+            strlen(fmt) +
+            strlen(c_filename) +
+            strlen(exe_filename) +
+            strlen(iba_cc)
         );
         iba_cc = "cc";
         fprintf(
@@ -132,7 +136,11 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     } else if (!strcmp(iba_cc, "tcc")) {
         const char *fmt = "%s -fPIC -o %s %s libruntime.a";
         buf = iba_malloc(
-            1 + strlen(fmt) + strlen(c_filename) + strlen(exe_filename)
+            1 +
+            strlen(fmt) +
+            strlen(c_filename) +
+            strlen(exe_filename) +
+            strlen(iba_cc)
         );
         sprintf(
             buf,
@@ -145,7 +153,11 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     } else {
         const char *fmt = "%s -fPIC -static -o %s %s libruntime.a";
         buf = iba_malloc(
-            1 + strlen(fmt) + strlen(c_filename) + strlen(exe_filename)
+            1 +
+            strlen(fmt) +
+            strlen(c_filename) +
+            strlen(exe_filename) +
+            strlen(iba_cc)
         );
         sprintf(
             buf,
@@ -158,14 +170,29 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 
     error_code = system(buf);
     if (error_code) {
+        const char *fmt = "%s -fPIC -o %s %s libccruntime.a";
+
         fprintf(stderr, "failed to compile '%s'\n", exe_filename);
         fprintf(stderr, "are you using the right C compiler?\n");
         fprintf(stderr, "tried using: '%s'\n", iba_cc);
         fprintf(stderr, "\nfailed default compilation, using fallback\n");
         iba_cc = "cc";
+
+        buf = iba_malloc(
+            1 +
+            strlen(fmt) +
+            strlen(c_filename) +
+            strlen(exe_filename) +
+            strlen(iba_cc)
+        );
+        iba_cc = "cc";
+        fprintf(
+            stderr,
+            "\nenvironment variable IBA_CC not set, defaulting to cc\n\n"
+        );
         sprintf(
             buf,
-            "%s -fPIC -o %s %s libccruntime.a",
+            fmt,
             iba_cc,
             exe_filename,
             c_filename
