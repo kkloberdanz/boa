@@ -20,8 +20,12 @@ dynamic: export OPTIM_FLAGS ?= -Os
 dynamic: build
 
 .PHONY: debug
-debug: export OPTIM_FLAGS ?= -O0 -ggdb -Werror
+debug: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
 debug: build
+
+.PHONY: valgrind
+valgrind: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
+valgrind: build run-valgrind
 
 y.tab.o: grammar/grammar.y
 	yacc -y -d grammar/grammar.y
@@ -48,6 +52,10 @@ libccruntime.a: runtime/*.c runtime/*.h
 
 .PHONY: build
 build: iba libruntime.a libccruntime.a
+
+.PHONY: run-valgrind
+run-valgrind:
+	valgrind ./iba -b example/ex16.iba
 
 .PHONY: clean
 clean:

@@ -20,7 +20,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <libgen.h>
-#include <unistd.h>
+#include <getopt.h>
 
 #include "ast.h"
 #include "../util/util.h"
@@ -103,7 +103,6 @@ static int compile_iba(const char *source_filename, char *output_filename) {
         perror("failed to close output file");
         return 6;
     }
-    iba_free_all();
     return exit_code;
 }
 
@@ -126,7 +125,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
             c_filename
         );
 
-    } else if(!strcmp(iba_cc, "tcc")) {
+    } else if (!strcmp(iba_cc, "tcc")) {
         sprintf(
             buf,
             "%s -fPIC -o %s %s libruntime.a",
@@ -229,5 +228,6 @@ int main(int argc, char **argv) {
     if (!build_only) {
         run_program(exe_filename);
     }
+    iba_free_all();
     return exit_code;
 }
