@@ -149,7 +149,23 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         fprintf(stderr, "failed to compile '%s'\n", exe_filename);
         fprintf(stderr, "are you using the right C compiler?\n");
         fprintf(stderr, "tried using: '%s'\n", iba_cc);
-        return exit_code;
+        fprintf(stderr, "\nfailed default compilation, using fallback\n");
+        iba_cc = "cc";
+        sprintf(
+            buf,
+            "%s -fPIC -o %s %s libccruntime.a",
+            iba_cc,
+            exe_filename,
+            c_filename
+        );
+
+        exit_code = system(buf);
+        if (exit_code) {
+            fprintf(stderr, "failed to compile '%s'\n", exe_filename);
+            fprintf(stderr, "are you using the right C compiler?\n");
+            fprintf(stderr, "tried using: '%s'\n", iba_cc);
+            return exit_code;
+        }
     }
     return exit_code;
 }
