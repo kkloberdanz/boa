@@ -113,6 +113,8 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 
     if (!iba_cc) {
         const char *fmt = "%s -fPIC -o %s %s libccruntime.a";
+        iba_cc = "cc";
+
         buf = iba_malloc(
             1 +
             strlen(fmt) +
@@ -120,7 +122,6 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
             strlen(exe_filename) +
             strlen(iba_cc)
         );
-        iba_cc = "cc";
         fprintf(
             stderr,
             "\nenvironment variable IBA_CC not set, defaulting to cc\n\n"
