@@ -20,12 +20,15 @@
 #include <stdbool.h>
 #include <string.h>
 #include <libgen.h>
+#include <unistd.h>
 
 #include "ast.h"
 #include "../util/util.h"
 #include "../util/memory.h"
 #include "codegen.h"
 #include "typecheck.h"
+
+const char *program_name = "iba";
 
 static bool is_iba_src_file(const char *filename) {
     unsigned long len = strlen(filename) - 1;
@@ -104,13 +107,11 @@ static int compile_iba(const char *source_filename, char *output_filename) {
     return exit_code;
 }
 
-static int compile_c(const char *c_filename, char **exe_filename) {
+static int compile_c(const char *c_filename, const char *exe_filename) {
     int exit_code = 0;
     const char *iba_cc = getenv("IBA_CC");
     char buf[1500];
 
-    strcpy(*exe_filename, c_filename);
-    c_filename_to_exe_filename(exe_filename);
     if (!iba_cc) {
         iba_cc = "cc";
         fprintf(
@@ -121,7 +122,7 @@ static int compile_c(const char *c_filename, char **exe_filename) {
             buf,
             "%s -fPIC -o %s %s libccruntime.a",
             iba_cc,
-            *exe_filename,
+            exe_filename,
             c_filename
         );
 
@@ -130,7 +131,7 @@ static int compile_c(const char *c_filename, char **exe_filename) {
             buf,
             "%s -fPIC -o %s %s libruntime.a",
             iba_cc,
-            *exe_filename,
+            exe_filename,
             c_filename
         );
 
@@ -139,14 +140,14 @@ static int compile_c(const char *c_filename, char **exe_filename) {
             buf,
             "%s -fPIC -static -o %s %s libruntime.a",
             iba_cc,
-            *exe_filename,
+            exe_filename,
             c_filename
         );
     }
 
     exit_code = system(buf);
     if (exit_code) {
-        fprintf(stderr, "failed to compile '%s'\n", *exe_filename);
+        fprintf(stderr, "failed to compile '%s'\n", exe_filename);
         fprintf(stderr, "are you using the right C compiler?\n");
         fprintf(stderr, "tried using: '%s'\n", iba_cc);
         return exit_code;
@@ -167,29 +168,64 @@ static int run_program(const char *exe_filename) {
     return exit_code;
 }
 
+static void print_usage(const char *program_name) {
+    fprintf(stderr, "%s: [-b] [-o outfile] infile\n\n", program_name);
+
+    fprintf(stderr, "        -b    Build only, don't run the iba program\n");
+    fprintf(stderr, "        -o    Instead of the default output filename,\n"
+                    "              write binary to outfile\n");
+}
+
 int main(int argc, char **argv) {
     int exit_code = 1;
-    if (argc != 2) {
-        fprintf(stderr, "usage: %s FILENAME\n", argv[0]);
-        return 1;
+    char c_filename[500];
+    const char *source_filename;
+    int opt;
+    char *exe_filename = NULL;
+    char build_only = 0;
+
+    while ((opt = getopt(argc, argv, "bo:")) != -1) {
+        switch (opt) {
+            case 'b':
+                build_only = 1;
+                break;
+
+            case 'o':
+                exe_filename = optarg;
+                break;
+
+            default:
+                print_usage(program_name);
+                return EXIT_FAILURE;
+        }
+    }
+
+    if (optind >= argc) {
+        fprintf(stderr, "no iba source file provided\n");
+        print_usage(program_name);
+        return EXIT_FAILURE;
     } else {
-        char c_filename[500];
-        char buf[500];
-        char *exe_filename = buf;
-        const char *source_filename = argv[1];
+        source_filename = argv[optind];
+    }
 
-        exit_code = compile_iba(source_filename, c_filename);
-        if (exit_code) {
-            fprintf(stderr, "failed to compile '%s'\n", source_filename);
-            return exit_code;
-        }
-
-        exit_code = compile_c(c_filename, &exe_filename);
-        if (exit_code) {
-            return exit_code;
-        }
-
-        run_program(exe_filename);
+    exit_code = compile_iba(source_filename, c_filename);
+    if (exit_code) {
+        fprintf(stderr, "failed to compile '%s'\n", source_filename);
         return exit_code;
     }
+
+    if (!exe_filename) {
+        exe_filename = make_string(c_filename);
+        c_filename_to_exe_filename(&exe_filename);
+    }
+
+    exit_code = compile_c(c_filename, exe_filename);
+    if (exit_code) {
+        return exit_code;
+    }
+
+    if (!build_only) {
+        run_program(exe_filename);
+    }
+    return exit_code;
 }
