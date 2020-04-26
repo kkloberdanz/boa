@@ -5,7 +5,7 @@
 #include "util.h"
 #include "../util/memory.h"
 
-char *make_string(char *str) {
+char *make_string(const char *str) {
     unsigned long len = strlen(str);
     char *buf = iba_malloc((1 + len) * sizeof(char));
     memcpy(buf, str, len + 1);

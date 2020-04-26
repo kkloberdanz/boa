@@ -59,7 +59,7 @@ static void c_filename_to_exe_filename(char **filename) {
     }
 }
 
-static int compile_iba(const char *source_filename, char *output_filename) {
+static int compile_iba(const char *source_filename, char **output_filename) {
     FILE *source_file = NULL;
     FILE *output = NULL;
     unsigned long len = strlen(source_filename) - 1;
@@ -88,11 +88,11 @@ static int compile_iba(const char *source_filename, char *output_filename) {
         return error_code;
     }
 
-    memcpy(output_filename, source_filename, len + 1);
-    output_filename[len - 2] = 'c';
-    output_filename[len - 1] = '\0';
+    *output_filename = make_string(source_filename);
+    (*output_filename)[len - 2] = 'c';
+    (*output_filename)[len - 1] = '\0';
 
-    output = fopen(output_filename, "w");
+    output = fopen(*output_filename, "w");
     if (output == NULL) {
         perror("failed to open output file");
         return 5;
@@ -109,9 +109,13 @@ static int compile_iba(const char *source_filename, char *output_filename) {
 static int compile_c(const char *c_filename, const char *exe_filename) {
     int error_code = 0;
     const char *iba_cc = getenv("IBA_CC");
-    char buf[1500];
+    char *buf;
 
     if (!iba_cc) {
+        const char *fmt = "%s -fPIC -o %s %s libccruntime.a";
+        buf = iba_malloc(
+            1 + strlen(fmt) + strlen(c_filename) + strlen(exe_filename)
+        );
         iba_cc = "cc";
         fprintf(
             stderr,
@@ -119,25 +123,33 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         );
         sprintf(
             buf,
-            "%s -fPIC -o %s %s libccruntime.a",
+            fmt,
             iba_cc,
             exe_filename,
             c_filename
         );
 
     } else if (!strcmp(iba_cc, "tcc")) {
+        const char *fmt = "%s -fPIC -o %s %s libruntime.a";
+        buf = iba_malloc(
+            1 + strlen(fmt) + strlen(c_filename) + strlen(exe_filename)
+        );
         sprintf(
             buf,
-            "%s -fPIC -o %s %s libruntime.a",
+            fmt,
             iba_cc,
             exe_filename,
             c_filename
         );
 
     } else {
+        const char *fmt = "%s -fPIC -static -o %s %s libruntime.a";
+        buf = iba_malloc(
+            1 + strlen(fmt) + strlen(c_filename) + strlen(exe_filename)
+        );
         sprintf(
             buf,
-            "%s -fPIC -static -o %s %s libruntime.a",
+            fmt,
             iba_cc,
             exe_filename,
             c_filename
@@ -171,10 +183,12 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 }
 
 static int run_program(const char *exe_filename) {
-    char buf[1500];
+    char *buf;
+    const char *fmt = "./%s";
     int error_code = 0;
 
-    sprintf(buf, "./%s", exe_filename);
+    buf = iba_malloc(1 + strlen(fmt) + strlen(exe_filename));
+    sprintf(buf, fmt, exe_filename);
     error_code = system(buf);
     if (error_code) {
         fprintf(stderr, "failed to run: '%s'\n", exe_filename);
@@ -195,7 +209,7 @@ static void print_usage(const char *program_name) {
 
 static int run(int argc, char **argv) {
     int error_code = 1;
-    char c_filename[500];
+    char *c_filename = NULL;
     const char *source_filename;
     int opt;
     char *exe_filename = NULL;
@@ -225,7 +239,7 @@ static int run(int argc, char **argv) {
         source_filename = argv[optind];
     }
 
-    error_code = compile_iba(source_filename, c_filename);
+    error_code = compile_iba(source_filename, &c_filename);
     if (error_code) {
         fprintf(stderr, "failed to compile '%s'\n", source_filename);
         return error_code;
