@@ -1,6 +1,3 @@
-CC ?= cc
-IBA_CC ?= cc
-
 STD ?= c89
 
 WARN_FLAGS ?= -Wall -Wextra -Wpedantic -Wno-padded
@@ -10,24 +7,34 @@ INCLD ?= -I.
 CFLAGS ?= -fPIC
 
 .PHONY: release
-release: export OPTIM_FLAGS ?= -Os -static
-release: export CC ?= musl-gcc
-release: export IBA_CC ?= musl-gcc
-release: build
+release: static
+
+.PHONY: static
+static: export OPTIM_FLAGS ?= -Os -static
+static: export CC := musl-gcc
+static: export IBA_CC := musl-gcc
+static: build
 
 .PHONY: dynamic
 dynamic: export OPTIM_FLAGS ?= -Os
+dynamic: export CC ?= cc
+dynamic: export IBA_CC ?= cc
 dynamic: build
 
 .PHONY: debug
 debug: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
+debug: export CC ?= cc
+debug: export IBA_CC ?= cc
 debug: build
 
 .PHONY: valgrind
 valgrind: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
+valgrind: export CC ?= cc
+valgrind: export IBA_CC ?= cc
 valgrind: run-valgrind
 
-COMPILER_SRC = compiler/*.c util/*.c  compiler/*.h util/*.h
+COMPILER_DEPS = compiler/*.c util/*.c  compiler/*.h util/*.h
+COMPILER_SRC = compiler/*.c util/*.c
 
 y.tab.o: grammar/grammar.y
 	yacc -y -d grammar/grammar.y
@@ -37,7 +44,7 @@ lex.yy.o: y.tab.o grammar/tokens.l
 	lex grammar/tokens.l
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -c lex.yy.c -o lex.yy.o
 
-iba: y.tab.o lex.yy.o $(COMPILER_SRC)
+iba: y.tab.o lex.yy.o $(COMPILER_DEPS)
 	$(CC) -std=$(STD) $(WARN_FLAGS) -o iba \
 		$(COMPILER_SRC) lex.yy.o y.tab.o \
 		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
