@@ -171,9 +171,11 @@ static int run_program(const char *exe_filename) {
 static void print_usage(const char *program_name) {
     fprintf(stderr, "%s: [-b] [-o outfile] infile\n\n", program_name);
 
-    fprintf(stderr, "        -b    Build only, don't run the iba program\n");
-    fprintf(stderr, "        -o    Instead of the default output filename,\n"
-                    "              write binary to outfile\n");
+    fprintf(stderr, "        -b    Build only, don't run the iba program\n\n"
+                    "        -o outfile\n"
+                    "              Instead of the default output filename,\n"
+                    "              write binary to outfile\n\n"
+    );
 }
 
 int main(int argc, char **argv) {
