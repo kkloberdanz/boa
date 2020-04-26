@@ -27,6 +27,8 @@ debug: build
 valgrind: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
 valgrind: run-valgrind
 
+COMPILER_SRC = compiler/*.c util/*.c  compiler/*.h util/*.h
+
 y.tab.o: grammar/grammar.y
 	yacc -y -d grammar/grammar.y
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -c y.tab.c -o y.tab.o
@@ -35,9 +37,9 @@ lex.yy.o: y.tab.o grammar/tokens.l
 	lex grammar/tokens.l
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -c lex.yy.c -o lex.yy.o
 
-iba: y.tab.o lex.yy.o compiler/*.c util/*.c  compiler/*.h util/*.h
+iba: y.tab.o lex.yy.o $(COMPILER_SRC)
 	$(CC) -std=$(STD) $(WARN_FLAGS) -o iba \
-		compiler/*.c util/*.c lex.yy.o y.tab.o \
+		$(COMPILER_SRC) lex.yy.o y.tab.o \
 		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
 
 libruntime.a: runtime/*.c runtime/*.h

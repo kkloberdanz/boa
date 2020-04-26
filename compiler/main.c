@@ -112,7 +112,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     char *buf;
 
     if (!iba_cc) {
-        const char *fmt = "%s -fPIC -o %s %s libccruntime.a";
+        const char *fmt = "%s -Os -fPIC -o %s %s libccruntime.a";
         iba_cc = "cc";
 
         buf = iba_malloc(
@@ -135,7 +135,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         );
 
     } else if (!strcmp(iba_cc, "tcc")) {
-        const char *fmt = "%s -fPIC -o %s %s libruntime.a";
+        const char *fmt = "%s -Os -fPIC -o %s %s libruntime.a";
         buf = iba_malloc(
             1 +
             strlen(fmt) +
@@ -152,7 +152,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         );
 
     } else {
-        const char *fmt = "%s -fPIC -static -o %s %s libruntime.a";
+        const char *fmt = "%s -Os -fPIC -static -o %s %s libruntime.a";
         buf = iba_malloc(
             1 +
             strlen(fmt) +
@@ -171,7 +171,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 
     error_code = system(buf);
     if (error_code) {
-        const char *fmt = "%s -fPIC -o %s %s libccruntime.a";
+        const char *fmt = "%s -Os -fPIC -o %s %s libccruntime.a";
 
         fprintf(stderr, "failed to compile '%s'\n", exe_filename);
         fprintf(stderr, "are you using the right C compiler?\n");
