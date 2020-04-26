@@ -122,10 +122,10 @@ maybe_newlines  : newlines
                 |
                 ;
 
-stmt        : expr newlines         {$$ = $1;}
-            | if_stmt               {$$ = $1;}
-            | assign_expr newlines  {$$ = $1;}
-            | decl_func             {$$ = $1;}
+stmt        : expr newlines                   {$$ = $1;}
+            | if_expr maybe_newlines          {$$ = $1;}
+            | assign_expr newlines            {$$ = $1;}
+            | decl_func                       {$$ = $1;}
             | SLIM_ARROW expr maybe_newlines  {$$ = make_return_node($2);}
             ;
 
@@ -176,7 +176,7 @@ assign_expr : id ASSIGN expr        {
                                          }
             ;
 
-if_stmt     : IF expr COLON maybe_newlines
+if_expr     : IF expr COLON maybe_newlines
                   stmts
               ELSE maybe_newlines
                   stmts             {$$ = make_conditional_node($2, $5, $8);}
