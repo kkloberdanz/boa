@@ -59,7 +59,7 @@ run-valgrind: build
 
 .PHONY: clean
 clean:
-	rm -rf bin
+	rm -rf bin/*
 	rm -f iba
 	rm -f libruntime.a runtime.o libccruntime.a
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
