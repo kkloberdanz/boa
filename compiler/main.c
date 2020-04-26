@@ -63,7 +63,7 @@ static int compile_iba(const char *source_filename, char *output_filename) {
     FILE *source_file = NULL;
     FILE *output = NULL;
     unsigned long len = strlen(source_filename) - 1;
-    int exit_code = 1;
+    int error_code = 1;
     ASTNode *tree = NULL;
 
     if (!is_iba_src_file(source_filename)) {
@@ -83,9 +83,9 @@ static int compile_iba(const char *source_filename, char *output_filename) {
         return 4;
     }
 
-    exit_code = typecheck(tree);
-    if (exit_code) {
-        return exit_code;
+    error_code = typecheck(tree);
+    if (error_code) {
+        return error_code;
     }
 
     memcpy(output_filename, source_filename, len + 1);
@@ -98,16 +98,16 @@ static int compile_iba(const char *source_filename, char *output_filename) {
         return 5;
     }
 
-    exit_code = emit(output, tree);
+    error_code = emit(output, tree);
     if (fclose(output) != 0) {
         perror("failed to close output file");
         return 6;
     }
-    return exit_code;
+    return error_code;
 }
 
 static int compile_c(const char *c_filename, const char *exe_filename) {
-    int exit_code = 0;
+    int error_code = 0;
     const char *iba_cc = getenv("IBA_CC");
     char buf[1500];
 
@@ -144,8 +144,8 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         );
     }
 
-    exit_code = system(buf);
-    if (exit_code) {
+    error_code = system(buf);
+    if (error_code) {
         fprintf(stderr, "failed to compile '%s'\n", exe_filename);
         fprintf(stderr, "are you using the right C compiler?\n");
         fprintf(stderr, "tried using: '%s'\n", iba_cc);
@@ -159,28 +159,28 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
             c_filename
         );
 
-        exit_code = system(buf);
-        if (exit_code) {
+        error_code = system(buf);
+        if (error_code) {
             fprintf(stderr, "failed to compile '%s'\n", exe_filename);
             fprintf(stderr, "are you using the right C compiler?\n");
             fprintf(stderr, "tried using: '%s'\n", iba_cc);
-            return exit_code;
+            return error_code;
         }
     }
-    return exit_code;
+    return error_code;
 }
 
 static int run_program(const char *exe_filename) {
     char buf[1500];
-    int exit_code = 0;
+    int error_code = 0;
 
     sprintf(buf, "./%s", exe_filename);
-    exit_code = system(buf);
-    if (exit_code) {
+    error_code = system(buf);
+    if (error_code) {
         fprintf(stderr, "failed to run: '%s'\n", exe_filename);
-        return exit_code;
+        return error_code;
     }
-    return exit_code;
+    return error_code;
 }
 
 static void print_usage(const char *program_name) {
@@ -193,8 +193,8 @@ static void print_usage(const char *program_name) {
     );
 }
 
-int main(int argc, char **argv) {
-    int exit_code = 1;
+static int run(int argc, char **argv) {
+    int error_code = 1;
     char c_filename[500];
     const char *source_filename;
     int opt;
@@ -225,10 +225,10 @@ int main(int argc, char **argv) {
         source_filename = argv[optind];
     }
 
-    exit_code = compile_iba(source_filename, c_filename);
-    if (exit_code) {
+    error_code = compile_iba(source_filename, c_filename);
+    if (error_code) {
         fprintf(stderr, "failed to compile '%s'\n", source_filename);
-        return exit_code;
+        return error_code;
     }
 
     if (!exe_filename) {
@@ -236,14 +236,19 @@ int main(int argc, char **argv) {
         c_filename_to_exe_filename(&exe_filename);
     }
 
-    exit_code = compile_c(c_filename, exe_filename);
-    if (exit_code) {
-        return exit_code;
+    error_code = compile_c(c_filename, exe_filename);
+    if (error_code) {
+        return error_code;
     }
 
     if (!build_only) {
         run_program(exe_filename);
     }
+    return error_code;
+}
+
+int main(int argc, char **argv) {
+    int error_code = run(argc, argv);
     iba_free_all();
-    return exit_code;
+    return error_code;
 }
