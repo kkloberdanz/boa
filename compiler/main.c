@@ -243,11 +243,15 @@ static int run(int argc, char **argv) {
     char *exe_filename = NULL;
     char build_only = 0;
 
-    while ((opt = getopt(argc, argv, "bo:")) != -1) {
+    while ((opt = getopt(argc, argv, "bho:")) != -1) {
         switch (opt) {
             case 'b':
                 build_only = 1;
                 break;
+
+            case 'h':
+                print_usage(program_name);
+                exit(EXIT_SUCCESS);
 
             case 'o':
                 exe_filename = optarg;
