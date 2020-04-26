@@ -64,6 +64,9 @@ libruntime.a: runtime/*.c runtime/*.h
 	ar rcs libruntime.a runtime.o
 
 libccruntime.a: runtime/*.c runtime/*.h
+	cc -std=$(STD) $(OPTIM_FLAGS) $(INCLD) -fPIC \
+		-c runtime/runtime.c -o ccruntime.o
+	ar rcs libccruntime.a ccruntime.o
 
 .PHONY: build
 build: iba libruntime.a libccruntime.a
