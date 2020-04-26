@@ -25,7 +25,7 @@ debug: build
 
 .PHONY: valgrind
 valgrind: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
-valgrind: build run-valgrind
+valgrind: run-valgrind
 
 y.tab.o: grammar/grammar.y
 	yacc -y -d grammar/grammar.y
@@ -54,8 +54,8 @@ libccruntime.a: runtime/*.c runtime/*.h
 build: iba libruntime.a libccruntime.a
 
 .PHONY: run-valgrind
-run-valgrind:
-	valgrind ./iba -b example/ex16.iba
+run-valgrind: build
+	valgrind ./iba -b -o bin/ex16 example/ex16.iba
 
 .PHONY: clean
 clean:
