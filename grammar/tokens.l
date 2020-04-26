@@ -77,7 +77,7 @@ single_line_comment #(.*)
 {whitespace}  { /* do nothing */; }
 {string}      { return STRING; }
 {comment}     { /* do nothing */; }
-{single_line_comment}     { yylineno++; }
+{single_line_comment}     { /* do nothing */ }
 .             { return ERROR; }
 
 %%
