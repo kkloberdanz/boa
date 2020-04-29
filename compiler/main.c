@@ -226,7 +226,7 @@ static int run_program(const char *exe_filename) {
 }
 
 static void print_usage(const char *prg_name) {
-    fprintf(stderr, "%s: [-b] [-o outfile] infile\n\n", prg_name);
+    fprintf(stderr, "\n\n%s: [-b] [-o outfile] infile\n\n", prg_name);
 
     fprintf(stderr, "        -b    Build only, don't run the iba program\n\n"
                     "        -o outfile\n"
