@@ -26,7 +26,6 @@ static void state_init(struct State *state) {
     state->equiv_types = malloc(sizeof(struct Set) * capacity);
 
     for (i = 0; i < capacity; i++) {
-        printf("initializing equiv_types[%lu]\n", i);
         state->equiv_types[i] = NULL;
         state->concrete_types[i] = TYPE_NOT_CHECKED;
     }
@@ -70,7 +69,6 @@ static void add_equivalent_type(
         );
 
         for (i = old_capacity; i < state->capacity; i++) {
-            printf("initializing equiv_types[%lu]\n", i);
             state->equiv_types[i] = NULL;
             state->concrete_types[i] = TYPE_NOT_CHECKED;
         }
@@ -78,7 +76,6 @@ static void add_equivalent_type(
 
     same_type_as_parent = state->equiv_types[parent_type];
 
-    fprintf(stderr, "adding equiv: %lu, parent, %lu\n", equiv_type, parent_type);
     state->equiv_types[parent_type] = set_insert(same_type_as_parent, equiv_type);
 }
 /*****************************************************************************/
@@ -164,13 +161,15 @@ int main(void) {
     for (i = 0; i < 4; i++) {
         for (j = 0; equivs[i][j] != 0; j++) {
             TypeId equiv_type = equivs[i][j];
-            fprintf(stderr, "T(%lu) := T(%lu)\n", types[i], equiv_type);
+            printf("T(%lu) := T(%lu)\n", types[i], equiv_type);
             add_equivalent_type(&state, types[i], equiv_type);
         }
     }
 
+    puts("");
     for (i = 0; i < 4; i++) {
         struct Set *set = state.equiv_types[types[i]];
+        printf("T(%lu) := ", types[i]);
         set_print(set);
     }
 
