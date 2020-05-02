@@ -6,12 +6,10 @@ struct Set {
     struct Set *right;
 };
 
-void set_insert(struct Set *set, TypeId id);
-
-void set_rec_print(struct Set *set);
+struct Set *set_insert(struct Set *root, TypeId id);
 
 void set_print(struct Set *set);
 
 int set_contains(struct Set *set, TypeId id);
 
-void set_init(struct Set *set);
+struct Set *set_new(TypeId id);

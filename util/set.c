@@ -2,41 +2,46 @@
 #include <stdlib.h>
 
 #include "../compiler/typeinfo.h"
-#include "memory.h"
 #include "set.h"
 
-void set_insert(struct Set *set, TypeId id) {
-    while (set) {
-        if (id < set->id) {
-            if (set->left) {
-                set = set->left;
-            } else {
-                set->left = iba_malloc(sizeof(struct Set));
-                set = set->left;
-                set->id = id;
-                set->right = NULL;
-                return;
-            }
-        } else if (id > set->id) {
-            if (set->right) {
-                set = set->right;
-            } else {
-                set->right = iba_malloc(sizeof(struct Set));
-                set = set->right;
-                set->id = id;
-                set->left = NULL;
-                return;
-            }
-        } else {
-            return;
-        }
-    }
+struct Set *set_new(TypeId id) {
+    struct Set *set = malloc(sizeof(*set));
+    set->right = NULL;
+    set->left = NULL;
+    set->id = id;
+    return set;
 }
 
-void set_rec_print(struct Set *set) {
+struct Set *set_insert(struct Set *root, TypeId id) {
+    struct Set *node = root;
+    if (node == NULL) {
+        return set_new(id);
+    }
+_tail_insert:
+    if (node->id < id) {
+        if (node->right == NULL) {
+            node->right = set_new(id);
+        } else {
+            node = node->right;
+            goto _tail_insert;
+        }
+    } else if (node->id > id) {
+        if (node->left == NULL) {
+            node->left = set_new(id);
+        } else {
+            node = node->left;
+            goto _tail_insert;
+        }
+    } else {
+        /* done */
+    }
+    return root;
+}
+
+static void set_rec_print(struct Set *set) {
     if (set) {
         set_rec_print(set->left);
-        printf("%lu ", set->id);
+        fprintf(stderr, "%lu ", set->id);
         set_rec_print(set->right);
     }
 }
@@ -59,31 +64,35 @@ int set_contains(struct Set *set, TypeId id) {
     return 0;
 }
 
-void set_init(struct Set *set) {
-    set->left = NULL;
-    set->right = NULL;
-    set->id = 0;
+void set_free(struct Set *set) {
+    if (set) {
+        set_free(set->left);
+        set_free(set->right);
+        free(set);
+    }
 }
 
 #ifdef IBA_SET_TEST
-int main() {
+int main(void) {
     size_t i;
-    struct Set set;
-    set_init(&set);
-    int arr[] = {4, 6, 3, 7, 9, 1, 4, 11};
+    int arr[] = {0, 1, 4, 6, 3, 7, 9, 1, 4, 11, 2};
+    struct Set *set = NULL;
+
     for (i = 0; i < (sizeof(arr) / sizeof(int)); i++) {
-        set_insert(&set, arr[i]);
-        set_print(&set);
+        fprintf(stderr, "inserting: %d\n", arr[i]);
+        set = set_insert(set, arr[i]);
+        //set_print(&set);
     }
 
-    set_print(&set);
+    set_print(set);
     for (i = 0; i < 20; i++) {
-        if (set_contains(&set, i)) {
-            printf("set contains: %d\n", (int)i);
+        if (set_contains(set, i)) {
+            fprintf(stderr, "set contains: %d\n", (int)i);
         }
     }
 
-    iba_free_all();
+    set_free(set);
+
     return 0;
 }
 #endif /* IBA_SET_TEST */
