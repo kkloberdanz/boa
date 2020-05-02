@@ -22,7 +22,7 @@ clang-warn-everything: export WARN_FLAGS := \
 	-Wno-padded
 clang-warn-everything: export CC := clang
 clang-warn-everything: export IBA_CC := clang
-clang-warn-everything: dynamic
+clang-warn-everything: build
 
 .PHONY: dynamic
 dynamic: export OPTIM_FLAGS ?= -Os
