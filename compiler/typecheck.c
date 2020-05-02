@@ -163,5 +163,8 @@ int main(void) {
         set_print(set);
         set_free(set);
     }
+
+    free(state.equiv_types);
+    free(state.concrete_types);
 }
 #endif
