@@ -31,6 +31,17 @@ static void state_init(struct State *state) {
         state->concrete_types[i] = TYPE_NOT_CHECKED;
     }
 }
+
+static void state_free(struct State *state) {
+    size_t i;
+    for (i = 0; i < state->capacity; i++) {
+        struct Set *set = state->equiv_types[i];
+        set_free(set);
+    }
+
+    free(state->equiv_types);
+    free(state->concrete_types);
+}
 /*****************************************************************************/
 
 /* type equivalency **********************************************************/
@@ -161,10 +172,8 @@ int main(void) {
     for (i = 0; i < 4; i++) {
         struct Set *set = state.equiv_types[types[i]];
         set_print(set);
-        set_free(set);
     }
 
-    free(state.equiv_types);
-    free(state.concrete_types);
+    state_free(&state);
 }
 #endif
