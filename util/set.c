@@ -40,8 +40,13 @@ _tail_insert:
 
 static void set_rec_print(struct Set *set) {
     if (set) {
-        set_rec_print(set->left);
-        printf("%lu", set->id);
+        if (set->left) {
+            set_rec_print(set->left);
+            printf(", %lu", set->id);
+        } else {
+            printf("%lu", set->id);
+        }
+
         if (set->right) {
             printf(", ");
             set_rec_print(set->right);
