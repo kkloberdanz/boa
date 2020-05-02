@@ -22,5 +22,6 @@
 
 void *iba_malloc(size_t num_bytes);
 void iba_free_all(void);
+void *iba_realloc(void *ptr, size_t size);
 
 #endif /* MEMORY_H */

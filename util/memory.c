@@ -31,6 +31,12 @@ void *iba_malloc(size_t num_bytes) {
     return bytes;
 }
 
+void *iba_realloc(void *ptr, size_t size) {
+    void *bytes = realloc(ptr, size);
+    ksm_void_ptr_vector_push(&memory, bytes);
+    return bytes;
+}
+
 void iba_free_all() {
     kk_track_free(&memory);
 }

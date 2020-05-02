@@ -4,29 +4,22 @@
 #include "typecheck.h"
 #include "typeinfo.h"
 #include "../util/util.h"
+#include "../util/memory.h"
+#include "../util/set.h"
 #include "../extern/uthash/include/uthash.h"
 
 /* data types ****************************************************************/
-struct State {
-    TypeId new_type;
-};
-
-struct ConcreteTypes {
-    TypeId type_id; /* hash key */
-    TypeId concrete_type;
-    UT_hash_handle hh; /* prereq for uthash */
-};
-
 struct EquivTypesSet {
     TypeId type_id; /* hash key */
-    /* TODO */
     UT_hash_handle hh; /* prereq for uthash */
 };
 
-struct TypeEquiv {
-    TypeId type_id; /* hash key */
-    struct EquivTypesSet equiv_types;
-    UT_hash_handle hh; /* prereq for uthash */
+struct State {
+    TypeId new_type;
+    TypeId *concrete_types;
+    struct Set *equiv_types;
+    size_t num_types;
+    size_t capacity;
 };
 /*****************************************************************************/
 
@@ -38,13 +31,20 @@ struct IdentifierTypes {
 
 /* type equivalency **********************************************************/
 static void add_equivalent_type(
-    struct TypeEquiv *tbl,
     TypeId parent_type,
-    TypeId equiv_type
+    TypeId equiv_type,
+    struct State *state
 ) {
-    UNUSED(tbl);
-    UNUSED(parent_type);
-    UNUSED(equiv_type);
+    struct Set *same_type_as_parent = &state->equiv_types[parent_type];
+
+    if (state->num_types < state->capacity) {
+        size_t new_size;
+        state->capacity *= 2;
+        new_size = sizeof(struct Set) * state->capacity;
+        state->equiv_types = iba_realloc(state->equiv_types, new_size);
+    }
+
+    set_insert(same_type_as_parent, equiv_type);
 }
 /*****************************************************************************/
 
@@ -106,6 +106,7 @@ int typecheck(ASTNode *ast) {
     UNUSED(get_new_type);
 
     state.new_type = TYPE_LASTTYPE;
+    state.num_types = 0;
     while (ast) {
         typecheck_node(ast);
         ast = ast->sibling;
