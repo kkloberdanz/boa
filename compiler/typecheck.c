@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "ast.h"
 #include "typecheck.h"
@@ -6,45 +8,67 @@
 #include "../util/util.h"
 #include "../util/memory.h"
 #include "../util/set.h"
-#include "../extern/uthash/include/uthash.h"
 
 /* data types ****************************************************************/
-struct EquivTypesSet {
-    TypeId type_id; /* hash key */
-    UT_hash_handle hh; /* prereq for uthash */
-};
-
 struct State {
     TypeId new_type;
     TypeId *concrete_types;
-    struct Set *equiv_types;
-    size_t num_types;
+    struct Set **equiv_types;
     size_t capacity;
 };
-/*****************************************************************************/
 
-struct IdentifierTypes {
-    char *identifier; /* hash key */
-    TypeId type_id;
-    UT_hash_handle hh; /* prereq for uthash */
-};
+static void state_init(struct State *state) {
+    size_t capacity = 1;
+    size_t i;
+    state->new_type = TYPE_NOT_CHECKED;
+    state->capacity = capacity;
+    state->concrete_types = malloc(sizeof(TypeId) * capacity);
+    state->equiv_types = malloc(sizeof(struct Set) * capacity);
+
+    for (i = 0; i < capacity; i++) {
+        printf("initializing equiv_types[%lu]\n", i);
+        state->equiv_types[i] = NULL;
+        state->concrete_types[i] = TYPE_NOT_CHECKED;
+    }
+}
+/*****************************************************************************/
 
 /* type equivalency **********************************************************/
 static void add_equivalent_type(
+    struct State *state,
     TypeId parent_type,
-    TypeId equiv_type,
-    struct State *state
+    TypeId equiv_type
 ) {
-    struct Set *same_type_as_parent = &state->equiv_types[parent_type];
+    TypeId greatest_type = MAX(parent_type, equiv_type);
+    struct Set *same_type_as_parent;
 
-    if (state->num_types < state->capacity) {
-        size_t new_size;
-        state->capacity *= 2;
-        new_size = sizeof(struct Set) * state->capacity;
-        state->equiv_types = iba_realloc(state->equiv_types, new_size);
+    if (greatest_type >= state->capacity) {
+        size_t old_capacity = state->capacity;
+        size_t i;
+
+        state->capacity = greatest_type * 2;
+
+        state->equiv_types = realloc(
+            state->equiv_types,
+            sizeof(struct Set) * state->capacity
+        );
+
+        state->concrete_types = realloc(
+            state->concrete_types,
+            sizeof(TypeId) * state->capacity
+        );
+
+        for (i = old_capacity; i < state->capacity; i++) {
+            printf("initializing equiv_types[%lu]\n", i);
+            state->equiv_types[i] = NULL;
+            state->concrete_types[i] = TYPE_NOT_CHECKED;
+        }
     }
 
-    set_insert(same_type_as_parent, equiv_type);
+    same_type_as_parent = state->equiv_types[parent_type];
+
+    fprintf(stderr, "adding equiv: %lu, parent, %lu\n", equiv_type, parent_type);
+    state->equiv_types[parent_type] = set_insert(same_type_as_parent, equiv_type);
 }
 /*****************************************************************************/
 
@@ -102,14 +126,42 @@ int typecheck(ASTNode *ast) {
     struct State state;
 
     UNUSED(add_equivalent_type);
-    UNUSED(state);
     UNUSED(get_new_type);
 
-    state.new_type = TYPE_LASTTYPE;
-    state.num_types = 0;
+    state_init(&state);
     while (ast) {
         typecheck_node(ast);
         ast = ast->sibling;
     }
     return 0;
 }
+
+#ifdef IBA_TYPECHECK_TEST
+int main(void) {
+    int i, j;
+    struct State state;
+    TypeId types[] = {1, 2, 3, 4};
+    TypeId equivs[4][4] = {
+        {4, 6, 0, 0},
+        {7, 8, 9, 0},
+        {1, 0, 0, 0},
+        {0, 0, 0, 0}
+    };
+
+    state_init(&state);
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; equivs[i][j] != 0; j++) {
+            TypeId equiv_type = equivs[i][j];
+            fprintf(stderr, "T(%lu) := T(%lu)\n", types[i], equiv_type);
+            add_equivalent_type(&state, types[i], equiv_type);
+        }
+    }
+
+    for (i = 0; i < 4; i++) {
+        struct Set *set = state.equiv_types[types[i]];
+        set_print(set);
+        set_free(set);
+    }
+}
+#endif

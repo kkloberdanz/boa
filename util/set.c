@@ -41,14 +41,18 @@ _tail_insert:
 static void set_rec_print(struct Set *set) {
     if (set) {
         set_rec_print(set->left);
-        fprintf(stderr, "%lu ", set->id);
-        set_rec_print(set->right);
+        printf("%lu", set->id);
+        if (set->right) {
+            printf(", ");
+            set_rec_print(set->right);
+        }
     }
 }
 
 void set_print(struct Set *set) {
+    putchar('{');
     set_rec_print(set);
-    puts("");
+    puts("}");
 }
 
 int set_contains(struct Set *set, TypeId id) {

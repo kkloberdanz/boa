@@ -87,3 +87,4 @@ clean:
 	rm -f example/ex[0-9]+
 	rm -f ex[0-9]+
 	rm -f ex16
+	rm -f a.out

@@ -13,3 +13,5 @@ void set_print(struct Set *set);
 int set_contains(struct Set *set, TypeId id);
 
 struct Set *set_new(TypeId id);
+
+void set_free(struct Set *set);
