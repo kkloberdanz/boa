@@ -43,13 +43,11 @@ static void set_rec_print(struct Set *set) {
         if (set->left) {
             set_rec_print(set->left);
             printf(", %lu", set->id);
+        } else if (set->right) {
+            printf("%lu, ", set->id);
+            set_rec_print(set->right);
         } else {
             printf("%lu", set->id);
-        }
-
-        if (set->right) {
-            printf(", ");
-            set_rec_print(set->right);
         }
     }
 }

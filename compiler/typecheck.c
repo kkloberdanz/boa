@@ -146,19 +146,23 @@ int typecheck(ASTNode *ast) {
 
 #ifdef IBA_TYPECHECK_TEST
 int main(void) {
-    int i, j;
+    size_t i, j;
     struct State state;
-    TypeId types[] = {1, 2, 3, 4};
-    TypeId equivs[4][4] = {
+    TypeId types[] = {1, 2, 3, 4, 5};
+    const size_t num_base_types = sizeof(types) / sizeof(TypeId);
+    TypeId equivs[5][4] = {
         {4, 6, 0, 0},
         {7, 8, 9, 0},
         {1, 0, 0, 0},
-        {0, 0, 0, 0}
+        {0, 0, 0, 0},
+        {4, 3, 0, 0}
     };
 
     state_init(&state);
 
-    for (i = 0; i < 4; i++) {
+    printf("num_base_types: %lu\n", num_base_types);
+
+    for (i = 0; i < num_base_types; i++) {
         for (j = 0; equivs[i][j] != 0; j++) {
             TypeId equiv_type = equivs[i][j];
             printf("T(%lu) := T(%lu)\n", types[i], equiv_type);
@@ -167,7 +171,7 @@ int main(void) {
     }
 
     puts("");
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < num_base_types; i++) {
         struct Set *set = state.equiv_types[types[i]];
         printf("T(%lu) := ", types[i]);
         set_print(set);
