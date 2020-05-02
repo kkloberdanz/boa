@@ -241,20 +241,26 @@ static int run(int argc, char **argv) {
     const char *source_filename;
     int opt;
     char *exe_filename = NULL;
-    char build_only = 0;
+    char run = 0;
+    char build = 0;
 
-    while ((opt = getopt(argc, argv, "bho:")) != -1) {
+    while ((opt = getopt(argc, argv, "rbho:")) != -1) {
         switch (opt) {
-            case 'b':
-                build_only = 1;
+            case 'r':
+                run = 1;
                 break;
 
             case 'h':
                 print_usage(program_name);
                 exit(EXIT_SUCCESS);
 
+            case 'b':
+                build = 1;
+                break;
+
             case 'o':
                 exe_filename = optarg;
+                build = 1;
                 break;
 
             default:
@@ -283,12 +289,16 @@ static int run(int argc, char **argv) {
     }
 
     error_code = compile_c(c_filename, exe_filename);
+    remove(c_filename);
     if (error_code) {
         return error_code;
     }
 
-    if (!build_only) {
+    if (run) {
         run_program(exe_filename);
+        if (!build) {
+            remove(exe_filename);
+        }
     }
     return error_code;
 }
