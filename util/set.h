@@ -24,4 +24,6 @@ TypeId *set_smallest(struct Set *set);
 
 struct Vec *set_to_vec(struct Set *set);
 
+TypeId set_get_smallest(struct Set *set);
+
 #endif /* SET_H */

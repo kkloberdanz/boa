@@ -114,6 +114,13 @@ struct Vec *set_to_vec(struct Set *set) {
     return vec;
 }
 
+TypeId set_get_smallest(struct Set *set) {
+    while (set->left) {
+        set = set->left;
+    }
+    return set->id;
+}
+
 #ifdef IBA_SET_TEST
 int main(void) {
     size_t i;
