@@ -2,7 +2,8 @@
 #define TYPECHECK_H
 
 #include "ast.h"
+#include "hindley-milner.h"
 
-int typecheck(ASTNode *ast);
+int check_types(ASTNode *ast);
 
 #endif /* TYPECHECK_H */

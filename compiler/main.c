@@ -83,7 +83,7 @@ static int compile_iba(const char *source_filename, char **output_filename) {
         return 4;
     }
 
-    error_code = typecheck(tree);
+    error_code = check_types(tree);
     if (error_code) {
         return error_code;
     }

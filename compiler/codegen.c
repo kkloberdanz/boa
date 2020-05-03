@@ -259,7 +259,7 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
 
         i = num_params;
         while (i --> 0) {
-            char *type;
+            char *type = "long";
             TypeId type_id = params_arr[i]->type;
 
             /* TODO: temporary hack until typechecking works */
@@ -267,7 +267,8 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
                 type_id = 1;
             }
 
-            type = iba_type_to_c_type(type_id);
+            /* TODO: put this back in then typechecking works
+            type = iba_type_to_c_type(type_id);*/
             sprintf(
                 params_str + len,
                 "%s %s, ",

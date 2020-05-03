@@ -234,3 +234,7 @@ ASTNode *make_return_node(ASTNode *expr_to_return) {
     );
     return node;
 }
+
+void ast_print(ASTNode *ast) {
+    UNUSED(ast);
+}

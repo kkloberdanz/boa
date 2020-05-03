@@ -9,6 +9,7 @@ char *builtin_types[] = {
     "Float",
     "String",
     "Bool",
+    "Nil",
     NULL
 };
 
@@ -18,6 +19,7 @@ static char *c_types[] = {
     "double",
     "char *",
     "char",
+    "void",
     NULL
 };
 

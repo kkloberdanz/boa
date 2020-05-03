@@ -4,8 +4,6 @@
 #   Collatz Conjecture, see: https://en.wikipedia.org/wiki/Collatz_conjecture
 #
 
-collatz(1000)
-
 collatz = n => {
     printd(n)
     if n == 1: -> 1
@@ -22,6 +20,8 @@ compare = a, b => {
     else if a < b: -> (0 - 1)
     else -> 1 # a > b
 }
+
+collatz(1000)
 
 printd(make_even(1111))
 

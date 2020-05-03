@@ -11,8 +11,8 @@
 void hmstate_init(struct HMState *state) {
     size_t capacity = 1;
     size_t i;
-    state->new_type = TYPE_NOT_CHECKED;
-    state->greatest_type = TYPE_NOT_CHECKED;
+    state->new_type = TYPE_LASTTYPE + 1;
+    state->greatest_type = TYPE_LASTTYPE + 1;
     state->capacity = capacity;
     state->equiv_types = malloc(sizeof(struct Set) * capacity);
 
