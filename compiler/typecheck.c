@@ -51,7 +51,6 @@ static void add_equivalent_type(
     TypeId equiv_type
 ) {
     TypeId greatest_type = MAX(parent_type, equiv_type);
-    struct Set *same_type_as_parent;
 
     if (greatest_type >= state->capacity) {
         size_t old_capacity = state->capacity;
@@ -81,11 +80,14 @@ static void add_equivalent_type(
         }
     }
 
-    same_type_as_parent = state->equiv_types[parent_type];
+    state->equiv_types[parent_type] = set_insert(
+        state->equiv_types[parent_type],
+        equiv_type
+    );
 
     state->equiv_types[parent_type] = set_insert(
-        same_type_as_parent,
-        equiv_type
+        state->equiv_types[parent_type],
+        parent_type
     );
 
     state->greatest_type = MAX(state->greatest_type, greatest_type);
@@ -106,6 +108,11 @@ static void find_equiv_types(struct State *state, TypeId current_type) {
             TypeId equiv_type = equiv_vec->data[j];
             set_insert(current_set, equiv_type);
         }
+
+        state->equiv_types[checking_type] = set_insert(
+            equiv_set,
+            current_type
+        );
 
         vec_free(equiv_vec);
     }
@@ -219,9 +226,9 @@ int main(void) {
         {0, 0, 0, 0},
         {4, 3, 0, 0},
         {4, 5, 0, 0},
-        {0, 0, 0, 0},
-        {0, 0, 0, 0},
-        {0, 0, 0, 0}
+        {2, 0, 0, 0},
+        {2, 0, 0, 0},
+        {2, 0, 0, 0}
     };
 
     state_init(&state);
