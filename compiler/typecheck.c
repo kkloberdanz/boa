@@ -29,13 +29,15 @@ static void state_init(struct State *state) {
 }
 
 static void state_free(struct State *state) {
-    size_t i;
-    for (i = 0; i < state->capacity; i++) {
-        struct Set *set = state->equiv_types[i];
-        set_free(set);
-    }
+    if (state) {
+        size_t i;
+        for (i = 0; i < state->capacity; i++) {
+            struct Set *set = state->equiv_types[i];
+            set_free(set);
+        }
 
-    free(state->equiv_types);
+        free(state->equiv_types);
+    }
 }
 
 static void add_equivalent_type(
@@ -244,6 +246,7 @@ int typecheck(ASTNode *ast) {
     UNUSED(get_new_type);
     UNUSED(collapse_types);
     UNUSED(print_sets);
+    UNUSED(check_conflicing_types);
 
     state_init(&state);
     while (ast) {

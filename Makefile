@@ -42,6 +42,12 @@ valgrind: export CC ?= cc
 valgrind: export IBA_CC ?= cc
 valgrind: run-valgrind
 
+.PHONY: sanitize
+sanitize: export OPTIM_FLAGS ?= -Os -ggdb3 -Werror -fsanitize=address
+sanitize: export CC ?= cc
+sanitize: export IBA_CC ?= cc
+sanitize: build
+
 COMPILER_DEPS = compiler/*.c util/*.c  compiler/*.h util/*.h
 COMPILER_SRC = compiler/*.c util/*.c
 
@@ -64,7 +70,7 @@ libruntime.a: runtime/*.c runtime/*.h
 	ar rcs libruntime.a runtime.o
 
 libccruntime.a: runtime/*.c runtime/*.h
-	cc -std=$(STD) $(OPTIM_FLAGS) $(INCLD) -fPIC \
+	cc -std=$(STD) -Os $(INCLD) -fPIC \
 		-c runtime/runtime.c -o ccruntime.o
 	ar rcs libccruntime.a ccruntime.o
 
