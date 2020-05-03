@@ -140,6 +140,19 @@ static TypeId get_new_type(struct State *state) {
     return state->new_type;
 }
 
+static void print_sets(
+    struct State *state,
+    const size_t num_base_types,
+    TypeId types[]
+) {
+    size_t i;
+    for (i = 0; i < num_base_types; i++) {
+        struct Set *set = state->equiv_types[types[i]];
+        printf("T(%lu) := ", types[i]);
+        set_print(set);
+    }
+}
+
 static void typecheck_node(ASTNode *ast) {
     switch (ast->kind) {
         case FUNC_CALL:
@@ -189,6 +202,7 @@ int typecheck(ASTNode *ast) {
     UNUSED(add_equivalent_type);
     UNUSED(get_new_type);
     UNUSED(collapse_types);
+    UNUSED(print_sets);
 
     state_init(&state);
     while (ast) {
@@ -198,19 +212,6 @@ int typecheck(ASTNode *ast) {
 
     state_free(&state);
     return 0;
-}
-
-static void print_sets(
-    struct State *state,
-    const size_t num_base_types,
-    TypeId types[]
-) {
-    size_t i;
-    for (i = 0; i < num_base_types; i++) {
-        struct Set *set = state->equiv_types[types[i]];
-        printf("T(%lu) := ", types[i]);
-        set_print(set);
-    }
 }
 
 #ifdef IBA_TYPECHECK_TEST
