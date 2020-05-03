@@ -6,23 +6,25 @@
 #include "typecheck.h"
 #include "typeinfo.h"
 #include "../util/util.h"
-#include "../util/memory.h"
 #include "../util/set.h"
 
-/* data types ****************************************************************/
 struct State {
-    TypeId new_type;
-    TypeId *concrete_types;
-    struct Set **equiv_types;
     size_t capacity;
+    TypeId new_type;
+    TypeId greatest_type;
+    TypeId *concrete_types;
+    TypeId *reduced_to_type;
+    struct Set **equiv_types;
 };
 
 static void state_init(struct State *state) {
     size_t capacity = 1;
     size_t i;
     state->new_type = TYPE_NOT_CHECKED;
+    state->greatest_type = TYPE_NOT_CHECKED;
     state->capacity = capacity;
     state->concrete_types = malloc(sizeof(TypeId) * capacity);
+    state->reduced_to_type = malloc(sizeof(TypeId) * capacity);
     state->equiv_types = malloc(sizeof(struct Set) * capacity);
 
     for (i = 0; i < capacity; i++) {
@@ -40,10 +42,9 @@ static void state_free(struct State *state) {
 
     free(state->equiv_types);
     free(state->concrete_types);
+    free(state->reduced_to_type);
 }
-/*****************************************************************************/
 
-/* type equivalency **********************************************************/
 static void add_equivalent_type(
     struct State *state,
     TypeId parent_type,
@@ -68,24 +69,45 @@ static void add_equivalent_type(
             sizeof(TypeId) * state->capacity
         );
 
+        state->reduced_to_type = realloc(
+            state->reduced_to_type,
+            sizeof(TypeId) * state->capacity
+        );
+
         for (i = old_capacity; i < state->capacity; i++) {
             state->equiv_types[i] = NULL;
             state->concrete_types[i] = TYPE_NOT_CHECKED;
+            state->reduced_to_type[i] = TYPE_NOT_CHECKED;
         }
     }
 
     same_type_as_parent = state->equiv_types[parent_type];
 
-    state->equiv_types[parent_type] = set_insert(same_type_as_parent, equiv_type);
-}
-/*****************************************************************************/
+    state->equiv_types[parent_type] = set_insert(
+        same_type_as_parent,
+        equiv_type
+    );
 
-/* internal state tracking ***************************************************/
+    state->greatest_type = MAX(state->greatest_type, greatest_type);
+}
+
+static void collapse_types(struct State *state) {
+    size_t i;
+    for (i = 0; i < state->greatest_type; i++) {
+        struct Set *current_set = state->equiv_types[i];
+        struct Vec *set_vec = set_to_vec(current_set);
+        for (i = 0; i < set_vec->last; i++) {
+            /* TODO */
+        }
+        vec_free(set_vec);
+    }
+}
+
 static TypeId get_new_type(struct State *state) {
+    state->greatest_type = MAX(state->greatest_type, state->new_type);
     state->new_type++;
     return state->new_type;
 }
-/*****************************************************************************/
 
 static void typecheck_node(ASTNode *ast) {
     switch (ast->kind) {
@@ -135,12 +157,15 @@ int typecheck(ASTNode *ast) {
 
     UNUSED(add_equivalent_type);
     UNUSED(get_new_type);
+    UNUSED(collapse_types);
 
     state_init(&state);
     while (ast) {
         typecheck_node(ast);
         ast = ast->sibling;
     }
+
+    state_free(&state);
     return 0;
 }
 
@@ -148,14 +173,18 @@ int typecheck(ASTNode *ast) {
 int main(void) {
     size_t i, j;
     struct State state;
-    TypeId types[] = {1, 2, 3, 4, 5};
+    TypeId types[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     const size_t num_base_types = sizeof(types) / sizeof(TypeId);
-    TypeId equivs[5][4] = {
+    TypeId equivs[9][4] = {
         {4, 6, 0, 0},
         {7, 8, 9, 0},
         {1, 0, 0, 0},
         {0, 0, 0, 0},
-        {4, 3, 0, 0}
+        {4, 3, 0, 0},
+        {4, 5, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}
     };
 
     state_init(&state);
@@ -176,6 +205,8 @@ int main(void) {
         printf("T(%lu) := ", types[i]);
         set_print(set);
     }
+
+    /* collapse types */
 
     state_free(&state);
 }

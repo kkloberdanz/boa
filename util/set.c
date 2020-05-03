@@ -51,22 +51,21 @@ _tail_insert:
     return root;
 }
 
-static void set_rec_print(struct Set *set, char first) {
-    if (set) {
-        set_rec_print(set->left, 0);
-        if (first) {
-            printf("%lu", set->id);
-        } else {
-            printf(", %lu", set->id);
-        }
-        set_rec_print(set->right, 0);
-    }
-}
-
 void set_print(struct Set *set) {
+    size_t i;
+    struct Vec *v = set_to_vec(set);
     putchar('{');
-    set_rec_print(set, 1);
+    if (v) {
+        for (i = 0; i < v->last; i++) {
+            if (i == v->last - 1) {
+                printf("%lu", v->data[i]);
+            } else {
+                printf("%lu, ", v->data[i]);
+            }
+        }
+    }
     puts("}");
+    vec_free(v);
 }
 
 int set_contains(struct Set *set, TypeId id) {

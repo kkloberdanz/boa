@@ -27,8 +27,10 @@ void vec_push(struct Vec *vec, TypeId id) {
 }
 
 void vec_free(struct Vec *vec) {
-    free(vec->data);
-    free(vec);
+    if (vec) {
+        free(vec->data);
+        free(vec);
+    }
 }
 
 void vec_print(struct Vec *vec) {

@@ -82,6 +82,7 @@ clean:
 	rm -f libruntime.a runtime.o libccruntime.a
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
 	rm -f core
+	rm -f vgcore*
 	rm -f example/*.c
 	rm -f *.o
 	rm -f example/ex[0-9]+
