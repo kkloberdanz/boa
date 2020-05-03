@@ -33,7 +33,7 @@ ASTNode *make_ast_node(
     ASTNode *left,
     ASTNode *condition,
     ASTNode *right,
-    struct ibaType type
+    TypeId type
 ) {
     ASTNode *node = iba_malloc(sizeof(ASTNode));
     node->kind = kind;
@@ -49,9 +49,8 @@ ASTNode *make_ast_node(
 
 ASTNode *make_operator_node(Operator op, ASTNode *left, ASTNode *right) {
     ASTNode *node;
-    struct ibaType type;
-    type.id = TYPE_NOT_CHECKED;
-    type.repr = "Void";
+    TypeId type;
+    type = TYPE_NOT_CHECKED;
     node = make_ast_node(
         OPERATOR,
         NULL,
@@ -69,10 +68,9 @@ ASTNode *make_conditional_node(
     ASTNode *left,
     ASTNode *right
 ) {
-    struct ibaType type;
+    TypeId type;
     ASTNode *node;
-    type.id = TYPE_NOT_CHECKED;
-    type.repr = "Void";
+    type = TYPE_NOT_CHECKED;
     node = make_ast_node(
         CONDITIONAL,
         NULL,
@@ -93,17 +91,14 @@ ASTNode *make_assign_node(
 ) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    struct ibaType type;
+    TypeId type;
     TypeId type_id = TYPE_NOT_CHECKED;
-    char *repr = "Void";
     if (type_node) {
         ParseObj *type_obj = type_node->obj;
-        repr = type_obj->repr;
         type_id = string_repr_to_type_id(type_obj->repr, all_types);
     }
 
-    type.id = type_id;
-    type.repr = repr;
+    type = type_id;
 
     node = make_ast_node(
         ASSIGN_EXPR,
@@ -120,9 +115,8 @@ ASTNode *make_assign_node(
 ASTNode *make_load_node(ASTNode *leaf_obj) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    struct ibaType type;
-    type.id = TYPE_NOT_CHECKED;
-    type.repr = "Void";
+    TypeId type;
+    type = TYPE_NOT_CHECKED;
     node = make_ast_node(
         LOAD_STMT,
         obj,
@@ -142,9 +136,8 @@ ASTNode *make_function_node(
 ) {
     ASTNode *node;
     ParseObj *obj = func_name->obj;
-    struct ibaType type;
-    type.id = TYPE_NOT_CHECKED;
-    type.repr = "Void";
+    TypeId type;
+    type = TYPE_NOT_CHECKED;
     node = make_ast_node(
         FUNC_DEF,
         obj,
@@ -160,9 +153,8 @@ ASTNode *make_function_node(
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    struct ibaType type;
-    type.id = TYPE_NOT_CHECKED;
-    type.repr = "Void";
+    TypeId type;
+    type = TYPE_NOT_CHECKED;
     node = make_ast_node(
         FUNC_CALL,
         obj,
@@ -189,30 +181,25 @@ ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
 ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
     ParseObj *obj;
     ASTNode *node;
-    struct ibaType type;
-    type.id = TYPE_NOT_CHECKED;
-    type.repr = "Void";
+    TypeId type;
+    type = TYPE_NOT_CHECKED;
     switch (kind) {
         case AST_STRING: {
-            type.id = TYPE_STRING;
-            type.repr = "String";
+            type = TYPE_STRING;
             string_replace_single_quote_with_double(repr);
             break;
         }
 
         case AST_INT:
-            type.id = TYPE_INT;
-            type.repr = "Int";
+            type = TYPE_INT;
             break;
 
         case AST_FLOAT:
-            type.id = TYPE_FLOAT;
-            type.repr = "Float";
+            type = TYPE_FLOAT;
             break;
 
         case AST_BOOL:
-            type.id = TYPE_BOOL;
-            type.repr = "Bool";
+            type = TYPE_BOOL;
             break;
 
         case AST_TYPE:
@@ -238,9 +225,8 @@ ASTNode *make_id_node(char *repr) {
 
 ASTNode *make_return_node(ASTNode *expr_to_return) {
     ASTNode *node;
-    struct ibaType type;
-    type.id = TYPE_NOT_CHECKED;
-    type.repr = "Void";
+    TypeId type;
+    type = TYPE_NOT_CHECKED;
     node = make_ast_node(
         RETURN_STMT,
         NULL,
