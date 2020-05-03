@@ -3,6 +3,11 @@
 
 #include "../compiler/typeinfo.h"
 #include "set.h"
+#include "vec.h"
+
+/*
+ * TODO: Make this a red-black tree
+ */
 
 struct Set *set_new(TypeId id) {
     struct Set *set = malloc(sizeof(*set));
@@ -10,6 +15,14 @@ struct Set *set_new(TypeId id) {
     set->left = NULL;
     set->id = id;
     return set;
+}
+
+TypeId *set_smallest(struct Set *set) {
+    if (set) {
+        return &set->id;
+    } else {
+        return NULL;
+    }
 }
 
 struct Set *set_insert(struct Set *root, TypeId id) {
@@ -38,23 +51,21 @@ _tail_insert:
     return root;
 }
 
-static void set_rec_print(struct Set *set) {
+static void set_rec_print(struct Set *set, char first) {
     if (set) {
-        if (set->left) {
-            set_rec_print(set->left);
-            printf(", %lu", set->id);
-        } else if (set->right) {
-            printf("%lu, ", set->id);
-            set_rec_print(set->right);
-        } else {
+        set_rec_print(set->left, 0);
+        if (first) {
             printf("%lu", set->id);
+        } else {
+            printf(", %lu", set->id);
         }
+        set_rec_print(set->right, 0);
     }
 }
 
 void set_print(struct Set *set) {
     putchar('{');
-    set_rec_print(set);
+    set_rec_print(set, 1);
     puts("}");
 }
 
@@ -79,6 +90,24 @@ void set_free(struct Set *set) {
     }
 }
 
+static void set_rec_to_vec(struct Set *set, struct Vec *vec) {
+    if (set) {
+        set_rec_to_vec(set->left, vec);
+        vec_push(vec, set->id);
+        set_rec_to_vec(set->right, vec);
+    }
+}
+
+struct Vec *set_to_vec(struct Set *set) {
+    if (set) {
+        struct Vec *vec = vec_new();
+        set_rec_to_vec(set, vec);
+        return vec;
+    } else {
+        return NULL;
+    }
+}
+
 #ifdef IBA_SET_TEST
 int main(void) {
     size_t i;
@@ -88,7 +117,6 @@ int main(void) {
     for (i = 0; i < (sizeof(arr) / sizeof(int)); i++) {
         fprintf(stderr, "inserting: %d\n", arr[i]);
         set = set_insert(set, arr[i]);
-        //set_print(&set);
     }
 
     set_print(set);
@@ -98,8 +126,12 @@ int main(void) {
         }
     }
 
+    struct Vec *ids = set_to_vec(set);
+    for (i = 0; i < ids->last; i++) {
+        printf("id = %lu\n", ids->data[i]);
+    }
+    vec_free(ids);
     set_free(set);
-
     return 0;
 }
 #endif /* IBA_SET_TEST */
