@@ -91,14 +91,11 @@ ASTNode *make_assign_node(
 ) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    TypeId type;
-    TypeId type_id = TYPE_NOT_CHECKED;
+    TypeId type = TYPE_NOT_CHECKED;
     if (type_node) {
         ParseObj *type_obj = type_node->obj;
-        type_id = string_repr_to_type_id(type_obj->repr, all_types);
+        type = string_repr_to_type_id(type_obj->repr, all_types);
     }
-
-    type = type_id;
 
     node = make_ast_node(
         ASSIGN_EXPR,
@@ -115,8 +112,7 @@ ASTNode *make_assign_node(
 ASTNode *make_load_node(ASTNode *leaf_obj) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    TypeId type;
-    type = TYPE_NOT_CHECKED;
+    TypeId type = TYPE_NOT_CHECKED;
     node = make_ast_node(
         LOAD_STMT,
         obj,
