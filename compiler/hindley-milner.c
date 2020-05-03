@@ -8,14 +8,7 @@
 #include "ast.h"
 #include "hindley-milner.h"
 
-struct State {
-    size_t capacity;
-    TypeId new_type;
-    TypeId greatest_type;
-    struct Set **equiv_types;
-};
-
-static void state_init(struct State *state) {
+void hmstate_init(struct HMState *state) {
     size_t capacity = 1;
     size_t i;
     state->new_type = TYPE_NOT_CHECKED;
@@ -28,7 +21,7 @@ static void state_init(struct State *state) {
     }
 }
 
-static void state_free(struct State *state) {
+void hmstate_free(struct HMState *state) {
     if (state) {
         size_t i;
         for (i = 0; i < state->capacity; i++) {
@@ -40,8 +33,8 @@ static void state_free(struct State *state) {
     }
 }
 
-static void add_equivalent_type(
-    struct State *state,
+void add_equivalent_type(
+    struct HMState *state,
     TypeId parent_type,
     TypeId equiv_type
 ) {
@@ -76,7 +69,7 @@ static void add_equivalent_type(
     state->greatest_type = MAX(state->greatest_type, greatest_type);
 }
 
-static void find_equiv_types(struct State *state, TypeId current_type) {
+static void find_equiv_types(struct HMState *state, TypeId current_type) {
     struct Set *current_set = state->equiv_types[current_type];
     struct Vec *set_vec = set_to_vec(current_set);
     size_t i;
@@ -102,7 +95,7 @@ static void find_equiv_types(struct State *state, TypeId current_type) {
     vec_free(set_vec);
 }
 
-static void expand_types(struct State *state) {
+static void expand_types(struct HMState *state) {
     TypeId current_type;
     for (current_type = 0;
         current_type < state->greatest_type;
@@ -132,7 +125,7 @@ static int check_for_conflict(struct Vec *equiv_vec, TypeId concrete_type) {
     return 0;
 }
 
-static int check_conflicting_type(struct State *state, TypeId current_type) {
+static int check_conflicting_type(struct HMState *state, TypeId current_type) {
     struct Set *current_set = state->equiv_types[current_type];
     struct Vec *set_vec = set_to_vec(current_set);
     size_t i;
@@ -157,7 +150,7 @@ exit:
     return error_code;
 }
 
-static int check_conflicing_types(struct State *state) {
+int check_conflicing_types(struct HMState *state) {
     TypeId current_type;
     int error_code = 0;
     for (current_type = 0;
@@ -172,19 +165,19 @@ static int check_conflicing_types(struct State *state) {
     return error_code;
 }
 
-static void collapse_types(struct State *state) {
+void collapse_types(struct HMState *state) {
     expand_types(state);
     expand_types(state);
 }
 
-static TypeId get_new_type(struct State *state) {
+TypeId get_new_type(struct HMState *state) {
     state->greatest_type = MAX(state->greatest_type, state->new_type);
     state->new_type++;
     return state->new_type;
 }
 
-static void print_sets(
-    struct State *state,
+void print_sets(
+    struct HMState *state,
     const size_t num_base_types,
     TypeId types[]
 ) {
@@ -215,28 +208,12 @@ static void print_sets(
  *    informing which line and which identifier does not have a correct type.
  */
 
-int hindley_milner(ASTNode *ast) {
-    struct State state;
-
-    UNUSED(ast);
-    UNUSED(add_equivalent_type);
-    UNUSED(get_new_type);
-    UNUSED(collapse_types);
-    UNUSED(print_sets);
-    UNUSED(check_conflicing_types);
-
-    state_init(&state);
-    /* TODO */
-    state_free(&state);
-    return 0;
-}
-
 #ifdef IBA_HINDLEY_MILNER_TEST
 int main(void) {
     int error_code = 0;
     const TypeId x = TYPE_LASTTYPE;
     size_t i, j;
-    struct State state;
+    struct HMState state;
     TypeId types[] = {
         x + 1,
         x + 2,
@@ -265,7 +242,7 @@ int main(void) {
 #endif
     };
 
-    state_init(&state);
+    hmstate_init(&state);
 
     printf("num_base_types: %lu\n", num_base_types);
 
@@ -292,7 +269,7 @@ int main(void) {
         fprintf(stderr, "ERROR: invalid use of types\n");
     }
 
-    state_free(&state);
+    hmstate_free(&state);
     return error_code;
 }
 #endif

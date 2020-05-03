@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "ast.h"
+#include "hindley-milner.h"
 #include "typecheck.h"
 #include "typeinfo.h"
 #include "../util/util.h"
@@ -34,9 +35,12 @@ static void typecheck_node(ASTNode *ast) {
 }
 
 int typecheck(ASTNode *ast) {
+    struct HMState state;
+    hmstate_init(&state);
     while (ast) {
         typecheck_node(ast);
         ast = ast->sibling;
     }
+    hmstate_free(&state);
     return 0;
 }
