@@ -2,6 +2,7 @@
 #define SET_H
 
 #include "../compiler/typeinfo.h"
+#include "vec.h"
 
 struct Set {
     TypeId id;
@@ -20,5 +21,7 @@ struct Set *set_new(TypeId id);
 void set_free(struct Set *set);
 
 TypeId *set_smallest(struct Set *set);
+
+struct Vec *set_to_vec(struct Set *set);
 
 #endif /* SET_H */

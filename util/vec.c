@@ -4,7 +4,7 @@
 #include "vec.h"
 #include "../compiler/typeinfo.h"
 
-struct Vec *vec_new() {
+struct Vec *vec_new(void) {
     struct Vec *vec = malloc(sizeof(struct Vec));
     vec->last = 0;
     vec->capacity = 0;

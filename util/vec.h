@@ -1,3 +1,6 @@
+#ifndef VEC_H
+#define VEC_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,8 +12,12 @@ struct Vec {
     size_t capacity;
 };
 
-struct Vec *vec_new();
+struct Vec *vec_new(void);
 
 void vec_push(struct Vec *vec, TypeId id);
 
 void vec_free(struct Vec *vec);
+
+void vec_print(struct Vec *vec);
+
+#endif
