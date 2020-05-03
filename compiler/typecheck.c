@@ -12,8 +12,6 @@ struct State {
     size_t capacity;
     TypeId new_type;
     TypeId greatest_type;
-    TypeId *concrete_types;
-    TypeId *reduced_to_type;
     struct Set **equiv_types;
 };
 
@@ -23,13 +21,10 @@ static void state_init(struct State *state) {
     state->new_type = TYPE_NOT_CHECKED;
     state->greatest_type = TYPE_NOT_CHECKED;
     state->capacity = capacity;
-    state->concrete_types = malloc(sizeof(TypeId) * capacity);
-    state->reduced_to_type = malloc(sizeof(TypeId) * capacity);
     state->equiv_types = malloc(sizeof(struct Set) * capacity);
 
     for (i = 0; i < capacity; i++) {
         state->equiv_types[i] = NULL;
-        state->concrete_types[i] = TYPE_NOT_CHECKED;
     }
 }
 
@@ -41,8 +36,6 @@ static void state_free(struct State *state) {
     }
 
     free(state->equiv_types);
-    free(state->concrete_types);
-    free(state->reduced_to_type);
 }
 
 static void add_equivalent_type(
@@ -63,20 +56,8 @@ static void add_equivalent_type(
             sizeof(struct Set) * state->capacity
         );
 
-        state->concrete_types = realloc(
-            state->concrete_types,
-            sizeof(TypeId) * state->capacity
-        );
-
-        state->reduced_to_type = realloc(
-            state->reduced_to_type,
-            sizeof(TypeId) * state->capacity
-        );
-
         for (i = old_capacity; i < state->capacity; i++) {
             state->equiv_types[i] = NULL;
-            state->concrete_types[i] = TYPE_NOT_CHECKED;
-            state->reduced_to_type[i] = TYPE_NOT_CHECKED;
         }
     }
 
@@ -127,6 +108,66 @@ static void expand_types(struct State *state) {
     ) {
         find_equiv_types(state, current_type);
     }
+}
+
+static int check_for_conflict(struct Vec *equiv_vec, TypeId concrete_type) {
+    size_t i;
+    for (i = 1; i < equiv_vec->last; i++) {
+        TypeId equiv_type = equiv_vec->data[i];
+        if (equiv_type < TYPE_LASTTYPE) {
+            /* TODO:
+             *     add line number and code snippet to error message
+             */
+            fprintf(
+                stderr,
+                "typecheck error, '%s' not compatible with '%s'\n",
+                builtin_types[concrete_type],
+                builtin_types[equiv_type]
+            );
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static int check_conflicting_type(struct State *state, TypeId current_type) {
+    struct Set *current_set = state->equiv_types[current_type];
+    struct Vec *set_vec = set_to_vec(current_set);
+    size_t i;
+    int error_code = 0;
+
+    for (i = 0; i < set_vec->last; i++) {
+        TypeId checking_type = set_vec->data[i];
+        struct Set *equiv_set = state->equiv_types[checking_type];
+
+        if (equiv_set) {
+            struct Vec *equiv_vec = set_to_vec(equiv_set);
+            TypeId concrete_type = equiv_vec->data[0];
+            error_code = check_for_conflict(equiv_vec, concrete_type);
+            vec_free(equiv_vec);
+            if (error_code) {
+                goto exit;
+            }
+        }
+    }
+exit:
+    vec_free(set_vec);
+    return error_code;
+}
+
+static int check_conflicing_types(struct State *state) {
+    TypeId current_type;
+    int error_code = 0;
+    for (current_type = 0;
+        current_type < state->greatest_type;
+        current_type++
+    ) {
+        error_code = check_conflicting_type(state, current_type);
+        if (error_code) {
+            return error_code;
+        }
+    }
+    return error_code;
 }
 
 static void collapse_types(struct State *state) {
@@ -216,20 +257,36 @@ int typecheck(ASTNode *ast) {
 
 #ifdef IBA_TYPECHECK_TEST
 int main(void) {
+    int error_code = 0;
+    const TypeId x = TYPE_LASTTYPE;
     size_t i, j;
     struct State state;
-    TypeId types[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    TypeId types[] = {
+        x + 1,
+        x + 2,
+        x + 3,
+        x + 4,
+        x + 5,
+        x + 6,
+        x + 7,
+        x + 8,
+        x + 9
+    };
     const size_t num_base_types = sizeof(types) / sizeof(TypeId);
     TypeId equivs[9][4] = {
-        {4, 6, 0, 0},
-        {7, 8, 9, 0},
-        {1, 0, 0, 0},
+        {x + 4, x + 6, 0, 0},
+        {x + 7, x + 8, x + 9, 0},
+        {x + 1, 0, 0, 0},
         {0, 0, 0, 0},
-        {4, 3, 0, 0},
-        {4, 5, 0, 0},
-        {2, 0, 0, 0},
-        {2, 0, 0, 0},
-        {2, 0, 0, 0}
+        {x + 4, TYPE_INT, 0, 0},
+        {x + 4, x + 5, 0, 0},
+        {x + 2, TYPE_BOOL, 0, 0},
+        {x + 2, 0, 0, 0},
+#ifdef IBA_TEST_TYPE_ERROR
+        {x + 2, TYPE_FLOAT, 0, 0}
+#else
+        {x + 2, 0, 0, 0}
+#endif
     };
 
     state_init(&state);
@@ -252,6 +309,14 @@ int main(void) {
     puts("\nafter collapse");
     print_sets(&state, num_base_types, types);
 
+    puts("typechecking...");
+
+    error_code = check_conflicing_types(&state);
+    if (error_code) {
+        fprintf(stderr, "ERROR: invalid use of types\n");
+    }
+
     state_free(&state);
+    return error_code;
 }
 #endif

@@ -57,10 +57,19 @@ void set_print(struct Set *set) {
     putchar('{');
     if (v) {
         for (i = 0; i < v->last; i++) {
-            if (i == v->last - 1) {
-                printf("%lu", v->data[i]);
+            const TypeId id = v->data[i];
+            const char *type;
+            char buf[100];
+            if (id < TYPE_LASTTYPE) {
+                type = builtin_types[id];
             } else {
-                printf("%lu, ", v->data[i]);
+                sprintf(buf, "%lu", id);
+                type = buf;
+            }
+            if (i == v->last - 1) {
+                printf("%s", type);
+            } else {
+                printf("%s, ", type);
             }
         }
     }
