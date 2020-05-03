@@ -91,16 +91,40 @@ static void add_equivalent_type(
     state->greatest_type = MAX(state->greatest_type, greatest_type);
 }
 
-static void collapse_types(struct State *state) {
+static void find_equiv_types(struct State *state, TypeId current_type) {
+    struct Set *current_set = state->equiv_types[current_type];
+    struct Vec *set_vec = set_to_vec(current_set);
     size_t i;
-    for (i = 0; i < state->greatest_type; i++) {
-        struct Set *current_set = state->equiv_types[i];
-        struct Vec *set_vec = set_to_vec(current_set);
-        for (i = 0; i < set_vec->last; i++) {
-            /* TODO */
+    size_t j;
+
+    for (i = 0; i < set_vec->last; i++) {
+        TypeId checking_type = set_vec->data[i];
+        struct Set *equiv_set = state->equiv_types[checking_type];
+        struct Vec *equiv_vec = set_to_vec(equiv_set);
+
+        for (j = 0; j < equiv_vec->last; j++) {
+            TypeId equiv_type = equiv_vec->data[j];
+            set_insert(current_set, equiv_type);
         }
-        vec_free(set_vec);
+
+        vec_free(equiv_vec);
     }
+    vec_free(set_vec);
+}
+
+static void expand_types(struct State *state) {
+    TypeId current_type;
+    for (current_type = 0;
+        current_type < state->greatest_type;
+        current_type++
+    ) {
+        find_equiv_types(state, current_type);
+    }
+}
+
+static void collapse_types(struct State *state) {
+    expand_types(state);
+    expand_types(state);
 }
 
 static TypeId get_new_type(struct State *state) {
@@ -169,6 +193,19 @@ int typecheck(ASTNode *ast) {
     return 0;
 }
 
+static void print_sets(
+    struct State *state,
+    const size_t num_base_types,
+    TypeId types[]
+) {
+    size_t i;
+    for (i = 0; i < num_base_types; i++) {
+        struct Set *set = state->equiv_types[types[i]];
+        printf("T(%lu) := ", types[i]);
+        set_print(set);
+    }
+}
+
 #ifdef IBA_TYPECHECK_TEST
 int main(void) {
     size_t i, j;
@@ -199,14 +236,13 @@ int main(void) {
         }
     }
 
-    puts("");
-    for (i = 0; i < num_base_types; i++) {
-        struct Set *set = state.equiv_types[types[i]];
-        printf("T(%lu) := ", types[i]);
-        set_print(set);
-    }
+    puts("\nbefore collapse");
+    print_sets(&state, num_base_types, types);
 
     /* collapse types */
+    collapse_types(&state);
+    puts("\nafter collapse");
+    print_sets(&state, num_base_types, types);
 
     state_free(&state);
 }

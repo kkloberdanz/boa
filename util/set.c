@@ -98,13 +98,11 @@ static void set_rec_to_vec(struct Set *set, struct Vec *vec) {
 }
 
 struct Vec *set_to_vec(struct Set *set) {
+    struct Vec *vec = vec_new();
     if (set) {
-        struct Vec *vec = vec_new();
         set_rec_to_vec(set, vec);
-        return vec;
-    } else {
-        return NULL;
     }
+    return vec;
 }
 
 #ifdef IBA_SET_TEST
