@@ -34,15 +34,19 @@ static void codegen(struct CodegenState *state, ASTNode *ast);
 static void write_start(struct CodegenState *state) {
     fprintf(state->outf, "#include <stdio.h>\n");
     fprintf(state->outf, "#include \"../runtime/runtime.h\"\n");
+    fprintf(state->outf, "#include \"../extern/tgc/tgc.h\"\n");
+    fprintf(state->outf, "static tgc_t gc;\n");
 }
 
 static void write_end(struct CodegenState *state) {
-    fprintf(state->outf, "return 0;\n");
+    fprintf(state->outf, "  tgc_stop(&gc);\n");
+    fprintf(state->outf, "  return 0;\n");
     fprintf(state->outf, "}\n");
 }
 
 static void write_main(struct CodegenState *state) {
-    fprintf(state->outf, "int main() {\n");
+    fprintf(state->outf, "int main(int argc, char **argv) {\n");
+    fprintf(state->outf, "  tgc_start(&gc, &argc);\n");
 }
 
 static void emit_func_call(struct CodegenState *state, ASTNode *ast) {

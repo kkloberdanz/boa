@@ -64,12 +64,15 @@ iba: y.tab.o lex.yy.o $(COMPILER_DEPS)
 		$(COMPILER_SRC) lex.yy.o y.tab.o \
 		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
 
-libruntime.a: runtime/*.c runtime/*.h
+bin/tgc.o:
+	$(IBA_CC) -o bin/tgc.o -c extern/tgc/tgc.c -Os -fPIC
+
+libruntime.a: runtime/*.c runtime/*.h bin/tgc.o
 	$(IBA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
 		-c runtime/runtime.c -o runtime.o
-	ar rcs libruntime.a runtime.o
+	ar rcs libruntime.a runtime.o bin/tgc.o
 
-libccruntime.a: runtime/*.c runtime/*.h
+libccruntime.a: runtime/*.c runtime/*.h bin/tgc.o
 	cc -std=$(STD) -Os $(INCLD) -fPIC \
 		-c runtime/runtime.c -o ccruntime.o
 	ar rcs libccruntime.a ccruntime.o
