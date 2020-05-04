@@ -23,9 +23,9 @@
 #include <getopt.h>
 
 #include "ast.h"
+#include "codegen.h"
 #include "../util/util.h"
 #include "../util/memory.h"
-#include "codegen.h"
 #include "typecheck.h"
 
 static const char *program_name = "iba";
