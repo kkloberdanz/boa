@@ -1,4 +1,4 @@
-#!/home/kyle/bin/iba
+#!/home/kyle/bin/iba -r
 #
 #   This is an exemple of an iba program
 #   Collatz Conjecture, see: https://en.wikipedia.org/wiki/Collatz_conjecture
@@ -9,6 +9,11 @@ collatz = n => {
     if n == 1: -> 1
     else if n % 2 == 0: -> collatz(n / 2)
     else -> collatz(3 * n + 1)
+}
+
+gcd = a, b => {
+    if b == 0: -> a
+    else -> gcd(b, a % b)
 }
 
 make_even = n => {
@@ -28,3 +33,6 @@ printd(make_even(1111))
 printd(compare(1, 2))
 printd(compare(1, 1))
 printd(compare(9, 7))
+
+printd(0)
+printd(gcd(9, 12))

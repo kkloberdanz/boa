@@ -52,24 +52,19 @@ static void mark_types_node(struct HMState *state, ASTNode *ast) {
             break;
 
         case ASSIGN_EXPR:
-            puts("ASSIGN_EXPR");
             break;
 
         case OPERATOR:
             mark_types_operator(state, ast);
-            puts("OPERATOR");
             break;
 
         case RETURN_STMT:
-            puts("RETURN_STMT");
             break;
 
         case LOAD_STMT:
-            puts("LOAD_STMT");
             break;
 
         case CONDITIONAL:
-            puts("CONDITIONAL");
             break;
 
         case FUNC_DEF: {
