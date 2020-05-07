@@ -28,8 +28,6 @@
 #include "../util/memory.h"
 #include "typecheck.h"
 
-static const char *program_name = "iba";
-
 static bool is_iba_src_file(const char *filename) {
     unsigned long len = strlen(filename) - 1;
     if (len < 5) {
@@ -256,7 +254,7 @@ static int run(int argc, char **argv) {
                 break;
 
             case 'h':
-                print_usage(program_name);
+                print_usage(argv[0]);
                 exit(EXIT_SUCCESS);
 
             case 'b':
@@ -269,14 +267,14 @@ static int run(int argc, char **argv) {
                 break;
 
             default:
-                print_usage(program_name);
+                print_usage(argv[0]);
                 return EXIT_FAILURE;
         }
     }
 
     if (optind >= argc) {
         fprintf(stderr, "no iba source file provided\n");
-        print_usage(program_name);
+        print_usage(argv[0]);
         return EXIT_FAILURE;
     } else {
         source_filename = argv[optind];
