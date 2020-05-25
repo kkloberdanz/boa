@@ -29,7 +29,7 @@
 #include "typecheck.h"
 
 static bool is_boa_src_file(const char *filename) {
-    unsigned long len = strlen(filename) - 1;
+    size_t len = strlen(filename) - 1;
     if (len < 5) {
         return false;
     }

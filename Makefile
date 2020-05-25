@@ -7,7 +7,7 @@ INCLD ?= -I.
 CFLAGS ?= -fPIC
 
 .PHONY: release
-release: static
+release: dynamic
 
 .PHONY: static
 static: export OPTIM_FLAGS ?= -Os -static
@@ -75,7 +75,7 @@ libruntime.a: runtime/*.c runtime/*.h bin/tgc.o
 libccruntime.a: runtime/*.c runtime/*.h bin/tgc.o
 	cc -std=$(STD) -Os $(INCLD) -fPIC \
 		-c runtime/runtime.c -o ccruntime.o
-	ar rcs libccruntime.a ccruntime.o
+	ar rcs libccruntime.a ccruntime.o bin/tgc.o
 
 .PHONY: build
 build: boa libruntime.a libccruntime.a
@@ -98,3 +98,5 @@ clean:
 	rm -f ex[0-9]+
 	rm -f ex16
 	rm -f a.out
+	rm -f hello
+	rm -f example/hello
