@@ -1,6 +1,6 @@
-#!/home/kyle/bin/iba -r
+#!/home/kyle/bin/boa -r
 #
-#   This is an exemple of an iba program
+#   This is an exemple of an boa program
 #   Collatz Conjecture, see: https://en.wikipedia.org/wiki/Collatz_conjecture
 #
 

@@ -17,13 +17,13 @@ enum BuiltinType {
     TYPE_LASTTYPE /* always keep this last */
 };
 
-struct ibaType {
+struct boaType {
     char *repr;
     TypeId id;
 };
 
 TypeId string_repr_to_type_id(char *repr, char *all_types[]);
 
-char *iba_type_to_c_type(TypeId type_id);
+char *boa_type_to_c_type(TypeId type_id);
 
 #endif /* TYPES_H */

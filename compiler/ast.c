@@ -1,18 +1,18 @@
 /*
- *     This file is part of iba.
+ *     This file is part of boa.
  *
- *  iba is free software: you can redistribute it and/or modify
+ *  boa is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  iba is distributed in the hope that it will be useful,
+ *  boa is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with iba.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with boa.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <stdio.h>
@@ -35,7 +35,7 @@ ASTNode *make_ast_node(
     ASTNode *right,
     TypeId type
 ) {
-    ASTNode *node = iba_malloc(sizeof(ASTNode));
+    ASTNode *node = boa_malloc(sizeof(ASTNode));
     node->kind = kind;
     node->sibling = NULL;
     node->obj = obj;
@@ -164,7 +164,7 @@ ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
 }
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
-    ParseObj *obj = iba_malloc(sizeof(ParseObj));
+    ParseObj *obj = boa_malloc(sizeof(ParseObj));
     if (obj == NULL) {
         fprintf(stderr, "out of memory");
         exit(EXIT_FAILURE);

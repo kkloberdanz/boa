@@ -208,7 +208,7 @@ void print_sets(
  *    informing which line and which identifier does not have a correct type.
  */
 
-#ifdef IBA_HINDLEY_MILNER_TEST
+#ifdef BOA_HINDLEY_MILNER_TEST
 int main(void) {
     int error_code = 0;
     const TypeId x = TYPE_LASTTYPE;
@@ -235,7 +235,7 @@ int main(void) {
         {x + 4, x + 5, 0, 0},
         {x + 2, TYPE_BOOL, 0, 0},
         {x + 2, 0, 0, 0},
-#ifdef IBA_TEST_TYPE_ERROR
+#ifdef BOA_TEST_TYPE_ERROR
         {x + 2, TYPE_FLOAT, 0, 0}
 #else
         {x + 2, 0, 0, 0}

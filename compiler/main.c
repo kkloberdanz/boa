@@ -1,18 +1,18 @@
 /*
- *     This file is part of iba.
+ *     This file is part of boa.
  *
- *  iba is free software: you can redistribute it and/or modify
+ *  boa is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  iba is distributed in the hope that it will be useful,
+ *  boa is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with iba.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with boa.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <stdio.h>
@@ -28,15 +28,12 @@
 #include "../util/memory.h"
 #include "typecheck.h"
 
-static bool is_iba_src_file(const char *filename) {
+static bool is_boa_src_file(const char *filename) {
     unsigned long len = strlen(filename) - 1;
     if (len < 5) {
         return false;
     }
-    return filename[len - 3] == '.' \
-        && filename[len - 2] == 'i' \
-        && filename[len - 1] == 'b' \
-        && filename[len] == 'a';
+    return strcmp(filename + (len - 3), ".boa") == 0;
 }
 
 static void c_filename_to_exe_filename(char **filename) {
@@ -57,15 +54,15 @@ static void c_filename_to_exe_filename(char **filename) {
     }
 }
 
-static int compile_iba(const char *source_filename, char **output_filename) {
+static int compile_boa(const char *source_filename, char **output_filename) {
     FILE *source_file = NULL;
     FILE *output = NULL;
     unsigned long len = strlen(source_filename) - 1;
     int error_code = 1;
     ASTNode *tree = NULL;
 
-    if (!is_iba_src_file(source_filename)) {
-        fprintf(stderr, "not a iba source file: %s\n", source_filename);
+    if (!is_boa_src_file(source_filename)) {
+        fprintf(stderr, "not a boa source file: %s\n", source_filename);
         return 2;
     }
     source_file = fopen(source_filename, "r");
@@ -106,62 +103,62 @@ static int compile_iba(const char *source_filename, char **output_filename) {
 
 static int compile_c(const char *c_filename, const char *exe_filename) {
     int error_code = 0;
-    const char *iba_cc = getenv("IBA_CC");
+    const char *boa_cc = getenv("BOA_CC");
     char *buf;
 
-    if (!iba_cc) {
+    if (!boa_cc) {
         const char *fmt = "%s -Os -fPIC -o %s %s libccruntime.a";
-        iba_cc = "cc";
+        boa_cc = "cc";
 
-        buf = iba_malloc(
+        buf = boa_malloc(
             1 +
             strlen(fmt) +
             strlen(c_filename) +
             strlen(exe_filename) +
-            strlen(iba_cc)
+            strlen(boa_cc)
         );
         fprintf(
             stderr,
-            "\nenvironment variable IBA_CC not set, defaulting to cc\n\n"
+            "\nenvironment variable BOA_CC not set, defaulting to cc\n\n"
         );
         sprintf(
             buf,
             fmt,
-            iba_cc,
+            boa_cc,
             exe_filename,
             c_filename
         );
 
-    } else if (!strcmp(iba_cc, "tcc")) {
+    } else if (!strcmp(boa_cc, "tcc")) {
         const char *fmt = "%s -Os -fPIC -o %s %s libruntime.a";
-        buf = iba_malloc(
+        buf = boa_malloc(
             1 +
             strlen(fmt) +
             strlen(c_filename) +
             strlen(exe_filename) +
-            strlen(iba_cc)
+            strlen(boa_cc)
         );
         sprintf(
             buf,
             fmt,
-            iba_cc,
+            boa_cc,
             exe_filename,
             c_filename
         );
 
     } else {
         const char *fmt = "%s -Os -fPIC -static -o %s %s libruntime.a";
-        buf = iba_malloc(
+        buf = boa_malloc(
             1 +
             strlen(fmt) +
             strlen(c_filename) +
             strlen(exe_filename) +
-            strlen(iba_cc)
+            strlen(boa_cc)
         );
         sprintf(
             buf,
             fmt,
-            iba_cc,
+            boa_cc,
             exe_filename,
             c_filename
         );
@@ -173,26 +170,26 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 
         fprintf(stderr, "failed to compile '%s'\n", exe_filename);
         fprintf(stderr, "are you using the right C compiler?\n");
-        fprintf(stderr, "tried using: '%s'\n", iba_cc);
+        fprintf(stderr, "tried using: '%s'\n", boa_cc);
         fprintf(stderr, "\nfailed default compilation, using fallback\n");
-        iba_cc = "cc";
+        boa_cc = "cc";
 
-        buf = iba_malloc(
+        buf = boa_malloc(
             1 +
             strlen(fmt) +
             strlen(c_filename) +
             strlen(exe_filename) +
-            strlen(iba_cc)
+            strlen(boa_cc)
         );
-        iba_cc = "cc";
+        boa_cc = "cc";
         fprintf(
             stderr,
-            "\nenvironment variable IBA_CC not set, defaulting to cc\n\n"
+            "\nenvironment variable BOA_CC not set, defaulting to cc\n\n"
         );
         sprintf(
             buf,
             fmt,
-            iba_cc,
+            boa_cc,
             exe_filename,
             c_filename
         );
@@ -201,7 +198,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         if (error_code) {
             fprintf(stderr, "failed to compile '%s'\n", exe_filename);
             fprintf(stderr, "are you using the right C compiler?\n");
-            fprintf(stderr, "tried using: '%s'\n", iba_cc);
+            fprintf(stderr, "tried using: '%s'\n", boa_cc);
             return error_code;
         }
     }
@@ -213,7 +210,7 @@ static int run_program(const char *exe_filename) {
     const char *fmt = "./%s";
     int error_code = 0;
 
-    buf = iba_malloc(1 + strlen(fmt) + strlen(exe_filename));
+    buf = boa_malloc(1 + strlen(fmt) + strlen(exe_filename));
     sprintf(buf, fmt, exe_filename);
     error_code = system(buf);
     if (error_code) {
@@ -226,7 +223,7 @@ static int run_program(const char *exe_filename) {
 static void print_usage(const char *prg_name) {
     fprintf(stderr, "\n%s: [-b] [-h] [-r] [-o outfile] infile\n\n", prg_name);
 
-    fprintf(stderr, "        -b    Build only, don't run the iba program\n\n"
+    fprintf(stderr, "        -b    Build only, don't run the boa program\n\n"
                     "        -h\n"
                     "              Display this help menu, then exit\n\n"
                     "        -o outfile\n"
@@ -234,7 +231,7 @@ static void print_usage(const char *prg_name) {
                     "              write binary to outfile\n\n"
                     "        -r\n"
                     "              Instead of outputing a file, simply run\n"
-                    "              the iba source file\n"
+                    "              the boa source file\n"
     );
 }
 
@@ -273,14 +270,14 @@ static int run(int argc, char **argv) {
     }
 
     if (optind >= argc) {
-        fprintf(stderr, "no iba source file provided\n");
+        fprintf(stderr, "no boa source file provided\n");
         print_usage(argv[0]);
         return EXIT_FAILURE;
     } else {
         source_filename = argv[optind];
     }
 
-    error_code = compile_iba(source_filename, &c_filename);
+    error_code = compile_boa(source_filename, &c_filename);
     if (error_code) {
         fprintf(stderr, "failed to compile '%s'\n", source_filename);
         return error_code;
@@ -308,6 +305,6 @@ static int run(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     int error_code = run(argc, argv);
-    iba_free_all();
+    boa_free_all();
     return error_code;
 }

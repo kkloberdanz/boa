@@ -121,7 +121,7 @@ TypeId set_get_smallest(struct Set *set) {
     return set->id;
 }
 
-#ifdef IBA_SET_TEST
+#ifdef BOA_SET_TEST
 int main(void) {
     size_t i;
     int arr[] = {0, 1, 4, 6, 3, 7, 9, 1, 4, 11, 2};
@@ -147,4 +147,4 @@ int main(void) {
     set_free(set);
     return 0;
 }
-#endif /* IBA_SET_TEST */
+#endif /* BOA_SET_TEST */

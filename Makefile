@@ -12,7 +12,7 @@ release: static
 .PHONY: static
 static: export OPTIM_FLAGS ?= -Os -static
 static: export CC := musl-gcc
-static: export IBA_CC := musl-gcc
+static: export BOA_CC := musl-gcc
 static: build
 
 .PHONY: clang-warn-everything
@@ -21,31 +21,31 @@ clang-warn-everything: export WARN_FLAGS := \
 	-Wno-format-nonliteral \
 	-Wno-padded
 clang-warn-everything: export CC := clang
-clang-warn-everything: export IBA_CC := clang
+clang-warn-everything: export BOA_CC := clang
 clang-warn-everything: build
 
 .PHONY: dynamic
 dynamic: export OPTIM_FLAGS ?= -Os
 dynamic: export CC ?= cc
-dynamic: export IBA_CC ?= cc
+dynamic: export BOA_CC ?= cc
 dynamic: build
 
 .PHONY: debug
 debug: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
 debug: export CC ?= cc
-debug: export IBA_CC ?= cc
+debug: export BOA_CC ?= cc
 debug: build
 
 .PHONY: valgrind
 valgrind: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
 valgrind: export CC ?= cc
-valgrind: export IBA_CC ?= cc
+valgrind: export BOA_CC ?= cc
 valgrind: run-valgrind
 
 .PHONY: sanitize
 sanitize: export OPTIM_FLAGS ?= -Os -ggdb3 -Werror -fsanitize=address
 sanitize: export CC ?= cc
-sanitize: export IBA_CC ?= cc
+sanitize: export BOA_CC ?= cc
 sanitize: build
 
 COMPILER_DEPS = compiler/*.c util/*.c  compiler/*.h util/*.h
@@ -59,16 +59,16 @@ lex.yy.o: y.tab.o grammar/tokens.l
 	lex grammar/tokens.l
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -c lex.yy.c -o lex.yy.o
 
-iba: y.tab.o lex.yy.o $(COMPILER_DEPS)
-	$(CC) -std=$(STD) $(WARN_FLAGS) -o iba \
+boa: y.tab.o lex.yy.o $(COMPILER_DEPS)
+	$(CC) -std=$(STD) $(WARN_FLAGS) -o boa \
 		$(COMPILER_SRC) lex.yy.o y.tab.o \
 		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
 
 bin/tgc.o:
-	$(IBA_CC) -o bin/tgc.o -c extern/tgc/tgc.c -Os -fPIC
+	$(BOA_CC) -o bin/tgc.o -c extern/tgc/tgc.c -Os -fPIC
 
 libruntime.a: runtime/*.c runtime/*.h bin/tgc.o
-	$(IBA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
+	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
 		-c runtime/runtime.c -o runtime.o
 	ar rcs libruntime.a runtime.o bin/tgc.o
 
@@ -78,16 +78,16 @@ libccruntime.a: runtime/*.c runtime/*.h bin/tgc.o
 	ar rcs libccruntime.a ccruntime.o
 
 .PHONY: build
-build: iba libruntime.a libccruntime.a
+build: boa libruntime.a libccruntime.a
 
 .PHONY: run-valgrind
 run-valgrind: build
-	valgrind ./iba -b -o bin/ex16 example/ex16.iba
+	valgrind ./boa -b -o bin/ex16 example/ex16.boa
 
 .PHONY: clean
 clean:
 	rm -rf bin/*
-	rm -f iba
+	rm -f boa
 	rm -f libruntime.a runtime.o libccruntime.a
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
 	rm -f core

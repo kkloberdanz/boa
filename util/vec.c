@@ -46,7 +46,7 @@ void vec_print(struct Vec *vec) {
     putchar(']');
 }
 
-#ifdef IBA_VEC_TEST
+#ifdef BOA_VEC_TEST
 int main(void) {
     size_t i;
     struct Vec *v = vec_new();
