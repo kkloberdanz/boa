@@ -206,6 +206,7 @@ expr        : expr PLUS expr        {
                                         );
                                     }
             | expr OVER expr        {
+                                        debug_puts("making OP_DIVIDE");
                                         $$ = make_operator_node(
                                             OP_DIVIDE,
                                             $1,
@@ -213,6 +214,7 @@ expr        : expr PLUS expr        {
                                         );
                                     }
             | expr PERCENT expr     {
+                                        debug_puts("making OP_MOD");
                                         $$ = make_operator_node(
                                             OP_MOD,
                                             $1,
@@ -245,12 +247,12 @@ type        : TYPE                  {
                                     }
             ;
 
-bool_expr   : expr EQ expr          {$$ = make_operator_node(OP_EQ, $1, $3);}
-            | expr LT expr          {$$ = make_operator_node(OP_LT, $1, $3);}
-            | expr LE expr          {$$ = make_operator_node(OP_LE, $1, $3);}
-            | expr GT expr          {$$ = make_operator_node(OP_GT, $1, $3);}
-            | expr GE expr          {$$ = make_operator_node(OP_GE, $1, $3);}
-            | expr NE expr          {$$ = make_operator_node(OP_NE, $1, $3);}
+bool_expr   : expr EQ expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_EQ, $1, $3);}
+            | expr LT expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_LT, $1, $3);}
+            | expr LE expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_LE, $1, $3);}
+            | expr GT expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_GT, $1, $3);}
+            | expr GE expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_GE, $1, $3);}
+            | expr NE expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_NE, $1, $3);}
             ;
 
 args        : expr                  {$$ = $1;}

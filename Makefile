@@ -31,7 +31,7 @@ dynamic: export BOA_CC ?= cc
 dynamic: build
 
 .PHONY: debug
-debug: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
+debug: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror -DDEBUG
 debug: export CC ?= cc
 debug: export BOA_CC ?= cc
 debug: build
