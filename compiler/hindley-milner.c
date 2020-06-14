@@ -19,6 +19,8 @@ void hmstate_init(struct HMState *state) {
     for (i = 0; i < capacity; i++) {
         state->equiv_types[i] = NULL;
     }
+
+    state->final_types = NULL; /* this gets set after collapse */
 }
 
 void hmstate_free(struct HMState *state) {
@@ -30,6 +32,7 @@ void hmstate_free(struct HMState *state) {
         }
 
         free(state->equiv_types);
+        free(state->final_types);
     }
 }
 
@@ -166,8 +169,17 @@ int check_conflicing_types(struct HMState *state) {
 }
 
 void collapse_types(struct HMState *state) {
+    size_t i = 0;
+    state->final_types = malloc(sizeof(TypeId) * state->greatest_type);
     expand_types(state);
     expand_types(state);
+    for (i = 0; i < state->greatest_type; i++) {
+        if (state->equiv_types[i]) {
+            state->final_types[i] = set_get_smallest(state->equiv_types[i]);
+        } else {
+            state->final_types[i] = 0;
+        }
+    }
 }
 
 TypeId get_new_type(struct HMState *state) {

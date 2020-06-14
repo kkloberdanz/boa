@@ -81,7 +81,8 @@ static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
     state->reg++;
     fprintf(
         state->outf,
-        "const long r%lu = %s(%s);\n",
+        "const %s r%lu = %s(%s);\n",
+        boa_type_to_c_type(ast->type),
         state->reg,
         func_name,
         args_str
@@ -91,7 +92,13 @@ static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
 static void emit_assign_expr(struct CodegenState *state, ASTNode *ast) {
     char *variable_name = ast->obj->repr;
     codegen_node(state, ast->right);
-    fprintf(state->outf, "const long %s = r%lu;\n", variable_name, state->reg);
+    fprintf(
+        state->outf,
+        "const %s %s = r%lu;\n",
+        boa_type_to_c_type(ast->type),
+        variable_name,
+        state->reg
+    );
 }
 
 static char *get_operator(Operator op) {
@@ -178,7 +185,8 @@ static void emit_operation_expr(struct CodegenState *state, ASTNode *ast) {
     state->reg++;
     fprintf(
         state->outf,
-        "const long r%lu = %s %s %s;\n",
+        "const %s r%lu = %s %s %s;\n",
+        boa_type_to_c_type(ast->type),
         state->reg,
         operand_1,
         operator,
@@ -195,7 +203,8 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
     state->reg++;
     fprintf(
         state->outf,
-        "const long r%lu = %s;\n",
+        "const %s r%lu = %s;\n",
+        boa_type_to_c_type(ast->type),
         state->reg,
         ast->obj->repr
     );
@@ -263,16 +272,9 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
 
         i = num_params;
         while (i --> 0) {
-            char *type = "long";
             TypeId type_id = params_arr[i]->type;
 
-            /* TODO: temporary hack until typechecking works */
-            if (type_id == 0) {
-                type_id = 1;
-            }
-
-            /* TODO: put this back in then typechecking works
-            type = boa_type_to_c_type(type_id);*/
+            const char *type = boa_type_to_c_type(type_id);
             sprintf(
                 params_str + len,
                 "%s %s, ",

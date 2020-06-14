@@ -36,5 +36,10 @@ TypeId string_repr_to_type_id(char *repr, char *all_types[]) {
 }
 
 char *boa_type_to_c_type(TypeId type_id) {
-    return c_types[type_id];
+    if (type_id < TYPE_LASTTYPE) {
+        return c_types[type_id];
+    } else {
+        fprintf(stderr, "Type: '%ld' does not exist\n", type_id);
+        return "ERROR";
+    }
 }

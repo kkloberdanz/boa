@@ -79,7 +79,14 @@ static void mark_types_node(struct HMState *state, ASTNode *ast, TypeId context)
     switch (ast->kind) {
         case FUNC_CALL:
             debug_puts("FUNC_CALL");
-            ast->type = get_new_type(state);
+
+            /* TODO: make a more efficient way to lookup type for builtin functions */
+            if (strcmp(ast->obj->repr, "printd")) {
+                ast->type = TYPE_INT;
+            } else {
+                ast->type = get_new_type(state);
+            }
+            ast->right->type = ast->type;
             context = ast->type;
             break;
 
@@ -148,6 +155,17 @@ static int mark_types(struct HMState *state, ASTNode *ast, TypeId context) {
     return 0;
 }
 
+static int assign_types(struct HMState *state, ASTNode *ast) {
+    while (ast) {
+        ast->type = state->final_types[ast->type];
+        assign_types(state, ast->right);
+        assign_types(state, ast->left);
+        assign_types(state, ast->condition);
+        ast = ast->sibling;
+    }
+    return 0;
+}
+
 int check_types(ASTNode *ast) {
     struct HMState state;
     int exit_code = 0;
@@ -157,6 +175,7 @@ int check_types(ASTNode *ast) {
     print_sets(&state, state.greatest_type);
     collapse_types(&state);
     print_sets(&state, state.greatest_type);
+    assign_types(&state, ast);
     exit_code = check_conflicing_types(&state);
     hmstate_free(&state);
     return exit_code;

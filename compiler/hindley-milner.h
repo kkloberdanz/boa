@@ -8,6 +8,7 @@ struct HMState {
     TypeId new_type;
     TypeId greatest_type;
     struct Set **equiv_types;
+    TypeId *final_types;
 };
 
 void hmstate_init(struct HMState *state);

@@ -26,7 +26,7 @@ compare = a, b => {
     else -> 1 # a > b
 }
 
-collatz(1000)
+printd(collatz(1000))
 
 printd(make_even(1111))
 
