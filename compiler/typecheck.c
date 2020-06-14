@@ -9,6 +9,19 @@
 #include "../util/util.h"
 #include "../util/set.h"
 
+/*
+ * TODO:
+ *     Revise typechecking, instead of current algorithm, use pointers.
+ *     1) If TypeId *type is NULL
+ *         - Allocate memory for type, assign it to TYPE_NOT_CHECKED
+ *     2) If encountered concrete type and type is not NULL and *type == TYPE_NOT_CHECKED
+ *         - Assign *type to concrete type
+ *     3) If encountered concrete type and type is not NULL and *type != TYPE_NOT_CHECKED
+ *         - Type error, conflicting types
+ *     4) If type not known and type is not NULL and *type == TYPE_NOT_CHECKED
+ *         - Point type to the address of an equivalent type
+ */
+
 static int mark_types(struct HMState *state, ASTNode *ast, TypeId context);
 static char is_boolean_operator(ASTNode *ast);
 
