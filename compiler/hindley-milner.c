@@ -178,13 +178,12 @@ TypeId get_new_type(struct HMState *state) {
 
 void print_sets(
     struct HMState *state,
-    const size_t num_base_types,
-    TypeId types[]
+    const size_t num_base_types
 ) {
     size_t i;
-    for (i = 0; i < num_base_types; i++) {
-        struct Set *set = state->equiv_types[types[i]];
-        printf("T(%lu) := ", types[i]);
+    for (i = 0; i <= num_base_types; i++) {
+        struct Set *set = state->equiv_types[i];
+        printf("T(%lu) := ", i);
         set_print(set);
     }
 }
@@ -255,12 +254,12 @@ int main(void) {
     }
 
     puts("\nbefore collapse");
-    print_sets(&state, num_base_types, types);
+    print_sets(&state, num_base_types);
 
     /* collapse types */
     collapse_types(&state);
     puts("\nafter collapse");
-    print_sets(&state, num_base_types, types);
+    print_sets(&state, num_base_types);
 
     puts("typechecking...");
 

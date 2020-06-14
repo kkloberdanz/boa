@@ -24,8 +24,7 @@ void add_equivalent_type(
 
 void print_sets(
     struct HMState *state,
-    const size_t num_base_types,
-    TypeId types[]
+    const size_t num_base_types
 );
 
 void collapse_types(struct HMState *state);
