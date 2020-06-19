@@ -3,11 +3,10 @@
 #include <string.h>
 
 #include "ast.h"
-#include "hindley-milner.h"
 #include "typecheck.h"
 #include "typeinfo.h"
 #include "../util/util.h"
-#include "../util/set.h"
+#include "../util/memory.h"
 
 /*
  * TODO:
@@ -22,16 +21,41 @@
  *         - Point type to the address of an equivalent type
  */
 
-static int mark_types(struct HMState *state, ASTNode *ast, TypeId context);
+static int mark_types(ASTNode *ast, TypeId context);
 static char is_boolean_operator(ASTNode *ast);
 
-static void mark_types_operator(struct HMState *state, ASTNode *ast, TypeId context) {
-    ast->left->type = get_new_type(state);
-    mark_types(state, ast->left, context);
+static TypeId *type_rules(TypeId *ptr, TypeId proposed_type) {
+    if (ptr == NULL) {
+        return new_type(proposed_type);
+    } else if (ptr && *ptr == TYPE_NOT_CHECKED) {
+        /* TODO: deallocate? */
+        return new_type(proposed_type);
+    } else if (ptr && *ptr != TYPE_NOT_CHECKED) {
+        fprintf(
+            stderr,
+            "conflicint types: %s and %s\n",
+            builtin_types[*ptr],
+            builtin_types[proposed_type]
+        );
+        exit(EXIT_FAILURE);
+    } else {
+        fprintf(
+            stderr,
+            "conflicint types: %s and %s\n",
+            builtin_types[*ptr],
+            builtin_types[proposed_type]
+        );
+        exit(EXIT_FAILURE);
+    }
+}
+
+static void mark_types_operator(ASTNode *ast, TypeId context) {
+    /*ast->left->type = get_new_type(state);*/
+    mark_types(ast->left, context);
 
     if (ast->condition) {
         if (is_boolean_operator(ast->condition)) {
-            ast->condition->type = TYPE_BOOL;
+            ast->condition->type = type_rules(ast->condition->type, TYPE_BOOL);
         } else {
             ast->condition->type = ast->left->type;
         }
@@ -39,7 +63,7 @@ static void mark_types_operator(struct HMState *state, ASTNode *ast, TypeId cont
 
     if (ast->right != NULL) {
         ast->right->type = ast->left->type;
-        mark_types(state, ast->right, context);
+        mark_types(ast->right, context);
     }
 }
 
@@ -60,28 +84,28 @@ static char is_boolean_operator(ASTNode *ast) {
     }
 }
 
-static void mark_types_node(struct HMState *state, ASTNode *ast, TypeId context) {
+static void mark_types_node(ASTNode *ast, TypeId context) {
     if (ast->obj) {
         /*printf("looking at: %s\n", ast->obj->repr);*/
         switch (ast->obj->kind) {
             case AST_STRING:
                 debug_puts("STRING");
-                ast->type = TYPE_STRING;
+                ast->type = type_rules(ast->type, TYPE_STRING);
                 return;
 
             case AST_INT:
                 debug_puts("INT");
-                ast->type = TYPE_INT;
+                ast->type = type_rules(ast->type, TYPE_INT);
                 return;
 
             case AST_FLOAT:
                 debug_puts("FLOAT");
-                ast->type = TYPE_FLOAT;
+                ast->type = type_rules(ast->type, TYPE_FLOAT);
                 return;
 
             case AST_BOOL:
                 debug_puts("BOOL");
-                ast->type = TYPE_BOOL;
+                ast->type = type_rules(ast->type, TYPE_BOOL);
                 return;
 
             default:
@@ -95,12 +119,10 @@ static void mark_types_node(struct HMState *state, ASTNode *ast, TypeId context)
 
             /* TODO: make a more efficient way to lookup type for builtin functions */
             if (strcmp(ast->obj->repr, "printd")) {
-                ast->type = TYPE_INT;
-            } else {
-                ast->type = get_new_type(state);
+                ast->type = type_rules(ast->type, TYPE_INT);
             }
             ast->right->type = ast->type;
-            context = ast->type;
+            /*context = ast->type;*/
             break;
 
         case ASSIGN_EXPR:
@@ -109,7 +131,7 @@ static void mark_types_node(struct HMState *state, ASTNode *ast, TypeId context)
 
         case OPERATOR:
             debug_puts("OPERATOR");
-            mark_types_operator(state, ast, context);
+            mark_types_operator(ast, context);
             break;
 
         case RETURN_STMT:
@@ -118,8 +140,8 @@ static void mark_types_node(struct HMState *state, ASTNode *ast, TypeId context)
              * type of the function to the type of the return value
              */
             debug_puts("RETURN_STMT");
-            mark_types(state, ast->right, context);
-            add_equivalent_type(state, context, ast->right->type);
+            mark_types(ast->right, context);
+            /*add_equivalent_type(state, context, ast->right->type);*/
             break;
 
         case LOAD_STMT:
@@ -135,6 +157,7 @@ static void mark_types_node(struct HMState *state, ASTNode *ast, TypeId context)
              * are the same type
              */
             debug_puts("CONDITIONAL");
+            /*
             ast->type = get_new_type(state);
             add_equivalent_type(state, ast->type, context);
             context = ast->type;
@@ -144,9 +167,11 @@ static void mark_types_node(struct HMState *state, ASTNode *ast, TypeId context)
             mark_types(state, ast->left, context);
             mark_types(state, ast->right, context);
             mark_types(state, ast->condition, context);
+            */
             break;
 
         case FUNC_DEF: {
+            /*
             ASTNode *func_param = ast->left;
             ast->type = get_new_type(state);
             context = ast->type;
@@ -155,41 +180,38 @@ static void mark_types_node(struct HMState *state, ASTNode *ast, TypeId context)
                 func_param = func_param->sibling;
             }
             mark_types(state, ast->right, context);
+            */
             break;
         }
     }
 }
 
-static int mark_types(struct HMState *state, ASTNode *ast, TypeId context) {
+static int mark_types(ASTNode *ast, TypeId context) {
     while (ast) {
-        mark_types_node(state, ast, context);
+        mark_types_node(ast, context);
         ast = ast->sibling;
     }
     return 0;
 }
 
-static int assign_types(struct HMState *state, ASTNode *ast) {
+/**
+ * Hack to force everything to be an int for testing
+ */
+static int assign_types(ASTNode *ast) {
     while (ast) {
-        ast->type = state->final_types[ast->type];
-        assign_types(state, ast->right);
-        assign_types(state, ast->left);
-        assign_types(state, ast->condition);
+        ast->type = new_type(TYPE_INT);
+        assign_types(ast->right);
+        assign_types(ast->left);
+        assign_types(ast->condition);
         ast = ast->sibling;
     }
     return 0;
 }
 
 int check_types(ASTNode *ast) {
-    struct HMState state;
     int exit_code = 0;
     TypeId context = TYPE_NOT_CHECKED;
-    hmstate_init(&state);
-    mark_types(&state, ast, context);
-    print_sets(&state, state.greatest_type);
-    collapse_types(&state);
-    print_sets(&state, state.greatest_type);
-    assign_types(&state, ast);
-    exit_code = check_conflicing_types(&state);
-    hmstate_free(&state);
+    mark_types(ast, context);
+    assign_types(ast);
     return exit_code;
 }

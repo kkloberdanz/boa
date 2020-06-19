@@ -33,7 +33,7 @@ ASTNode *make_ast_node(
     ASTNode *left,
     ASTNode *condition,
     ASTNode *right,
-    TypeId type
+    TypeId *type
 ) {
     ASTNode *node = boa_malloc(sizeof(ASTNode));
     node->kind = kind;
@@ -49,8 +49,7 @@ ASTNode *make_ast_node(
 
 ASTNode *make_operator_node(Operator op, ASTNode *left, ASTNode *right) {
     ASTNode *node;
-    TypeId type;
-    type = TYPE_NOT_CHECKED;
+    TypeId *type = NULL;
     node = make_ast_node(
         OPERATOR,
         NULL,
@@ -68,9 +67,8 @@ ASTNode *make_conditional_node(
     ASTNode *left,
     ASTNode *right
 ) {
-    TypeId type;
+    TypeId *type = NULL;
     ASTNode *node;
-    type = TYPE_NOT_CHECKED;
     node = make_ast_node(
         CONDITIONAL,
         NULL,
@@ -91,10 +89,11 @@ ASTNode *make_assign_node(
 ) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    TypeId type = TYPE_NOT_CHECKED;
+    TypeId *type = NULL;
     if (type_node) {
         ParseObj *type_obj = type_node->obj;
-        type = string_repr_to_type_id(type_obj->repr, all_types);
+        TypeId typ = string_repr_to_type_id(type_obj->repr, all_types);
+        type = new_type(typ);
     }
 
     node = make_ast_node(
@@ -112,7 +111,7 @@ ASTNode *make_assign_node(
 ASTNode *make_load_node(ASTNode *leaf_obj) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    TypeId type = TYPE_NOT_CHECKED;
+    TypeId *type = NULL;
     node = make_ast_node(
         LOAD_STMT,
         obj,
@@ -132,8 +131,7 @@ ASTNode *make_function_node(
 ) {
     ASTNode *node;
     ParseObj *obj = func_name->obj;
-    TypeId type;
-    type = TYPE_NOT_CHECKED;
+    TypeId *type = NULL;
     node = make_ast_node(
         FUNC_DEF,
         obj,
@@ -149,8 +147,7 @@ ASTNode *make_function_node(
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
-    TypeId type;
-    type = TYPE_NOT_CHECKED;
+    TypeId *type = NULL;
     node = make_ast_node(
         FUNC_CALL,
         obj,
@@ -177,25 +174,24 @@ ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind) {
 ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
     ParseObj *obj;
     ASTNode *node;
-    TypeId type;
-    type = TYPE_NOT_CHECKED;
+    TypeId *type = NULL;
     switch (kind) {
         case AST_STRING: {
-            type = TYPE_STRING;
+            type = new_type(TYPE_STRING);
             string_replace_single_quote_with_double(repr);
             break;
         }
 
         case AST_INT:
-            type = TYPE_INT;
+            type = new_type(TYPE_INT);
             break;
 
         case AST_FLOAT:
-            type = TYPE_FLOAT;
+            type = new_type(TYPE_FLOAT);
             break;
 
         case AST_BOOL:
-            type = TYPE_BOOL;
+            type = new_type(TYPE_BOOL);
             break;
 
         case AST_TYPE:
@@ -221,8 +217,7 @@ ASTNode *make_id_node(char *repr) {
 
 ASTNode *make_return_node(ASTNode *expr_to_return) {
     ASTNode *node;
-    TypeId type;
-    type = TYPE_NOT_CHECKED;
+    TypeId *type = NULL;
     node = make_ast_node(
         RETURN_STMT,
         NULL,

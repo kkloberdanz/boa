@@ -82,7 +82,7 @@ static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
     fprintf(
         state->outf,
         "const %s r%lu = %s(%s);\n",
-        boa_type_to_c_type(ast->type),
+        boa_type_to_c_type(*ast->type),
         state->reg,
         func_name,
         args_str
@@ -95,7 +95,7 @@ static void emit_assign_expr(struct CodegenState *state, ASTNode *ast) {
     fprintf(
         state->outf,
         "const %s %s = r%lu;\n",
-        boa_type_to_c_type(ast->type),
+        boa_type_to_c_type(*ast->type),
         variable_name,
         state->reg
     );
@@ -186,7 +186,7 @@ static void emit_operation_expr(struct CodegenState *state, ASTNode *ast) {
     fprintf(
         state->outf,
         "const %s r%lu = %s %s %s;\n",
-        boa_type_to_c_type(ast->type),
+        boa_type_to_c_type(*ast->type),
         state->reg,
         operand_1,
         operator,
@@ -204,7 +204,7 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
     fprintf(
         state->outf,
         "const %s r%lu = %s;\n",
-        boa_type_to_c_type(ast->type),
+        boa_type_to_c_type(*ast->type),
         state->reg,
         ast->obj->repr
     );
@@ -272,7 +272,7 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
 
         i = num_params;
         while (i --> 0) {
-            TypeId type_id = params_arr[i]->type;
+            TypeId type_id = *params_arr[i]->type;
 
             const char *type = boa_type_to_c_type(type_id);
             sprintf(

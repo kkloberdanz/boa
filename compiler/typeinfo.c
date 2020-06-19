@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "typeinfo.h"
+#include "../util/memory.h"
 
 char *builtin_types[] = {
     "Void",
@@ -42,4 +43,10 @@ char *boa_type_to_c_type(TypeId type_id) {
         fprintf(stderr, "Type: '%ld' does not exist\n", type_id);
         return "ERROR";
     }
+}
+
+TypeId *new_type(TypeId t) {
+    TypeId *typ = boa_malloc(sizeof(TypeId));
+    *typ = t;
+    return typ;
 }

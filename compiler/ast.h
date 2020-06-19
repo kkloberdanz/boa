@@ -76,7 +76,7 @@ typedef struct ASTNode {
     struct ASTNode *sibling;
     ASTkind kind;
     Operator op;
-    TypeId type;
+    TypeId *type;
 } ASTNode;
 
 ParseObj *make_parseobj(char *repr, enum ASTLiteralKind kind);
@@ -106,7 +106,7 @@ ASTNode *make_ast_node(
     ASTNode *left,
     ASTNode *condition,
     ASTNode *right,
-    TypeId type
+    TypeId *type
 );
 
 ASTNode *make_leaf_node(ParseObj *); /* just holds minic object */
