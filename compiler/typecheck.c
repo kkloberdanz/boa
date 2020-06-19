@@ -229,8 +229,9 @@ static int mark_types(ASTNode *ast, TypeId *context) {
 static int assign_types(ASTNode *ast) {
     while (ast) {
         if (!ast->type) {
-            /*ast->type = new_type(TYPE_NOT_CHECKED);*/
             ast->type = new_type(TYPE_INT);
+        } else {
+            *ast->type = TYPE_INT;
         }
         assign_types(ast->right);
         assign_types(ast->left);
