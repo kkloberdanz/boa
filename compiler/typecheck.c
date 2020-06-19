@@ -21,7 +21,7 @@
  *         - Point type to the address of an equivalent type
  */
 
-static int mark_types(ASTNode *ast, TypeId context);
+static int mark_types(ASTNode *ast, TypeId *context);
 static char is_boolean_operator(ASTNode *ast);
 
 static TypeId *type_rules(TypeId *ptr, TypeId proposed_type) {
@@ -49,8 +49,7 @@ static TypeId *type_rules(TypeId *ptr, TypeId proposed_type) {
     }
 }
 
-static void mark_types_operator(ASTNode *ast, TypeId context) {
-    /*ast->left->type = get_new_type(state);*/
+static void mark_types_operator(ASTNode *ast, TypeId *context) {
     mark_types(ast->left, context);
 
     if (ast->condition) {
@@ -84,7 +83,7 @@ static char is_boolean_operator(ASTNode *ast) {
     }
 }
 
-static void mark_types_node(ASTNode *ast, TypeId context) {
+static void mark_types_node(ASTNode *ast, TypeId *context) {
     if (ast->obj) {
         /*printf("looking at: %s\n", ast->obj->repr);*/
         switch (ast->obj->kind) {
@@ -117,12 +116,16 @@ static void mark_types_node(ASTNode *ast, TypeId context) {
         case FUNC_CALL:
             debug_puts("FUNC_CALL");
 
-            /* TODO: make a more efficient way to lookup type for builtin functions */
+            /*
+             * TODO:
+             *     make a more efficient way to lookup
+             *     type for builtin functions
+             */
             if (strcmp(ast->obj->repr, "printd")) {
                 ast->type = type_rules(ast->type, TYPE_INT);
             }
             ast->right->type = ast->type;
-            /*context = ast->type;*/
+            context = ast->type;
             break;
 
         case ASSIGN_EXPR:
@@ -136,8 +139,10 @@ static void mark_types_node(ASTNode *ast, TypeId context) {
 
         case RETURN_STMT:
             /*
-             * TODO: Must track context to ensure all return values are equal and to set the
-             * type of the function to the type of the return value
+             * TODO:
+             *     Must track context to ensure all return values are equal
+             *     and to set the type of the function to the type of the
+             *     return value
              */
             debug_puts("RETURN_STMT");
             mark_types(ast->right, context);
@@ -186,7 +191,7 @@ static void mark_types_node(ASTNode *ast, TypeId context) {
     }
 }
 
-static int mark_types(ASTNode *ast, TypeId context) {
+static int mark_types(ASTNode *ast, TypeId *context) {
     while (ast) {
         mark_types_node(ast, context);
         ast = ast->sibling;
@@ -199,7 +204,9 @@ static int mark_types(ASTNode *ast, TypeId context) {
  */
 static int assign_types(ASTNode *ast) {
     while (ast) {
-        ast->type = new_type(TYPE_INT);
+        if (!ast->type) {
+            ast->type = new_type(TYPE_INT);
+        }
         assign_types(ast->right);
         assign_types(ast->left);
         assign_types(ast->condition);
@@ -210,7 +217,7 @@ static int assign_types(ASTNode *ast) {
 
 int check_types(ASTNode *ast) {
     int exit_code = 0;
-    TypeId context = TYPE_NOT_CHECKED;
+    TypeId *context = NULL;
     mark_types(ast, context);
     assign_types(ast);
     return exit_code;

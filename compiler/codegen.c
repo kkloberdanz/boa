@@ -257,7 +257,12 @@ static void codegen_node(struct CodegenState *state, ASTNode *ast) {
 static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
     ASTNode *params = ast->left;
     if (params == NULL) {
-        fprintf(state->outf, "static int %s() {\n", ast->obj->repr);
+        fprintf(
+            state->outf,
+            "static %s %s() {\n",
+            boa_type_to_c_type(*ast->type),
+            ast->obj->repr
+        );
     } else {
         char params_str[255];
         size_t len = 0;
@@ -286,7 +291,8 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
         params_str[len - 2] = '\0';
         fprintf(
             state->outf,
-            "static int %s(%s) {\n",
+            "static %s %s(%s) {\n",
+            boa_type_to_c_type(*ast->type),
             ast->obj->repr,
             params_str
         );

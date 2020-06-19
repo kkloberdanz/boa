@@ -306,7 +306,18 @@ ASTNode *parse(FILE *src_file) {
 static int yylex(void) {
     int token = get_token(source_file);
 #ifdef DEBUG
-    printf("token: '%s'\n", token_string);
+    switch (*token_string) {
+        case '\n':
+            printf("token: '\\n'\n");
+            break;
+
+        case '\t':
+            printf("token: '\\t'\n");
+            break;
+
+        default:
+            printf("token: '%s'\n", token_string);
+    }
 #endif
     return token;
 }
