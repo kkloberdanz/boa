@@ -19,29 +19,57 @@
  *         - Type error, conflicting types
  *     4) If type not known and type is not NULL and *type == TYPE_NOT_CHECKED
  *         - Point type to the address of an equivalent type
+ *
+ *     Add type map with identifier mapping to a concrete type
  */
 
 static int mark_types(ASTNode *ast, TypeId *context);
 static char is_boolean_operator(ASTNode *ast);
 
-static TypeId *type_rules(TypeId *ptr, TypeId proposed_type) {
-    if (ptr == NULL) {
-        return new_type(proposed_type);
-    } else if (ptr && *ptr == TYPE_NOT_CHECKED) {
-        /* TODO: deallocate? */
-        return new_type(proposed_type);
-    } else if (ptr && *ptr != TYPE_NOT_CHECKED) {
+/*
+ * TODO:
+ *     how to handle NULL type nodes? They should each point to the same
+ *     new address
+ */
+static void set_equiv_types(TypeId *t1, TypeId *t2) {
+    if (t1 && !t2) {
+        t2 = t1;
+    } else if (!t1 && t2) {
+        t1 = t2;
+    } else if (t1 && t2 && *t1 == *t2) {
+        /* do nothing */
+    } else if (t1 && t2 && *t1 == TYPE_NOT_CHECKED) {
+        *t1 = *t2;
+    } else if (t2 && t1 && *t2 == TYPE_NOT_CHECKED) {
+        *t2 = *t1;
+    } else if (t1 && t2) {
         fprintf(
             stderr,
-            "conflicint types: %s and %s\n",
-            builtin_types[*ptr],
-            builtin_types[proposed_type]
+            "conflicing types: %s and %s\n",
+            builtin_types[*t1],
+            builtin_types[*t2]
         );
         exit(EXIT_FAILURE);
     } else {
         fprintf(
             stderr,
-            "conflicint types: %s and %s\n",
+            "internal compiler error, type nodes are both NULL\n"
+        );
+    }
+}
+
+static TypeId *type_rules(TypeId *ptr, TypeId proposed_type) {
+    if (!ptr) {
+        return new_type(proposed_type);
+    } else if (ptr && *ptr == TYPE_NOT_CHECKED) {
+        *ptr = proposed_type;
+        return ptr;
+    } else if (ptr && *ptr == proposed_type) {
+        return ptr;
+    } else {
+        fprintf(
+            stderr,
+            "conflicing types: %s and %s\n",
             builtin_types[*ptr],
             builtin_types[proposed_type]
         );
@@ -56,12 +84,12 @@ static void mark_types_operator(ASTNode *ast, TypeId *context) {
         if (is_boolean_operator(ast->condition)) {
             ast->condition->type = type_rules(ast->condition->type, TYPE_BOOL);
         } else {
-            ast->condition->type = ast->left->type;
+            set_equiv_types(ast->condition->type, ast->left->type);
         }
     }
 
     if (ast->right != NULL) {
-        ast->right->type = ast->left->type;
+        set_equiv_types(ast->right->type, ast->left->type);
         mark_types(ast->right, context);
     }
 }
@@ -124,7 +152,7 @@ static void mark_types_node(ASTNode *ast, TypeId *context) {
             if (strcmp(ast->obj->repr, "printd")) {
                 ast->type = type_rules(ast->type, TYPE_INT);
             }
-            ast->right->type = ast->type;
+            set_equiv_types(ast->right->type, ast->type);
             context = ast->type;
             break;
 
@@ -146,7 +174,7 @@ static void mark_types_node(ASTNode *ast, TypeId *context) {
              */
             debug_puts("RETURN_STMT");
             mark_types(ast->right, context);
-            /*add_equivalent_type(state, context, ast->right->type);*/
+            set_equiv_types(ast->right->type, context);
             break;
 
         case LOAD_STMT:
@@ -158,34 +186,30 @@ static void mark_types_node(ASTNode *ast, TypeId *context) {
              * conditional must be a bool
              * left and right sides of condition must be same type
              *
-             * TODO: Must track context somehow to ensure that final values of conditions
-             * are the same type
+             * TODO: Must track context somehow to ensure that final
+             * values of conditions are the same type
              */
             debug_puts("CONDITIONAL");
-            /*
-            ast->type = get_new_type(state);
-            add_equivalent_type(state, ast->type, context);
-            context = ast->type;
-            ast->condition->type = TYPE_BOOL;
-            ast->left->type = get_new_type(state);
-            ast->right->type = ast->left->type;
-            mark_types(state, ast->left, context);
-            mark_types(state, ast->right, context);
-            mark_types(state, ast->condition, context);
-            */
+            set_equiv_types(ast->type, context);
+            ast->condition->type = type_rules(ast->condition->type, TYPE_BOOL);
+            set_equiv_types(ast->right->type, ast->left->type);
+            mark_types(ast->left, context);
+            mark_types(ast->right, context);
+            mark_types(ast->condition, context);
             break;
 
         case FUNC_DEF: {
-            /*
             ASTNode *func_param = ast->left;
-            ast->type = get_new_type(state);
+
+            /* TODO: lookup type in map */
+            ast->type = new_type(TYPE_NOT_CHECKED);
             context = ast->type;
             while (func_param) {
-                func_param->type = get_new_type(state);
+                /* TODO: param same type as argument */
+                func_param->type = new_type(TYPE_NOT_CHECKED);
                 func_param = func_param->sibling;
             }
-            mark_types(state, ast->right, context);
-            */
+            mark_types(ast->right, context);
             break;
         }
     }
@@ -205,6 +229,7 @@ static int mark_types(ASTNode *ast, TypeId *context) {
 static int assign_types(ASTNode *ast) {
     while (ast) {
         if (!ast->type) {
+            /*ast->type = new_type(TYPE_NOT_CHECKED);*/
             ast->type = new_type(TYPE_INT);
         }
         assign_types(ast->right);
