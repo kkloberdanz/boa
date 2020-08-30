@@ -75,10 +75,6 @@ runtime/boaobj.o: runtime/boaobj.c runtime/boaobj.h
 	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
 		-c runtime/boaobj.c -o runtime/boaobj.o
 
-runtime/runtime.o: runtime/runtime.c runtime/runtime.h
-	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
-		-c runtime/runtime.c -o runtime/runtime.o
-
 libruntime.a: runtime/runtime.o runtime/boaobj.o bin/tgc.o
 	ar rcs libruntime.a runtime/*.o bin/tgc.o
 

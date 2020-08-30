@@ -37,7 +37,7 @@ static void write_start(struct CodegenState *state) {
     fprintf(state->outf, "#include \"../runtime/runtime.h\"\n");
     fprintf(state->outf, "#include \"../runtime/boaobj.h\"\n");
     fprintf(state->outf, "#include \"../extern/tgc/tgc.h\"\n");
-    fprintf(state->outf, "static tgc_t gc;\n");
+    fprintf(state->outf, "extern tgc_t gc;\n");
 }
 
 static void write_end(struct CodegenState *state) {
