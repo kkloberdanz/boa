@@ -1,0 +1,6 @@
+x = 5 + 11
+print(x)
+y = x + 4
+print(y)
+z = x + y
+print(z)

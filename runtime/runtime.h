@@ -20,8 +20,8 @@
 
 #include <stdio.h>
 
-int print(char *str);
-int printd(int num);
-int print2d(int n1, int n2);
+#include "boaobj.h"
+
+struct BoaObj *print(const struct BoaObj *obj);
 
 #endif /* RUNTIME_H */

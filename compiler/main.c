@@ -78,11 +78,6 @@ static int compile_boa(const char *source_filename, char **output_filename) {
         return 4;
     }
 
-    error_code = check_types(tree);
-    if (error_code) {
-        return error_code;
-    }
-
     *output_filename = make_string(source_filename);
     (*output_filename)[len - 2] = 'c';
     (*output_filename)[len - 1] = '\0';
@@ -147,7 +142,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         );
 
     } else {
-        const char *fmt = "%s -Os -fPIC -static -o %s %s libruntime.a";
+        const char *fmt = "%s -Werror -Os -fPIC -static -o %s %s libruntime.a";
         buf = boa_malloc(
             1 +
             strlen(fmt) +

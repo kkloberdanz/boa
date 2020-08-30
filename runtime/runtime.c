@@ -18,18 +18,29 @@
 #include <stdio.h>
 
 #include "runtime.h"
+#include "boaobj.h"
 
-int printd(int num) {
-    printf("%d\n", num);
-    return 0;
-}
+struct BoaObj *print(const struct BoaObj *obj) {
+    switch (obj->type) {
+        case BOA_NIL:
+            puts("Nil");
+            break;
 
-int print2d(int n1, int n2) {
-    printf("%d %d\n", n1, n2);
-    return 0;
-}
+        case BOA_INT:
+            printf("%ld\n", obj->data.i);
+            break;
 
-int print(char *str) {
-    printf("%s\n", str);
-    return 0;
+        case BOA_FLOAT:
+            printf("%f\n", obj->data.f);
+            break;
+
+        case BOA_STRING:
+            printf("%s\n", obj->data.s);
+            break;
+
+        case BOA_LIST:
+            puts("[not yet implemented]");
+            break;
+    }
+    return NULL;
 }

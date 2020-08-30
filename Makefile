@@ -67,18 +67,23 @@ boa: y.tab.o lex.yy.o $(COMPILER_DEPS)
 bin/tgc.o:
 	$(BOA_CC) -o bin/tgc.o -c extern/tgc/tgc.c -Os -fPIC
 
-libruntime.a: runtime/*.c runtime/*.h bin/tgc.o
+runtime/runtime.o: runtime/runtime.c runtime/runtime.h
 	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
-		-c runtime/runtime.c -o runtime.o
-	ar rcs libruntime.a runtime.o bin/tgc.o
+		-c runtime/runtime.c -o runtime/runtime.o
 
-libccruntime.a: runtime/*.c runtime/*.h bin/tgc.o
-	cc -std=$(STD) -Os $(INCLD) -fPIC \
-		-c runtime/runtime.c -o ccruntime.o
-	ar rcs libccruntime.a ccruntime.o bin/tgc.o
+runtime/boaobj.o: runtime/boaobj.c runtime/boaobj.h
+	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
+		-c runtime/boaobj.c -o runtime/boaobj.o
+
+runtime/runtime.o: runtime/runtime.c runtime/runtime.h
+	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
+		-c runtime/runtime.c -o runtime/runtime.o
+
+libruntime.a: runtime/runtime.o runtime/boaobj.o bin/tgc.o
+	ar rcs libruntime.a runtime/*.o bin/tgc.o
 
 .PHONY: build
-build: boa libruntime.a libccruntime.a
+build: boa libruntime.a
 
 .PHONY: run-valgrind
 run-valgrind: build
@@ -88,7 +93,7 @@ run-valgrind: build
 clean:
 	rm -rf bin/*
 	rm -f boa
-	rm -f libruntime.a runtime.o libccruntime.a
+	rm -f libruntime.a runtime.o
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
 	rm -f core
 	rm -f vgcore*
@@ -100,3 +105,4 @@ clean:
 	rm -f a.out
 	rm -f hello
 	rm -f example/hello
+	rm -f runtime/*.o
