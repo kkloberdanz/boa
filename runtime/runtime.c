@@ -38,6 +38,14 @@ struct BoaObj *print(const struct BoaObj *obj) {
             printf("%s\n", obj->data.s);
             break;
 
+        case BOA_BOOL:
+            if (obj->data.b) {
+                puts("True");
+            } else {
+                puts("False");
+            }
+            break;
+
         case BOA_LIST:
             puts("[not yet implemented]");
             break;

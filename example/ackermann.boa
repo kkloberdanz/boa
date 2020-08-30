@@ -10,5 +10,5 @@ ackermann = m, n => {
         -> ackermann(m - 1, n2)
 }
 
-printd(ackermann(3, 8))
-printd(ackermann(4, 1))
+print(ackermann(3, 8))
+#print(ackermann(4, 1))

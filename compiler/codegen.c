@@ -31,7 +31,6 @@ struct CodegenState {
 static void codegen_node(struct CodegenState *state, ASTNode *ast);
 static void codegen(struct CodegenState *state, ASTNode *ast);
 static void emit_load_stmt(struct CodegenState *state, ASTNode *ast);
-static void emit_load_literal_stmt(struct CodegenState *state, ASTNode *ast);
 
 static void write_start(struct CodegenState *state) {
     fprintf(state->outf, "#include <stdio.h>\n");
@@ -130,27 +129,27 @@ static char *get_operator(Operator op) {
             break;
 
         case OP_LT:
-            op_repr = "<";
+            op_repr = "perform_lt";
             break;
 
         case OP_LE:
-            op_repr = "<=";
+            op_repr = "perform_lte";
             break;
 
         case OP_GT:
-            op_repr = ">";
+            op_repr = "perform_gt";
             break;
 
         case OP_GE:
-            op_repr = ">=";
+            op_repr = "perform_gte";
             break;
 
         case OP_NE:
-            op_repr = "!=";
+            op_repr = "perform_ne";
             break;
 
         case OP_NOT:
-            op_repr = "!";
+            op_repr = "perform_not";
             break;
 
         case OP_NIL:
@@ -173,7 +172,6 @@ static void emit_operation_expr(struct CodegenState *state, ASTNode *ast) {
         operand_1 = buf1;
     } else {
         emit_load_stmt(state, ast->left);
-        /*operand_1 = ast->left->obj->repr;*/
         sprintf(buf1, "r%lu", state->reg);
         operand_1 = buf1;
     }
@@ -184,7 +182,6 @@ static void emit_operation_expr(struct CodegenState *state, ASTNode *ast) {
         operand_2 = buf2;
     } else {
         emit_load_stmt(state, ast->right);
-        /*operand_2 = ast->right->obj->repr;*/
         sprintf(buf2, "r%lu", state->reg);
         operand_2 = buf2;
     }
@@ -205,9 +202,27 @@ static void emit_return_stmt(struct CodegenState *state, ASTNode *ast) {
     fprintf(state->outf, "return r%lu;\n", state->reg);
 }
 
-static void emit_load_literal_stmt(struct CodegenState *state, ASTNode *ast) {
-    /* TODO: make a function to get the right function for the type */
-    const char *load_func = "create_boa_int";
+static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
+    char *load_func;
+    switch (ast->obj->kind) {
+        case AST_ID:
+            load_func = "";
+            break;
+
+        case AST_INT:
+            load_func = "create_boa_int";
+            break;
+
+        case AST_FLOAT:
+            load_func = "create_boa_float";
+            break;
+
+        /* TODO: add all literal types */
+        default:
+            fprintf(stderr, "literal type not yet supported\n");
+            break;
+    }
+
     state->reg++;
     fprintf(
         state->outf,
@@ -218,27 +233,9 @@ static void emit_load_literal_stmt(struct CodegenState *state, ASTNode *ast) {
     );
 }
 
-static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
-    switch (ast->obj->kind) {
-        case AST_ID:
-            state->reg++;
-            fprintf(
-                state->outf,
-                "struct BoaObj *r%lu = %s;\n",
-                state->reg,
-                ast->obj->repr
-            );
-            break;
-
-        default:
-            emit_load_literal_stmt(state, ast);
-            break;
-    }
-}
-
 static void emit_conditional_expr(struct CodegenState *state, ASTNode *ast) {
     codegen(state, ast->condition);
-    fprintf(state->outf, "if (r%lu) {\n", state->reg);
+    fprintf(state->outf, "if (r%lu->data.b) {\n", state->reg);
     codegen(state, ast->left);
     fprintf(state->outf, "}\n");
     if (ast->right != NULL) {
@@ -285,8 +282,7 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
     if (params == NULL) {
         fprintf(
             state->outf,
-            "static %s %s() {\n",
-            "long",
+            "static struct BoaObj *%s() {\n",
             ast->obj->repr
         );
     } else {
@@ -303,11 +299,9 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
 
         i = num_params;
         while (i --> 0) {
-            const char *type = "long";
             sprintf(
                 params_str + len,
-                "%s %s, ",
-                type,
+                "struct BoaObj *%s, ",
                 params_arr[i]->obj->repr
             );
             len = strlen(params_str);
@@ -315,8 +309,7 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
         params_str[len - 2] = '\0';
         fprintf(
             state->outf,
-            "static %s %s(%s) {\n",
-            "long",
+            "static struct BoaObj *%s(%s) {\n",
             ast->obj->repr,
             params_str
         );
