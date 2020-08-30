@@ -102,30 +102,11 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     char *buf;
 
     if (!boa_cc) {
-        const char *fmt = "%s -Os -fPIC -o %s %s libccruntime.a";
         boa_cc = "cc";
+    }
 
-        buf = boa_malloc(
-            1 +
-            strlen(fmt) +
-            strlen(c_filename) +
-            strlen(exe_filename) +
-            strlen(boa_cc)
-        );
-        fprintf(
-            stderr,
-            "\nenvironment variable BOA_CC not set, defaulting to cc\n\n"
-        );
-        sprintf(
-            buf,
-            fmt,
-            boa_cc,
-            exe_filename,
-            c_filename
-        );
-
-    } else if (!strcmp(boa_cc, "tcc")) {
-        const char *fmt = "%s -Os -fPIC -o %s %s libruntime.a";
+    if (!strcmp(boa_cc, "musl-gcc")) {
+        const char *fmt = "%s -Werror -Os -fPIC -static -o %s %s libruntime.a";
         buf = boa_malloc(
             1 +
             strlen(fmt) +
@@ -142,7 +123,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         );
 
     } else {
-        const char *fmt = "%s -Werror -Os -fPIC -static -o %s %s libruntime.a";
+        const char *fmt = "%s -Os -fPIC -o %s %s libruntime.a";
         buf = boa_malloc(
             1 +
             strlen(fmt) +
