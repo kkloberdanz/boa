@@ -163,18 +163,20 @@ static int run_program(const char *exe_filename) {
 }
 
 static void print_usage(const char *prg_name) {
-    fprintf(stderr, "\n%s: [-b] [-h] [-r] [-o outfile] infile\n\n", prg_name);
+    const char *msg = \
+        "        -b    Build only, don't run the boa program\n\n"
+        "        -h\n"
+        "              Display this help menu, then exit\n\n"
+        "        -o outfile\n"
+        "              Instead of the default output filename,\n"
+        "              write binary to outfile\n\n"
+        "        -r\n"
+        "              Instead of outputing a file, simply run\n"
+        "              the boa source file\n"
+        ;
 
-    fprintf(stderr, "        -b    Build only, don't run the boa program\n\n"
-                    "        -h\n"
-                    "              Display this help menu, then exit\n\n"
-                    "        -o outfile\n"
-                    "              Instead of the default output filename,\n"
-                    "              write binary to outfile\n\n"
-                    "        -r\n"
-                    "              Instead of outputing a file, simply run\n"
-                    "              the boa source file\n"
-    );
+    fprintf(stderr, "\n%s: [-b] [-h] [-r] [-o outfile] infile\n\n", prg_name);
+    fprintf(stderr, "%s\n", msg);
 }
 
 static int run(int argc, char **argv) {
