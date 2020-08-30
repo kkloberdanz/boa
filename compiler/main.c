@@ -142,41 +142,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 
     error_code = system(buf);
     if (error_code) {
-        const char *fmt = "%s -Os -fPIC -o %s %s libccruntime.a";
-
         fprintf(stderr, "failed to compile '%s'\n", exe_filename);
-        fprintf(stderr, "are you using the right C compiler?\n");
-        fprintf(stderr, "tried using: '%s'\n", boa_cc);
-        fprintf(stderr, "\nfailed default compilation, using fallback\n");
-        boa_cc = "cc";
-
-        buf = boa_malloc(
-            1 +
-            strlen(fmt) +
-            strlen(c_filename) +
-            strlen(exe_filename) +
-            strlen(boa_cc)
-        );
-        boa_cc = "cc";
-        fprintf(
-            stderr,
-            "\nenvironment variable BOA_CC not set, defaulting to cc\n\n"
-        );
-        sprintf(
-            buf,
-            fmt,
-            boa_cc,
-            exe_filename,
-            c_filename
-        );
-
-        error_code = system(buf);
-        if (error_code) {
-            fprintf(stderr, "failed to compile '%s'\n", exe_filename);
-            fprintf(stderr, "are you using the right C compiler?\n");
-            fprintf(stderr, "tried using: '%s'\n", boa_cc);
-            return error_code;
-        }
     }
     return error_code;
 }
