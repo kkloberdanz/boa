@@ -65,6 +65,8 @@ single_line_comment #(.*)
 "^"           { return CARROT; }
 "{"           { return LBRACE; }
 "}"           { return RBRACE; }
+"["           { return LBRACK; }
+"]"           { return RBRACK; }
 ";"           { return SEMICOLON; }
 ":"           { return COLON; }
 ","           { return COMMA; }

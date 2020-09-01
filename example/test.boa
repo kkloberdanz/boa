@@ -68,3 +68,9 @@ print(xyz)
 n = print(xyz == False)
 print(n)
 print(-123 + 3)
+
+#l = []
+#print(l)
+#
+#l2 = [1, 2, 3]
+#print(l2)

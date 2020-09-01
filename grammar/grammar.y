@@ -73,6 +73,8 @@ char **all_types = NULL;
 %token RPAREN
 %token LBRACE
 %token RBRACE
+%token LBRACK
+%token RBRACK
 %token SEMICOLON
 %token COMMENT
 %token COLON
@@ -237,6 +239,7 @@ expr        : expr PLUS expr        {
                                         );
                                     }
             | id                    {$$ = make_load_node($1);}
+            | list_con              {$$ = $1;}
             ;
 
 type        : TYPE                  {
@@ -287,6 +290,9 @@ id          : ID                    {
                                     }
             ;
 
+list_con    : LBRACK params RBRACK  { puts("create list here"); }
+            | LBRACK RBRACK  { puts("create empty list here"); }
+            ;
 %%
 
 ASTNode *parse(FILE *src_file) {
