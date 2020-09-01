@@ -32,7 +32,7 @@ char token_string[MAX_TOKEN_SIZE+1];
 %option noyywrap
 
 digit       [0-9]
-number      {digit}+
+number      (-?){digit}+
 letter      [a-zA-Z]
 identifier  ({letter})({letter}|{number}|_)*
 newline     \n
