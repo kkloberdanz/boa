@@ -5,6 +5,7 @@
 #include "boaobj.h"
 
 static struct BoaObj **small_nums;
+static struct BoaObj *nil_obj;
 
 const int SMALL_NUMS_START = -255;
 const int SMALL_NUMS_END = 255;
@@ -20,6 +21,8 @@ void gc_init() {
     long i;
     size_t nmemb = abs(SMALL_NUMS_START) + abs(SMALL_NUMS_END);
     size_t sz = nmemb * sizeof(struct BoaObj *);
+    nil_obj = boaobj_malloc(sizeof(struct BoaObj));
+    nil_obj->type = BOA_NIL;
     small_nums = boaobj_malloc(sz);
     for (i = SMALL_NUMS_START; i <= SMALL_NUMS_END; i++) {
         long index = i + SMALL_NUMS_END;
@@ -27,6 +30,10 @@ void gc_init() {
         small_nums[index]->type = BOA_INT;
         small_nums[index]->data.i = i;
     }
+}
+
+struct BoaObj *create_boa_nil() {
+    return nil_obj;
 }
 
 struct BoaObj *create_boa_int(long i) {
@@ -60,7 +67,7 @@ struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b) {
     struct BoaObj *dst = NULL;
     if (a->type != b->type) {
         fprintf(stderr, "mismatched types\n");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     switch (a->type) {
         case BOA_NIL:
@@ -81,7 +88,7 @@ struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_LIST:
         default:
             fprintf(stderr, "type not supported for add");
-            return NULL;
+            exit(EXIT_FAILURE);
     }
     dst->type = a->type;
     return dst;
@@ -91,7 +98,7 @@ struct BoaObj *perform_equ(const struct BoaObj *a, const struct BoaObj *b) {
     struct BoaObj *dst = NULL;
     if (a->type != b->type) {
         fprintf(stderr, "mismatched types\n");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     switch (a->type) {
         case BOA_NIL:
@@ -117,7 +124,7 @@ struct BoaObj *perform_equ(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_LIST:
         default:
             fprintf(stderr, "type not supported for add");
-            return NULL;
+            exit(EXIT_FAILURE);
     }
     dst->type = BOA_BOOL;
     return dst;
@@ -127,7 +134,7 @@ struct BoaObj *perform_sub(const struct BoaObj *a, const struct BoaObj *b) {
     struct BoaObj *dst = NULL;
     if (a->type != b->type) {
         fprintf(stderr, "mismatched types\n");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     switch (a->type) {
         case BOA_NIL:
@@ -148,7 +155,7 @@ struct BoaObj *perform_sub(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_LIST:
         default:
             fprintf(stderr, "type not supported for add");
-            return NULL;
+            exit(EXIT_FAILURE);
     }
     dst->type = a->type;
     return dst;
@@ -158,7 +165,7 @@ struct BoaObj *perform_div(const struct BoaObj *a, const struct BoaObj *b) {
     struct BoaObj *dst = NULL;
     if (a->type != b->type) {
         fprintf(stderr, "mismatched types\n");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     switch (a->type) {
         case BOA_NIL:
@@ -179,7 +186,7 @@ struct BoaObj *perform_div(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_LIST:
         default:
             fprintf(stderr, "type not supported for add");
-            return NULL;
+            exit(EXIT_FAILURE);
     }
     dst->type = a->type;
     return dst;
@@ -189,7 +196,7 @@ struct BoaObj *perform_mul(const struct BoaObj *a, const struct BoaObj *b) {
     struct BoaObj *dst = NULL;
     if (a->type != b->type) {
         fprintf(stderr, "mismatched types\n");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     switch (a->type) {
         case BOA_NIL:
@@ -210,7 +217,7 @@ struct BoaObj *perform_mul(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_LIST:
         default:
             fprintf(stderr, "type not supported for add");
-            return NULL;
+            exit(EXIT_FAILURE);
     }
     dst->type = a->type;
     return dst;
@@ -220,7 +227,7 @@ struct BoaObj *perform_mod(const struct BoaObj *a, const struct BoaObj *b) {
     struct BoaObj *dst = NULL;
     if (a->type != b->type) {
         fprintf(stderr, "mismatched types\n");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     switch (a->type) {
         case BOA_NIL:
@@ -236,7 +243,7 @@ struct BoaObj *perform_mod(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_LIST:
         default:
             fprintf(stderr, "type not supported for add");
-            return NULL;
+            exit(EXIT_FAILURE);
     }
     dst->type = a->type;
     return dst;
@@ -246,7 +253,7 @@ struct BoaObj *perform_lt(const struct BoaObj *a, const struct BoaObj *b) {
     struct BoaObj *dst = NULL;
     if (a->type != b->type) {
         fprintf(stderr, "mismatched types\n");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     switch (a->type) {
         case BOA_NIL:
@@ -267,7 +274,7 @@ struct BoaObj *perform_lt(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_LIST:
         default:
             fprintf(stderr, "type not supported for add");
-            return NULL;
+            exit(EXIT_FAILURE);
     }
     dst->type = a->type;
     return dst;

@@ -4,8 +4,8 @@
 #   Collatz Conjecture, see: https://en.wikipedia.org/wiki/Collatz_conjecture
 #
 
-true = 0 == 0
-false = 1 == 0
+True = 0 == 0
+False = 1 == 0
 
 collatz = n => {
     print(n)
@@ -63,6 +63,7 @@ print(func(11, 3))
 print(ackermann(3, 4))
 print(ackermann(3, 8))
 
-xyz = true
+xyz = True
 print(xyz)
-print(xyz == false)
+n = print(xyz == False)
+print(n)

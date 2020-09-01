@@ -35,14 +35,14 @@ struct BoaObj *print(const struct BoaObj *obj) {
             break;
 
         case BOA_STRING:
-            printf("%s\n", obj->data.s);
+            puts(obj->data.s);
             break;
 
         case BOA_BOOL:
             if (obj->data.b) {
-                puts("true");
+                puts("True");
             } else {
-                puts("false");
+                puts("False");
             }
             break;
 
@@ -50,5 +50,5 @@ struct BoaObj *print(const struct BoaObj *obj) {
             puts("[not yet implemented]");
             break;
     }
-    return NULL;
+    return create_boa_nil();
 }

@@ -34,8 +34,7 @@ char token_string[MAX_TOKEN_SIZE+1];
 digit       [0-9]
 number      {digit}+
 letter      [a-zA-Z]
-identifier  ([a-z]|_)({letter}|{number}|_)*
-type        [A-Z]({letter}|{number})*
+identifier  ({letter})({letter}|{number}|_)*
 newline     \n
 whitespace  [ \t]+
 string      \"(\\.|[^"\\])*\"|\'(\\.|[^"\\])*\'
@@ -72,7 +71,6 @@ single_line_comment #(.*)
 "\""          { return QUOTE; }
 {number}      { return INTEGER; }
 {identifier}  { return ID; }
-{type}        { return TYPE; }
 {newline}     { yylineno++; return NEWLINE; }
 {whitespace}  { /* do nothing */; }
 {string}      { return STRING; }
