@@ -2,21 +2,22 @@
 #include <stdlib.h>
 
 #include "boaobj.h"
-#include "../extern/tgc/tgc.h"
 
-tgc_t gc;
 static struct BoaObj **small_nums;
 
+const long SMALL_NUMS_START = -255;
+const long SMALL_NUMS_END = 255;
+
 void *boaobj_malloc(size_t size) {
-    /*return tgc_alloc(&gc, size);*/
+    /* TODO: add to garbage collector's collection */
     return malloc(size);
 }
 
 void gc_init() {
     long i;
     small_nums = boaobj_malloc(511 * sizeof(struct BoaObj *));
-    for (i = -255; i <= 255; i++) {
-        long index = i + 255;
+    for (i = SMALL_NUMS_START; i <= SMALL_NUMS_END; i++) {
+        long index = i + SMALL_NUMS_END;
         small_nums[index] = malloc(sizeof(struct BoaObj));
         small_nums[index]->type = BOA_INT;
         small_nums[index]->data.i = i;
@@ -25,9 +26,8 @@ void gc_init() {
 
 struct BoaObj *create_boa_int(long i) {
     struct BoaObj *obj = NULL;
-    if (i >= -255 && i <= 255) {
-        long index = i + 255;
-        obj = small_nums[index];
+    if (i >= SMALL_NUMS_START && i <= SMALL_NUMS_END) {
+        long index = i + SMALL_NUMS_END; obj = small_nums[index];
     } else {
         obj = boaobj_malloc(sizeof(struct BoaObj));
         obj->type = BOA_INT;
