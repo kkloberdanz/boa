@@ -40,9 +40,9 @@ struct BoaObj *print(const struct BoaObj *obj) {
 
         case BOA_BOOL:
             if (obj->data.b) {
-                puts("True");
+                puts("true");
             } else {
-                puts("False");
+                puts("false");
             }
             break;
 

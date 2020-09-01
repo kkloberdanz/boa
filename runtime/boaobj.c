@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "boaobj.h"
 
 static struct BoaObj **small_nums;
 
-const long SMALL_NUMS_START = -255;
-const long SMALL_NUMS_END = 255;
+const int SMALL_NUMS_START = -255;
+const int SMALL_NUMS_END = 255;
+
+char *strdup(const char *);
 
 void *boaobj_malloc(size_t size) {
     /* TODO: add to garbage collector's collection */
@@ -15,7 +18,9 @@ void *boaobj_malloc(size_t size) {
 
 void gc_init() {
     long i;
-    small_nums = boaobj_malloc(511 * sizeof(struct BoaObj *));
+    size_t nmemb = abs(SMALL_NUMS_START) + abs(SMALL_NUMS_END);
+    size_t sz = nmemb * sizeof(struct BoaObj *);
+    small_nums = boaobj_malloc(sz);
     for (i = SMALL_NUMS_START; i <= SMALL_NUMS_END; i++) {
         long index = i + SMALL_NUMS_END;
         small_nums[index] = malloc(sizeof(struct BoaObj));
@@ -27,7 +32,8 @@ void gc_init() {
 struct BoaObj *create_boa_int(long i) {
     struct BoaObj *obj = NULL;
     if (i >= SMALL_NUMS_START && i <= SMALL_NUMS_END) {
-        long index = i + SMALL_NUMS_END; obj = small_nums[index];
+        long index = i + SMALL_NUMS_END;
+        obj = small_nums[index];
     } else {
         obj = boaobj_malloc(sizeof(struct BoaObj));
         obj->type = BOA_INT;
@@ -40,6 +46,13 @@ struct BoaObj *create_boa_float(double f) {
     struct BoaObj *obj = boaobj_malloc(sizeof(struct BoaObj));
     obj->type = BOA_FLOAT;
     obj->data.f = f;
+    return obj;
+}
+
+struct BoaObj *create_boa_string(const char *str) {
+    struct BoaObj *obj = boaobj_malloc(sizeof(struct BoaObj));
+    obj->type = BOA_STRING;
+    obj->data.s = strdup(str);
     return obj;
 }
 
@@ -93,6 +106,11 @@ struct BoaObj *perform_equ(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_FLOAT:
             dst = boaobj_malloc(sizeof(struct BoaObj));
             dst->data.b = a->data.f == b->data.f;
+            break;
+
+        case BOA_BOOL:
+            dst = boaobj_malloc(sizeof(struct BoaObj));
+            dst->data.b = a->data.b == b->data.b;
             break;
 
         case BOA_STRING:

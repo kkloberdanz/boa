@@ -200,7 +200,7 @@ static void emit_return_stmt(struct CodegenState *state, ASTNode *ast) {
 }
 
 static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
-    char *load_func;
+    char *load_func = NULL;
     switch (ast->obj->kind) {
         case AST_ID:
             load_func = "";
@@ -212,6 +212,10 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
 
         case AST_FLOAT:
             load_func = "create_boa_float";
+            break;
+
+        case AST_STRING:
+            load_func = "create_boa_string";
             break;
 
         /* TODO: add all literal types */
