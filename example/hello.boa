@@ -1,4 +1,4 @@
-#!/home/kyle/bin/boa -r
+#!/usr/bin/env boa
 #
 #   This is an exemple of a boa program
 #   Collatz Conjecture, see: https://en.wikipedia.org/wiki/Collatz_conjecture

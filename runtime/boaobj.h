@@ -31,6 +31,7 @@ struct BoaObj {
 };
 
 struct BoaObj *create_boa_int(long i);
+void gc_init();
 struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b);
 struct BoaObj *perform_mul(const struct BoaObj *a, const struct BoaObj *b);
 struct BoaObj *perform_div(const struct BoaObj *a, const struct BoaObj *b);

@@ -106,7 +106,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     }
 
     if (!strcmp(boa_cc, "musl-gcc")) {
-        const char *fmt = "%s -Werror -Os -fPIC -static -o %s %s libruntime.a";
+        const char *fmt = "%s -Werror -O0 -ggdb3 -fPIC -static -o %s %s libruntime.a";
         buf = boa_malloc(
             1 +
             strlen(fmt) +
@@ -123,7 +123,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         );
 
     } else {
-        const char *fmt = "%s -Os -fPIC -o %s %s libruntime.a";
+        const char *fmt = "%s -O0 -ggdb3 -fPIC -o %s %s libruntime.a";
         buf = boa_malloc(
             1 +
             strlen(fmt) +
@@ -170,9 +170,6 @@ static void print_usage(const char *prg_name) {
         "        -o outfile\n"
         "              Instead of the default output filename,\n"
         "              write binary to outfile\n\n"
-        "        -r\n"
-        "              Instead of outputing a file, simply run\n"
-        "              the boa source file\n"
         ;
 
     fprintf(stderr, "\n%s: [-b] [-h] [-r] [-o outfile] infile\n\n", prg_name);
@@ -185,21 +182,18 @@ static int run(int argc, char **argv) {
     const char *source_filename;
     int opt;
     char *exe_filename = NULL;
-    char run = 0;
+    char run = 1;
     char build = 0;
 
-    while ((opt = getopt(argc, argv, "rbho:")) != -1) {
+    while ((opt = getopt(argc, argv, "bho:")) != -1) {
         switch (opt) {
-            case 'r':
-                run = 1;
-                break;
-
             case 'h':
                 print_usage(argv[0]);
                 exit(EXIT_SUCCESS);
 
             case 'b':
                 build = 1;
+                run = 0;
                 break;
 
             case 'o':

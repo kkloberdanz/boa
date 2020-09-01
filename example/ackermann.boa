@@ -1,4 +1,4 @@
-#!/home/kyle/bin/boa -r
+#!/usr/bin/env boa
 
 ackermann = m, n => {
     if m == 0:

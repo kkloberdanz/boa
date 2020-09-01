@@ -41,14 +41,15 @@ static void write_start(struct CodegenState *state) {
 }
 
 static void write_end(struct CodegenState *state) {
-    fprintf(state->outf, "  tgc_stop(&gc);\n");
+    /*fprintf(state->outf, "  tgc_stop(&gc);\n");*/
     fprintf(state->outf, "  return 0;\n");
     fprintf(state->outf, "}\n");
 }
 
 static void write_main(struct CodegenState *state) {
     fprintf(state->outf, "int main(int argc, char **argv) {\n");
-    fprintf(state->outf, "  tgc_start(&gc, &argc);\n");
+    /*fprintf(state->outf, "  tgc_start(&gc, &argc);\n");*/
+    fprintf(state->outf, "  gc_init();\n");
 }
 
 static void emit_func_call(struct CodegenState *state, ASTNode *ast) {

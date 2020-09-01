@@ -5,15 +5,34 @@
 #include "../extern/tgc/tgc.h"
 
 tgc_t gc;
+static struct BoaObj **small_nums;
 
 void *boaobj_malloc(size_t size) {
-    return tgc_alloc(&gc, size);
+    /*return tgc_alloc(&gc, size);*/
+    return malloc(size);
+}
+
+void gc_init() {
+    long i;
+    small_nums = boaobj_malloc(511 * sizeof(struct BoaObj *));
+    for (i = -255; i <= 255; i++) {
+        long index = i + 255;
+        small_nums[index] = malloc(sizeof(struct BoaObj));
+        small_nums[index]->type = BOA_INT;
+        small_nums[index]->data.i = i;
+    }
 }
 
 struct BoaObj *create_boa_int(long i) {
-    struct BoaObj *obj = boaobj_malloc(sizeof(struct BoaObj));
-    obj->type = BOA_INT;
-    obj->data.i = i;
+    struct BoaObj *obj = NULL;
+    if (i >= -255 && i <= 255) {
+        long index = i + 255;
+        obj = small_nums[index];
+    } else {
+        obj = boaobj_malloc(sizeof(struct BoaObj));
+        obj->type = BOA_INT;
+        obj->data.i = i;
+    }
     return obj;
 }
 
