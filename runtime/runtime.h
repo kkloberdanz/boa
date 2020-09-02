@@ -22,6 +22,7 @@
 
 #include "boaobj.h"
 
+struct BoaObj *println(const struct BoaObj *obj);
 struct BoaObj *print(const struct BoaObj *obj);
 
 #endif /* RUNTIME_H */

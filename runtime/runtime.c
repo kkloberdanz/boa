@@ -29,7 +29,7 @@ struct BoaObj *println(const struct BoaObj *obj) {
 struct BoaObj *print(const struct BoaObj *obj) {
     switch (obj->type) {
         case BOA_NIL:
-            puts("Nil");
+            printf("Nil");
             break;
 
         case BOA_INT:
@@ -46,9 +46,9 @@ struct BoaObj *print(const struct BoaObj *obj) {
 
         case BOA_BOOL:
             if (obj->data.b) {
-                puts("True");
+                printf("True");
             } else {
-                puts("False");
+                printf("False");
             }
             break;
 
