@@ -10,7 +10,7 @@ CFLAGS ?= -fPIC
 release: dynamic
 
 .PHONY: static
-static: export OPTIM_FLAGS ?= -Os -static
+static: export OPTIM_FLAGS ?= -Os -static -s
 static: export CC := musl-gcc
 static: export BOA_CC := musl-gcc
 static: build
@@ -48,8 +48,8 @@ sanitize: export CC ?= cc
 sanitize: export BOA_CC ?= cc
 sanitize: build
 
-COMPILER_DEPS = compiler/*.c util/*.c  compiler/*.h util/*.h
 COMPILER_SRC = compiler/*.c util/*.c
+COMPILER_DEPS = $(COMPILER_SRC) compiler/*.h util/*.h
 
 y.tab.o: grammar/grammar.y
 	yacc -y -d grammar/grammar.y
@@ -64,9 +64,6 @@ boa: y.tab.o lex.yy.o $(COMPILER_DEPS)
 		$(COMPILER_SRC) lex.yy.o y.tab.o \
 		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
 
-bin/tgc.o:
-	$(BOA_CC) -o bin/tgc.o -c extern/tgc/tgc.c -Os -fPIC
-
 runtime/runtime.o: runtime/runtime.c runtime/runtime.h
 	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
 		-c runtime/runtime.c -o runtime/runtime.o
@@ -75,8 +72,8 @@ runtime/boaobj.o: runtime/boaobj.c runtime/boaobj.h
 	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
 		-c runtime/boaobj.c -o runtime/boaobj.o
 
-libruntime.a: runtime/runtime.o runtime/boaobj.o bin/tgc.o
-	ar rcs libruntime.a runtime/*.o bin/tgc.o
+libruntime.a: runtime/runtime.o runtime/boaobj.o
+	ar rcs libruntime.a runtime/*.o
 
 .PHONY: build
 build: boa libruntime.a
