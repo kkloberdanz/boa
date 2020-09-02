@@ -53,6 +53,7 @@ static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
     size_t len = 0;
     size_t i;
     if (ast) {
+        /* TODO: clean this up by adding code into boaobj.c */
         ASTNode *node = ast->left;
         long reg;
         while (node) {

@@ -1,0 +1,9 @@
+#!/usr/bin/env boa
+
+l1 = [1, 2, 3]
+l2 = [4, 5, 6, 7, 8]
+l3 = l1 + l2
+println(l3)
+
+l4 = []
+println(l4)

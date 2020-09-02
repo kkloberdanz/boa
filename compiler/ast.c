@@ -149,12 +149,6 @@ ASTNode *make_list_node(
 ) {
     ASTNode *node;
     TypeId *type = NULL;
-    node = params;
-    while (node) {
-        printf("%s, ", node->obj->repr);
-        node = node->sibling;
-    }
-    puts("");
     node = make_ast_node(
         LIST_LITERAL,
         NULL,

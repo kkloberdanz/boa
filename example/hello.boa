@@ -1,6 +1,6 @@
 #!/usr/bin/env boa
 
 str = "hello world!"
-print(str)
+println(str)
 
-print("good" + "bye")
+println("good" + "bye")

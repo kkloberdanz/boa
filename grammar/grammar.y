@@ -151,7 +151,6 @@ params      : expr                  {$$ = $1;}
                                         YYSTYPE ast = $3;
                                         if (ast) {
                                             while (ast->sibling) {
-                                                printf("param: %s\n", ast->obj->repr);
                                                 ast = ast->sibling;
                                             }
                                             ast->sibling = $1;

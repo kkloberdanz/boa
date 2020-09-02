@@ -56,7 +56,7 @@ struct BoaObj *print(const struct BoaObj *obj) {
             struct BoaObj **list = obj->data.l;
             size_t len = obj->len;
             printf("%s", "[");
-            if (list) {
+            if (list && len) {
                 size_t i;
                 for (i = 0; i < len - 1; i++) {
                     struct BoaObj *node = list[i];

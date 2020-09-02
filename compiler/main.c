@@ -106,8 +106,13 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     }
 
     if (!strcmp(boa_cc, "musl-gcc")) {
+#ifdef DEBUG
+        const char *fmt = \
+            "%s -Werror -ggdb3 -O0 -fPIC -static -o %s %s libruntime.a";
+#else
         const char *fmt = \
             "%s -Werror -s -O2 -fPIC -static -o %s %s libruntime.a";
+#endif
         buf = boa_malloc(
             1 +
             strlen(fmt) +
@@ -124,7 +129,11 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
         );
 
     } else {
+#ifdef DEBUG
+        const char *fmt = "%s -ggdb3 -O0 -fPIC -o %s %s libruntime.a";
+#else
         const char *fmt = "%s -s -O2 -fPIC -o %s %s libruntime.a";
+#endif
         buf = boa_malloc(
             1 +
             strlen(fmt) +
