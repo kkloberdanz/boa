@@ -84,7 +84,16 @@ struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b) {
             dst->data.f = a->data.f + b->data.f;
             break;
 
-        case BOA_STRING:
+        case BOA_STRING: {
+            size_t len = strlen(a->data.s) + strlen(b->data.s) + 1;
+            char *buf = malloc(len);
+            dst = boaobj_malloc(sizeof(struct BoaObj));
+            strcpy(buf, a->data.s);
+            strcat(buf, b->data.s);
+            dst->data.s = buf;
+            break;
+        }
+
         case BOA_LIST:
         default:
             fprintf(stderr, "type not supported for add");

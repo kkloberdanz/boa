@@ -1,6 +1,8 @@
 #ifndef BOAOBJ_H
 #define BOAOBJ_H
 
+#include <stdio.h>
+
 enum BoaOp {
     OP_ADD,
     OP_SUB,
@@ -19,11 +21,12 @@ enum BoaType {
 
 struct BoaObj {
     enum BoaType type;
+    size_t len;
     union {
         long i;
         double f;
         char *s;
-        struct BoaObj *l;
+        struct BoaObj **l;
         char b;
     } data;
 };

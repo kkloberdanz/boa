@@ -144,6 +144,29 @@ ASTNode *make_function_node(
     return node;
 }
 
+ASTNode *make_list_node(
+    ASTNode *params
+) {
+    ASTNode *node;
+    TypeId *type = NULL;
+    node = params;
+    while (node) {
+        printf("%s, ", node->obj->repr);
+        node = node->sibling;
+    }
+    puts("");
+    node = make_ast_node(
+        LIST_LITERAL,
+        NULL,
+        OP_NIL,
+        params,
+        NULL,
+        NULL,
+        type
+    );
+    return node;
+}
+
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args) {
     ASTNode *node;
     ParseObj *obj = leaf_obj->obj;
@@ -192,6 +215,10 @@ ASTNode *make_literal_node(char *repr, enum ASTLiteralKind kind) {
 
         case AST_BOOL:
             type = new_type(TYPE_BOOL);
+            break;
+
+        case AST_LIST:
+            type = new_type(TYPE_LIST);
             break;
 
         case AST_TYPE:

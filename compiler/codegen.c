@@ -34,6 +34,7 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast);
 
 static void write_start(struct CodegenState *state) {
     fprintf(state->outf, "#include <stdio.h>\n");
+    fprintf(state->outf, "#include <stdlib.h>\n");
     fprintf(state->outf, "#include \"../runtime/runtime.h\"\n");
     fprintf(state->outf, "#include \"../runtime/boaobj.h\"\n");
 }
@@ -46,6 +47,55 @@ static void write_end(struct CodegenState *state) {
 static void write_main(struct CodegenState *state) {
     fprintf(state->outf, "int main(int argc, char **argv) {\n");
     fprintf(state->outf, "  gc_init();\n");
+}
+
+static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
+    size_t len = 0;
+    size_t i;
+    if (ast) {
+        ASTNode *node = ast->left;
+        long reg;
+        while (node) {
+            len++;
+            emit_load_stmt(state, node);
+            node = node->sibling;
+        }
+        state->reg++;
+        fprintf(
+            state->outf,
+            "struct BoaObj *r%ld = malloc(%lu);\n",
+            state->reg,
+            sizeof(struct BoaObj *)
+        );
+        fprintf(
+            state->outf,
+            "r%ld->type = BOA_LIST;\n",
+            state->reg
+        );
+        fprintf(
+            state->outf,
+            "r%ld->len = %lu;\n",
+            state->reg,
+            len
+        );
+        fprintf(
+            state->outf,
+            "r%ld->data.l = malloc(%lu);\n",
+            state->reg,
+            len * sizeof(struct BoaObj *)
+        );
+        reg = state->reg - 1;
+        for (i = 0; i < len; i++) {
+            fprintf(
+                state->outf,
+                "r%ld->data.l[%lu] = r%ld;\n",
+                state->reg,
+                i,
+                reg
+            );
+            reg--;
+        }
+    }
 }
 
 static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
@@ -218,6 +268,10 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
             load_func = "create_boa_string";
             break;
 
+        case AST_LIST:
+            load_func = "create_boa_list";
+            break;
+
         /* TODO: add all literal types */
         default:
             fprintf(stderr, "literal type not yet supported\n");
@@ -270,6 +324,10 @@ static void codegen_node(struct CodegenState *state, ASTNode *ast) {
 
         case CONDITIONAL:
             emit_conditional_expr(state, ast);
+            break;
+
+        case LIST_LITERAL:
+            emit_list_literal(state, ast);
             break;
 
         /* definitions are handled in first pass, skip for second pass */
@@ -327,6 +385,7 @@ static void codegen_defs_node(struct CodegenState *state, ASTNode *ast) {
 
         /* only handle definitions in first pass */
         case FUNC_CALL:
+        case LIST_LITERAL:
         case ASSIGN_EXPR:
         case OPERATOR:
         case CONDITIONAL:

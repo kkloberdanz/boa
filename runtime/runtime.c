@@ -20,6 +20,12 @@
 #include "runtime.h"
 #include "boaobj.h"
 
+struct BoaObj *println(const struct BoaObj *obj) {
+    print(obj);
+    printf("\n");
+    return create_boa_nil();
+}
+
 struct BoaObj *print(const struct BoaObj *obj) {
     switch (obj->type) {
         case BOA_NIL:
@@ -27,11 +33,11 @@ struct BoaObj *print(const struct BoaObj *obj) {
             break;
 
         case BOA_INT:
-            printf("%ld\n", obj->data.i);
+            printf("%ld", obj->data.i);
             break;
 
         case BOA_FLOAT:
-            printf("%f\n", obj->data.f);
+            printf("%f", obj->data.f);
             break;
 
         case BOA_STRING:
@@ -46,9 +52,22 @@ struct BoaObj *print(const struct BoaObj *obj) {
             }
             break;
 
-        case BOA_LIST:
-            puts("[not yet implemented]");
+        case BOA_LIST: {
+            struct BoaObj **list = obj->data.l;
+            size_t len = obj->len;
+            printf("%s", "[");
+            if (list) {
+                size_t i;
+                for (i = 0; i < len - 1; i++) {
+                    struct BoaObj *node = list[i];
+                    print(node);
+                    printf(", ");
+                }
+                print(list[len - 1]);
+            }
+            printf("%s", "]");
             break;
+        }
     }
     return create_boa_nil();
 }

@@ -151,6 +151,7 @@ params      : expr                  {$$ = $1;}
                                         YYSTYPE ast = $3;
                                         if (ast) {
                                             while (ast->sibling) {
+                                                printf("param: %s\n", ast->obj->repr);
                                                 ast = ast->sibling;
                                             }
                                             ast->sibling = $1;
@@ -290,8 +291,10 @@ id          : ID                    {
                                     }
             ;
 
-list_con    : LBRACK params RBRACK  { puts("create list here"); }
-            | LBRACK RBRACK  { puts("create empty list here"); }
+list_con    : LBRACK params RBRACK  {
+                                        $$ = make_list_node($2);
+                                    }
+            | LBRACK RBRACK  { $$ = make_list_node(NULL); }
             ;
 %%
 

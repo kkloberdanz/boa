@@ -3,4 +3,4 @@
 str = "hello world!"
 print(str)
 
-print("goodbye")
+print("good" + "bye")

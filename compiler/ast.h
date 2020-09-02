@@ -34,7 +34,8 @@ typedef enum {
     FUNC_DEF,
     LOAD_STMT,
     RETURN_STMT,
-    FUNC_CALL
+    FUNC_CALL,
+    LIST_LITERAL
 } ASTkind;
 
 typedef enum {
@@ -59,6 +60,7 @@ enum ASTLiteralKind {
     AST_FLOAT,
     AST_BOOL,
     AST_ID,
+    AST_LIST,
     AST_TYPE
 };
 
@@ -96,6 +98,8 @@ ASTNode *make_function_node(
     ASTNode *right,
     ASTNode *params
 );
+
+ASTNode *make_list_node(ASTNode *params);
 
 ASTNode *make_func_call_node(ASTNode *leaf_obj, ASTNode *args);
 

@@ -14,6 +14,7 @@ enum BuiltinType {
     TYPE_STRING,
     TYPE_BOOL,
     TYPE_NIL,
+    TYPE_LIST,
     TYPE_LASTTYPE /* always keep this last */
 };
 
