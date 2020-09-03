@@ -52,15 +52,20 @@ static void write_main(struct CodegenState *state) {
 static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
     size_t len = 0;
     size_t i;
+    unsigned long argument_regs[20];
+    long reg;
+
     if (ast) {
+        ASTNode *args_list = ast->left;
         /* TODO: clean this up by adding code into boaobj.c */
-        ASTNode *node = ast->left;
-        long reg;
-        while (node) {
-            len++;
-            emit_load_stmt(state, node);
-            node = node->sibling;
+        /* solve each argument expression, and store the result in
+         * argument_regs */
+        for (len = 0; args_list != NULL; len++) {
+            codegen_node(state, args_list);
+            argument_regs[len] = state->reg;
+            args_list = args_list->sibling;
         }
+
         state->reg++;
         fprintf(
             state->outf,
@@ -85,14 +90,14 @@ static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
             state->reg,
             len * sizeof(struct BoaObj *)
         );
-        reg = state->reg - 1;
+
         for (i = 0; i < len; i++) {
             fprintf(
                 state->outf,
                 "r%ld->data.l[%lu] = r%ld;\n",
                 state->reg,
                 i,
-                reg
+                argument_regs[len - i - 1]
             );
             reg--;
         }

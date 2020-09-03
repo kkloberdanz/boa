@@ -7,3 +7,8 @@ println(l3)
 
 l4 = []
 println(l4)
+
+println(l3 + l4 + l1)
+
+l5 = [1 + 2, 3 * 4, 50 / 5, println(0)]
+println(l5)
