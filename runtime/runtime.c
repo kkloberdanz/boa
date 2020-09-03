@@ -78,7 +78,7 @@ struct BoaObj *append(struct BoaObj *list, struct BoaObj *item) {
         fprintf(stderr, "append() can only be used on a list");
     }
     list->len++; /* TODO: 2x amortize this */
-    list->data.l = realloc(list->data.l, list->len);
+    list->data.l = realloc(list->data.l, sizeof(*list->data.l) * list->len);
     list->data.l[list->len - 1] = item;
     return list;
 }

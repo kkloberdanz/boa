@@ -100,7 +100,11 @@ struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b) {
             dst->data.l = malloc(sizeof(struct BoaObj **) * len);
             dst->len = len;
             memcpy(dst->data.l, a->data.l, a->len * sizeof(struct BoaObj *));
-            memcpy(dst->data.l + a->len, b->data.l, b->len * sizeof(struct BoaObj *));
+            memcpy(
+                dst->data.l + a->len,
+                b->data.l,
+                b->len * sizeof(struct BoaObj *)
+            );
             break;
         }
 
