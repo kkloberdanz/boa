@@ -73,11 +73,11 @@ runtime/boaobj.o: runtime/boaobj.c runtime/boaobj.h
 	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
 		-c runtime/boaobj.c -o runtime/boaobj.o
 
-libruntime.a: runtime/runtime.o runtime/boaobj.o
-	ar rcs libruntime.a runtime/*.o
+libboaruntime.a: runtime/runtime.o runtime/boaobj.o
+	ar rcs libboaruntime.a runtime/*.o
 
 .PHONY: build
-build: boa libruntime.a
+build: boa libboaruntime.a
 
 .PHONY: run-valgrind
 run-valgrind: build
@@ -87,7 +87,7 @@ run-valgrind: build
 clean:
 	rm -rf bin/*
 	rm -f boa
-	rm -f libruntime.a runtime.o
+	rm -f libboaruntime.a runtime.o
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
 	rm -f core
 	rm -f vgcore*
