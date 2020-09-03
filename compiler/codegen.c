@@ -277,7 +277,8 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
             break;
 
         /* TODO: add all literal types */
-        default:
+        case AST_BOOL: /* TODO: make this work */
+        case AST_TYPE:
             fprintf(stderr, "literal type not yet supported\n");
             break;
     }

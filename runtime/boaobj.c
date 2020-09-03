@@ -7,8 +7,8 @@
 static struct BoaObj **small_nums;
 static struct BoaObj *nil_obj;
 
-const int SMALL_NUMS_START = -255;
-const int SMALL_NUMS_END = 255;
+static const int SMALL_NUMS_START = -255;
+static const int SMALL_NUMS_END = 255;
 
 char *strdup(const char *);
 
@@ -19,7 +19,7 @@ void *boaobj_malloc(size_t size) {
 
 void gc_init() {
     long i;
-    size_t nmemb = abs(SMALL_NUMS_START) + abs(SMALL_NUMS_END);
+    size_t nmemb = (size_t)abs(SMALL_NUMS_START) + (size_t)abs(SMALL_NUMS_END);
     size_t sz = nmemb * sizeof(struct BoaObj *);
     nil_obj = boaobj_malloc(sizeof(struct BoaObj));
     nil_obj->type = BOA_NIL;
@@ -32,7 +32,7 @@ void gc_init() {
     }
 }
 
-struct BoaObj *create_boa_nil() {
+struct BoaObj *create_boa_nil(void) {
     return nil_obj;
 }
 
@@ -104,7 +104,7 @@ struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b) {
             break;
         }
 
-        default:
+        case BOA_BOOL:
             fprintf(stderr, "type not supported");
             exit(EXIT_FAILURE);
     }
@@ -140,7 +140,6 @@ struct BoaObj *perform_equ(const struct BoaObj *a, const struct BoaObj *b) {
 
         case BOA_STRING:
         case BOA_LIST:
-        default:
             fprintf(stderr, "type not supported");
             exit(EXIT_FAILURE);
     }
@@ -169,9 +168,9 @@ struct BoaObj *perform_sub(const struct BoaObj *a, const struct BoaObj *b) {
             dst->data.f = a->data.f - b->data.f;
             break;
 
+        case BOA_BOOL:
         case BOA_STRING:
         case BOA_LIST:
-        default:
             fprintf(stderr, "type not supported");
             exit(EXIT_FAILURE);
     }
@@ -200,9 +199,9 @@ struct BoaObj *perform_div(const struct BoaObj *a, const struct BoaObj *b) {
             dst->data.f = a->data.f / b->data.f;
             break;
 
+        case BOA_BOOL:
         case BOA_STRING:
         case BOA_LIST:
-        default:
             fprintf(stderr, "type not supported");
             exit(EXIT_FAILURE);
     }
@@ -231,9 +230,9 @@ struct BoaObj *perform_mul(const struct BoaObj *a, const struct BoaObj *b) {
             dst->data.f = a->data.f * b->data.f;
             break;
 
+        case BOA_BOOL:
         case BOA_STRING:
         case BOA_LIST:
-        default:
             fprintf(stderr, "type not supported");
             exit(EXIT_FAILURE);
     }
@@ -257,9 +256,10 @@ struct BoaObj *perform_mod(const struct BoaObj *a, const struct BoaObj *b) {
             dst->data.i = a->data.i % b->data.i;
             break;
 
+        case BOA_BOOL:
         case BOA_STRING:
         case BOA_LIST:
-        default:
+        case BOA_FLOAT:
             fprintf(stderr, "type not supported");
             exit(EXIT_FAILURE);
     }
@@ -288,9 +288,9 @@ struct BoaObj *perform_lt(const struct BoaObj *a, const struct BoaObj *b) {
             dst->data.f = a->data.f < b->data.f;
             break;
 
+        case BOA_BOOL:
         case BOA_STRING:
         case BOA_LIST:
-        default:
             fprintf(stderr, "type not supported");
             exit(EXIT_FAILURE);
     }

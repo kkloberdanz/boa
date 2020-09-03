@@ -19,7 +19,8 @@ static: build
 clang-warn-everything: export WARN_FLAGS := \
 	-Weverything \
 	-Wno-format-nonliteral \
-	-Wno-padded
+	-Wno-padded \
+	-Wno-float-equal
 clang-warn-everything: export CC := clang
 clang-warn-everything: export BOA_CC := clang
 clang-warn-everything: build
