@@ -1,13 +1,13 @@
 #!/usr/bin/env boa
 
 x = 5 + 11
-print(x)
+println(x)
 y = x + 4
-print(y)
+println(y)
 z = x + y
-print(z)
+println(z)
 
 a = 5 == 5
-print(a)
+println(a)
 
-print(6 == 7)
+println(6 == 7)

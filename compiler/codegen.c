@@ -75,14 +75,23 @@ static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
         }
 
         state->reg++;
-        fprintf(
-            state->outf,
-            "struct BoaObj *r%lu = %s(%lu, %s);\n",
-            state->reg,
-            "create_boa_list",
-            nmemb,
-            args_str
-        );
+        if (nmemb > 0) {
+            fprintf(
+                state->outf,
+                "struct BoaObj *r%lu = %s(%lu, %s);\n",
+                state->reg,
+                "create_boa_list",
+                nmemb,
+                args_str
+            );
+        } else {
+            fprintf(
+                state->outf,
+                "struct BoaObj *r%lu = %s(0);\n",
+                state->reg,
+                "create_boa_list"
+            );
+        }
     }
 }
 
