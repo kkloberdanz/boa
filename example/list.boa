@@ -12,3 +12,6 @@ println(l3 + l4 + l1)
 
 l5 = [1 + 2, 3 * 4, 50 / 5, println(0)]
 println(l5)
+
+append(l5, 12345)
+println(l5)

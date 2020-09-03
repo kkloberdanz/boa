@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "runtime.h"
 #include "boaobj.h"
@@ -70,4 +71,14 @@ struct BoaObj *print(const struct BoaObj *obj) {
         }
     }
     return create_boa_nil();
+}
+
+struct BoaObj *append(struct BoaObj *list, struct BoaObj *item) {
+    if (list->type != BOA_LIST) {
+        fprintf(stderr, "append() can only be used on a list");
+    }
+    list->len++; /* TODO: 2x amortize this */
+    list->data.l = realloc(list->data.l, list->len);
+    list->data.l[list->len - 1] = item;
+    return list;
 }
