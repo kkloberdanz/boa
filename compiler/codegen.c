@@ -50,55 +50,39 @@ static void write_main(struct CodegenState *state) {
 }
 
 static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
-    size_t len = 0;
+    size_t nmemb = 0;
     size_t i;
     unsigned long argument_regs[20];
+    size_t len = 0;
+    char args_str[255] = {0};
 
     if (ast) {
         ASTNode *args_list = ast->left;
-        /* TODO: clean this up by adding code into boaobj.c */
-        /* solve each argument expression, and store the result in
-         * argument_regs */
-        for (len = 0; args_list != NULL; len++) {
+        for (nmemb = 0; args_list != NULL; nmemb++) {
             codegen_node(state, args_list);
-            argument_regs[len] = state->reg;
+            argument_regs[nmemb] = state->reg;
             args_list = args_list->sibling;
+        }
+
+        i = nmemb;
+        while (i --> 0) {
+            if (i > 0) {
+                sprintf(args_str + len, "r%lu, ", argument_regs[i]);
+            } else {
+                sprintf(args_str + len, "r%lu", argument_regs[i]);
+            }
+            len = strlen(args_str);
         }
 
         state->reg++;
         fprintf(
             state->outf,
-            "struct BoaObj *r%ld = malloc(%lu);\n",
+            "struct BoaObj *r%lu = %s(%lu, %s);\n",
             state->reg,
-            sizeof(struct BoaObj *)
+            "create_boa_list",
+            nmemb,
+            args_str
         );
-        fprintf(
-            state->outf,
-            "r%ld->type = BOA_LIST;\n",
-            state->reg
-        );
-        fprintf(
-            state->outf,
-            "r%ld->len = %lu;\n",
-            state->reg,
-            len
-        );
-        fprintf(
-            state->outf,
-            "r%ld->data.l = malloc(%lu);\n",
-            state->reg,
-            len * sizeof(struct BoaObj *)
-        );
-
-        for (i = 0; i < len; i++) {
-            fprintf(
-                state->outf,
-                "r%ld->data.l[%lu] = r%ld;\n",
-                state->reg,
-                i,
-                argument_regs[len - i - 1]
-            );
-        }
     }
 }
 

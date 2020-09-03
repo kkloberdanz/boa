@@ -76,9 +76,19 @@ struct BoaObj *print(const struct BoaObj *obj) {
 struct BoaObj *append(struct BoaObj *list, struct BoaObj *item) {
     if (list->type != BOA_LIST) {
         fprintf(stderr, "append() can only be used on a list");
+        exit(EXIT_FAILURE);
     }
-    list->len++; /* TODO: 2x amortize this */
-    list->data.l = realloc(list->data.l, sizeof(*list->data.l) * list->len);
+    list->len++;
+    if (!list->cap) {
+        list->cap = list->len;
+        list->data.l = malloc(sizeof(*list->data.l) * list->len);
+    } else if (list->len > list->cap) {
+        list->cap = 2 * list->len;
+        list->data.l = realloc(
+            list->data.l,
+            sizeof(*list->data.l) * list->cap
+        );
+    }
     list->data.l[list->len - 1] = item;
     return list;
 }

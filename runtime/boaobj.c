@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "boaobj.h"
 
@@ -63,6 +64,22 @@ struct BoaObj *create_boa_string(const char *str) {
     return obj;
 }
 
+struct BoaObj *create_boa_list(const size_t nmemb, ...) {
+    va_list valist;
+    struct BoaObj *obj = boaobj_malloc(sizeof(struct BoaObj));
+    size_t i;
+
+    va_start(valist, nmemb);
+    obj->type = BOA_LIST;
+    obj->len = nmemb;
+    obj->cap = nmemb;
+    obj->data.l = boaobj_malloc(sizeof(struct BoaObj *) * nmemb);
+    for (i = 0; i < nmemb; i++) {
+        obj->data.l[i] = va_arg(valist, struct BoaObj *);
+    }
+    return obj;
+}
+
 struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b) {
     struct BoaObj *dst = NULL;
     if (a->type != b->type) {
@@ -99,6 +116,7 @@ struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b) {
             dst = malloc(sizeof(struct BoaObj));
             dst->data.l = malloc(sizeof(struct BoaObj **) * len);
             dst->len = len;
+            dst->cap = len;
             memcpy(dst->data.l, a->data.l, a->len * sizeof(struct BoaObj *));
             memcpy(
                 dst->data.l + a->len,

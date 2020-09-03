@@ -22,6 +22,7 @@ enum BoaType {
 struct BoaObj {
     enum BoaType type;
     size_t len;
+    size_t cap;
     union {
         long i;
         double f;
@@ -36,6 +37,7 @@ struct BoaObj *create_boa_int(long i);
 struct BoaObj *create_boa_float(double f);
 struct BoaObj *create_boa_string(const char *str);
 struct BoaObj *create_boa_nil(void);
+struct BoaObj *create_boa_list(const size_t nmemb, ...);
 void gc_init(void);
 struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b);
 struct BoaObj *perform_mul(const struct BoaObj *a, const struct BoaObj *b);
