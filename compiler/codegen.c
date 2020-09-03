@@ -53,7 +53,6 @@ static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
     size_t len = 0;
     size_t i;
     unsigned long argument_regs[20];
-    long reg;
 
     if (ast) {
         ASTNode *args_list = ast->left;
@@ -99,7 +98,6 @@ static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
                 i,
                 argument_regs[len - i - 1]
             );
-            reg--;
         }
     }
 }

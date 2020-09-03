@@ -28,10 +28,10 @@
 #include "../util/memory.h"
 #include "typecheck.h"
 
-static bool is_boa_src_file(const char *filename) {
+static char is_boa_src_file(const char *filename) {
     size_t len = strlen(filename) - 1;
     if (len < 5) {
-        return false;
+        return 0;
     }
     return strcmp(filename + (len - 3), ".boa") == 0;
 }
