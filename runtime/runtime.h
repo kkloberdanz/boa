@@ -24,5 +24,6 @@
 
 struct BoaObj *println(const struct BoaObj *obj);
 struct BoaObj *print(const struct BoaObj *obj);
+struct BoaObj *append(struct BoaObj *list, struct BoaObj *item);
 
 #endif /* RUNTIME_H */
