@@ -29,6 +29,7 @@ struct BoaObj {
         char *s;
         struct BoaObj **l;
         char b;
+        struct BoaObj *(*fn)(struct BoaObj *);
     } data;
 };
 

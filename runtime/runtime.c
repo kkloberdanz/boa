@@ -92,3 +92,15 @@ struct BoaObj *append(struct BoaObj *list, struct BoaObj *item) {
     list->data.l[list->len - 1] = item;
     return list;
 }
+
+struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
+    size_t len = list->len;
+    size_t i = 0;
+    struct BoaObj *new_obj = malloc(sizeof(struct BoaObj));
+    new_obj->data.l = malloc(len * sizeof(struct BoaObj *));
+    for (i = 0; i < len; i++) {
+        struct BoaObj *node = list->data.l[i];
+        new_obj->data.l[i] = func->data.fn(node);
+    }
+    return new_obj;
+}

@@ -9,12 +9,12 @@ rec_collatz = acc, n => {
         -> acc
     else if n % 2 == 0:
         new_n = n / 2
-        append(acc, new_n)
-        -> rec_collatz(acc, new_n)
+        new_acc = append(acc, new_n)
+        -> rec_collatz(new_acc, new_n)
     else
         new_n = 3 * n + 1
-        append(acc, new_n)
-        -> rec_collatz(acc, new_n)
+        new_acc = append(acc, new_n)
+        -> rec_collatz(new_acc, new_n)
 }
 
 collatz = n => {
