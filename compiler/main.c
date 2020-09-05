@@ -182,7 +182,7 @@ static void print_usage(const char *prg_name) {
         "              write binary to outfile\n\n"
         ;
 
-    fprintf(stderr, "\n%s: [-b] [-h] [-r] [-o outfile] infile\n\n", prg_name);
+    fprintf(stderr, "\n%s: [-b] [-h] [-o outfile] infile\n\n", prg_name);
     fprintf(stderr, "%s\n", msg);
 }
 
