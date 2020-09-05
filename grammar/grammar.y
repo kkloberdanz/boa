@@ -127,7 +127,6 @@ maybe_newlines  : newlines
 stmt        : expr newlines                   {$$ = $1;}
             | assign_expr newlines            {$$ = $1;}
             | decl_func                       {$$ = $1;}
-            | SLIM_ARROW expr maybe_newlines  {$$ = make_return_node($2);}
             ;
 
 decl_func   : id ASSIGN params FAT_ARROW LBRACE newlines
@@ -180,11 +179,21 @@ assign_expr : id ASSIGN expr        {
 if_expr     : IF expr COLON maybe_newlines
                   if_body
               ELSE maybe_newlines
-                  if_body           {$$ = make_conditional_node($2, $5, $8);}
+                  if_body           
+                                    {
+                                        debug_puts("if_expr");
+                                        $$ = make_conditional_node($2, $5, $8);
+                                    }
+            ;
 
-if_body     : stmts SLIM_ARROW expr {
+if_body     : SLIM_ARROW expr       {
+                                        debug_puts("if_body 1");
+                                        $$ = $2 ;
+                                    }
+
+            | stmts SLIM_ARROW expr {
                                         YYSTYPE ast;
-                                        debug_puts("if_body");
+                                        debug_puts("if_body 2");
                                         ast = $1;
                                         if (ast) {
                                             while (ast->sibling) {
@@ -196,7 +205,20 @@ if_body     : stmts SLIM_ARROW expr {
                                             $$ = $3;
                                         }
                                     }
-            | SLIM_ARROW expr       { $$ = $2 ; }
+            | stmts SLIM_ARROW expr {
+                                        YYSTYPE ast;
+                                        debug_puts("if_body 3");
+                                        ast = $1;
+                                        if (ast) {
+                                            while (ast->sibling) {
+                                                ast = ast->sibling;
+                                            }
+                                            ast->sibling = $3;
+                                            $$ = $1;
+                                        } else {
+                                            $$ = $3;
+                                        }
+                                    }
             ;
 
 expr        : expr PLUS expr        {
