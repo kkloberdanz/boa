@@ -69,6 +69,9 @@ struct BoaObj *print(const struct BoaObj *obj) {
             printf("%s", "]");
             break;
         }
+        case BOA_FUNC:
+            puts("<function>");
+            break;
     }
     return create_boa_nil();
 }
@@ -96,7 +99,16 @@ struct BoaObj *append(struct BoaObj *list, struct BoaObj *item) {
 struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
     size_t len = list->len;
     size_t i = 0;
-    struct BoaObj *new_obj = malloc(sizeof(struct BoaObj));
+    struct BoaObj *new_obj;
+    if (list->type != BOA_LIST) {
+        fprintf(stderr, "append() can only be used on a list");
+        exit(EXIT_FAILURE);
+    }
+    if (func->type != BOA_FUNC) {
+        fprintf(stderr, "append() can only be used on a list");
+        exit(EXIT_FAILURE);
+    }
+    new_obj = malloc(sizeof(struct BoaObj));
     new_obj->data.l = malloc(len * sizeof(struct BoaObj *));
     for (i = 0; i < len; i++) {
         struct BoaObj *node = list->data.l[i];

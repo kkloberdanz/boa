@@ -16,7 +16,8 @@ enum BoaType {
     BOA_FLOAT,
     BOA_BOOL,
     BOA_STRING,
-    BOA_LIST
+    BOA_LIST,
+    BOA_FUNC
 };
 
 struct BoaObj {
