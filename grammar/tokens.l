@@ -52,7 +52,8 @@ single_line_comment #(.*)
 "!="          { return NE; }
 "=>"          { return FAT_ARROW; }
 "if"          { return IF; }
-"then"        { return THEN; }
+"match"       { return MATCH; }
+"|"           { return PIPE; }
 "->"          { return SLIM_ARROW; }
 "else"        { return ELSE; }
 "("           { return LPAREN; }

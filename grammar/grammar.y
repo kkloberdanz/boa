@@ -46,6 +46,8 @@ char **all_types = NULL;
 %token ENDFILE
 %token ERROR
 %token IF
+%token MATCH
+%token PIPE
 %token SLIM_ARROW
 %token ELSE
 %token ELIF
@@ -176,6 +178,13 @@ assign_expr : id ASSIGN expr        {
                                             all_types
                                             );
                                          }
+            ;
+
+pipes       : PIPE expr SLIM_ARROW stmt
+
+match_expr  : MATCH expr
+                pipes
+              SEMICOLON
             ;
 
 if_expr     : IF expr COLON maybe_newlines
