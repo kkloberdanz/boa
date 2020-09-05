@@ -125,7 +125,6 @@ maybe_newlines  : newlines
                 ;
 
 stmt        : expr newlines                   {$$ = $1;}
-            | if_expr maybe_newlines          {$$ = $1;}
             | assign_expr newlines            {$$ = $1;}
             | decl_func                       {$$ = $1;}
             | SLIM_ARROW expr maybe_newlines  {$$ = make_return_node($2);}
@@ -179,9 +178,26 @@ assign_expr : id ASSIGN expr        {
             ;
 
 if_expr     : IF expr COLON maybe_newlines
-                  stmts
+                  if_body
               ELSE maybe_newlines
-                  stmts             {$$ = make_conditional_node($2, $5, $8);}
+                  if_body           {$$ = make_conditional_node($2, $5, $8);}
+
+if_body     : stmts SLIM_ARROW expr {
+                                        YYSTYPE ast;
+                                        debug_puts("if_body");
+                                        ast = $1;
+                                        if (ast) {
+                                            while (ast->sibling) {
+                                                ast = ast->sibling;
+                                            }
+                                            ast->sibling = $3;
+                                            $$ = $1;
+                                        } else {
+                                            $$ = $3;
+                                        }
+                                    }
+            | SLIM_ARROW expr       { $$ = $2 ; }
+            ;
 
 expr        : expr PLUS expr        {
                                         debug_puts("making OP_PLUS");
@@ -240,6 +256,7 @@ expr        : expr PLUS expr        {
                                     }
             | id                    {$$ = make_load_node($1);}
             | list_con              {$$ = $1;}
+            | if_expr               {$$ = $1;}
             ;
 
 type        : TYPE                  {
