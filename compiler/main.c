@@ -175,8 +175,7 @@ static int run_program(const char *exe_filename) {
 static void print_usage(const char *prg_name) {
     const char *msg = \
         "        -b    Build only, don't run the boa program\n\n"
-        "        -h\n"
-        "              Display this help menu, then exit\n\n"
+        "        -h    Display this help menu, then exit\n\n"
         "        -o outfile\n"
         "              Instead of the default output filename,\n"
         "              write binary to outfile\n\n"
