@@ -1,0 +1,15 @@
+func = x => {
+    if x < 4:
+        if x == 2:
+            -> 1
+        else
+            -> 2
+    else -> 3
+}
+
+println(func(1))
+println(func(2))
+println(func(3))
+println(func(4))
+println(func(5))
+println(func(6))
