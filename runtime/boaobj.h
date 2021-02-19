@@ -48,5 +48,6 @@ struct BoaObj *perform_mod(const struct BoaObj *a, const struct BoaObj *b);
 struct BoaObj *perform_sub(const struct BoaObj *a, const struct BoaObj *b);
 struct BoaObj *perform_equ(const struct BoaObj *a, const struct BoaObj *b);
 struct BoaObj *perform_lt(const struct BoaObj *a, const struct BoaObj *b);
+struct BoaObj *perform_gt(const struct BoaObj *a, const struct BoaObj *b);
 
 #endif /* BOAOBJ_H */
