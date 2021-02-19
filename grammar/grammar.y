@@ -125,8 +125,8 @@ maybe_newlines  : newlines
                 ;
 
 stmt        : expr newlines                   {$$ = $1;}
-            | if_expr maybe_newlines          {$$ = $1;}
-            | assign_expr newlines            {$$ = $1;}
+            | if_stmt                         {$$ = $1;}
+            | assign_stmt                     {$$ = $1;}
             | decl_func                       {$$ = $1;}
             | SLIM_ARROW expr maybe_newlines  {$$ = make_return_node($2);}
             ;
@@ -137,7 +137,6 @@ decl_func   : id ASSIGN params FAT_ARROW LBRACE newlines
                                         debug_puts("decl_func");
                                         $$ = make_function_node($1, $7, $3);
                                     }
-
             | DEF id LPAREN RPAREN LBRACE newlines
               stmts
               RBRACE newlines       {
@@ -161,24 +160,18 @@ params      : expr                  {$$ = $1;}
                                     }
             ;
 
-assign_expr : id ASSIGN expr        {
-                                        debug_puts("assign_expr");
+assign_stmt : id ASSIGN expr newlines
+                                    {
+                                        debug_puts("assign_stmt");
                                         $$ = make_assign_node(
                                             $1,
                                             $3,
                                             NULL,
                                             all_types);
                                     }
-            | id COLON type ASSIGN expr {$$ = make_assign_node(
-                                            $1,
-                                            $5,
-                                            $3,
-                                            all_types
-                                            );
-                                         }
             ;
 
-if_expr     : IF expr COLON maybe_newlines
+if_stmt     : IF expr COLON maybe_newlines
                   stmts
               ELSE maybe_newlines
                   stmts             {$$ = make_conditional_node($2, $5, $8);}
@@ -250,12 +243,12 @@ type        : TYPE                  {
                                     }
             ;
 
-bool_expr   : expr EQ expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_EQ, $1, $3);}
-            | expr LT expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_LT, $1, $3);}
-            | expr LE expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_LE, $1, $3);}
-            | expr GT expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_GT, $1, $3);}
-            | expr GE expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_GE, $1, $3);}
-            | expr NE expr          { debug_puts("making bool op"); $$ = make_operator_node(OP_NE, $1, $3);}
+bool_expr   : expr EQ expr          { $$ = make_operator_node(OP_EQ, $1, $3);}
+            | expr LT expr          { $$ = make_operator_node(OP_LT, $1, $3);}
+            | expr LE expr          { $$ = make_operator_node(OP_LE, $1, $3);}
+            | expr GT expr          { $$ = make_operator_node(OP_GT, $1, $3);}
+            | expr GE expr          { $$ = make_operator_node(OP_GE, $1, $3);}
+            | expr NE expr          { $$ = make_operator_node(OP_NE, $1, $3);}
             ;
 
 args        : expr                  {$$ = $1;}
@@ -273,27 +266,15 @@ args        : expr                  {$$ = $1;}
                                     }
             ;
 
-call_func   : id LPAREN args RPAREN {
-                                        debug_puts("call_func");
-                                        $$ = make_func_call_node($1, $3);
-                                    }
-            | id LPAREN RPAREN      {
-                                        debug_puts("call_func");
-                                        $$ = make_func_call_node($1, NULL);
-                                    }
+call_func   : id LPAREN args RPAREN { $$ = make_func_call_node($1, $3); }
+            | id LPAREN RPAREN      { $$ = make_func_call_node($1, NULL); }
             ;
 
-id          : ID                    {
-                                        $$ = make_id_node(
-                                            make_string(token_string)
-                                        );
-                                    }
+id          : ID                    {$$ = make_id_node(make_string(token_string));}
             ;
 
-list_con    : LBRACK params RBRACK  {
-                                        $$ = make_list_node($2);
-                                    }
-            | LBRACK RBRACK  { $$ = make_list_node(NULL); }
+list_con    : LBRACK params RBRACK  { $$ = make_list_node($2); }
+            | LBRACK RBRACK         { $$ = make_list_node(NULL); }
             ;
 %%
 

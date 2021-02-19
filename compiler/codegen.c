@@ -50,53 +50,46 @@ static void write_main(struct CodegenState *state) {
 }
 
 static void emit_list_literal(struct CodegenState *state, ASTNode *ast) {
-    size_t len = 0;
+    size_t nmemb = 0;
     size_t i;
     unsigned long argument_regs[20];
+    size_t len = 0;
+    char args_str[255] = {0};
 
     if (ast) {
         ASTNode *args_list = ast->left;
-        /* TODO: clean this up by adding code into boaobj.c */
-        /* solve each argument expression, and store the result in
-         * argument_regs */
-        for (len = 0; args_list != NULL; len++) {
+        for (nmemb = 0; args_list != NULL; nmemb++) {
             codegen_node(state, args_list);
-            argument_regs[len] = state->reg;
+            argument_regs[nmemb] = state->reg;
             args_list = args_list->sibling;
         }
 
-        state->reg++;
-        fprintf(
-            state->outf,
-            "struct BoaObj *r%ld = malloc(%lu);\n",
-            state->reg,
-            sizeof(struct BoaObj *)
-        );
-        fprintf(
-            state->outf,
-            "r%ld->type = BOA_LIST;\n",
-            state->reg
-        );
-        fprintf(
-            state->outf,
-            "r%ld->len = %lu;\n",
-            state->reg,
-            len
-        );
-        fprintf(
-            state->outf,
-            "r%ld->data.l = malloc(%lu);\n",
-            state->reg,
-            len * sizeof(struct BoaObj *)
-        );
+        i = nmemb;
+        while (i --> 0) {
+            if (i > 0) {
+                sprintf(args_str + len, "r%lu, ", argument_regs[i]);
+            } else {
+                sprintf(args_str + len, "r%lu", argument_regs[i]);
+            }
+            len = strlen(args_str);
+        }
 
-        for (i = 0; i < len; i++) {
+        state->reg++;
+        if (nmemb > 0) {
             fprintf(
                 state->outf,
-                "r%ld->data.l[%lu] = r%ld;\n",
+                "struct BoaObj *r%lu = %s(%lu, %s);\n",
                 state->reg,
-                i,
-                argument_regs[len - i - 1]
+                "create_boa_list",
+                nmemb,
+                args_str
+            );
+        } else {
+            fprintf(
+                state->outf,
+                "struct BoaObj *r%lu = %s(0);\n",
+                state->reg,
+                "create_boa_list"
             );
         }
     }
@@ -277,7 +270,8 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
             break;
 
         /* TODO: add all literal types */
-        default:
+        case AST_BOOL: /* TODO: make this work */
+        case AST_TYPE:
             fprintf(stderr, "literal type not yet supported\n");
             break;
     }

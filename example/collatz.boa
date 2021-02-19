@@ -4,11 +4,21 @@
 #   Collatz Conjecture, see: https://en.wikipedia.org/wiki/Collatz_conjecture
 #
 
-collatz = n => {
-    print(n)
-    if n == 1: -> 1
-    else if n % 2 == 0: -> collatz(n / 2)
-    else -> collatz(3 * n + 1)
+rec_collatz = acc, n => {
+    if n == 1:
+        -> acc
+    else if n % 2 == 0:
+        new_n = n / 2
+        new_acc = append(acc, new_n)
+        -> rec_collatz(new_acc, new_n)
+    else
+        new_n = 3 * n + 1
+        new_acc = append(acc, new_n)
+        -> rec_collatz(new_acc, new_n)
 }
 
-collatz(10)
+collatz = n => {
+    -> rec_collatz([n], n)
+}
+
+println(collatz(10))

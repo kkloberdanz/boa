@@ -69,6 +69,9 @@ struct BoaObj *print(const struct BoaObj *obj) {
             printf("%s", "]");
             break;
         }
+        case BOA_FUNC:
+            puts("<function>");
+            break;
     }
     return create_boa_nil();
 }
@@ -76,9 +79,40 @@ struct BoaObj *print(const struct BoaObj *obj) {
 struct BoaObj *append(struct BoaObj *list, struct BoaObj *item) {
     if (list->type != BOA_LIST) {
         fprintf(stderr, "append() can only be used on a list");
+        exit(EXIT_FAILURE);
     }
-    list->len++; /* TODO: 2x amortize this */
-    list->data.l = realloc(list->data.l, list->len);
+    list->len++;
+    if (!list->cap) {
+        list->cap = list->len;
+        list->data.l = malloc(sizeof(*list->data.l) * list->len);
+    } else if (list->len > list->cap) {
+        list->cap = 2 * list->len;
+        list->data.l = realloc(
+            list->data.l,
+            sizeof(*list->data.l) * list->cap
+        );
+    }
     list->data.l[list->len - 1] = item;
     return list;
+}
+
+struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
+    size_t len = list->len;
+    size_t i = 0;
+    struct BoaObj *new_obj;
+    if (list->type != BOA_LIST) {
+        fprintf(stderr, "append() can only be used on a list");
+        exit(EXIT_FAILURE);
+    }
+    if (func->type != BOA_FUNC) {
+        fprintf(stderr, "append() can only be used on a list");
+        exit(EXIT_FAILURE);
+    }
+    new_obj = malloc(sizeof(struct BoaObj));
+    new_obj->data.l = malloc(len * sizeof(struct BoaObj *));
+    for (i = 0; i < len; i++) {
+        struct BoaObj *node = list->data.l[i];
+        new_obj->data.l[i] = func->data.fn(node);
+    }
+    return new_obj;
 }

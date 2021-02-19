@@ -16,26 +16,31 @@ enum BoaType {
     BOA_FLOAT,
     BOA_BOOL,
     BOA_STRING,
-    BOA_LIST
+    BOA_LIST,
+    BOA_FUNC
 };
 
 struct BoaObj {
     enum BoaType type;
     size_t len;
+    size_t cap;
     union {
         long i;
         double f;
         char *s;
         struct BoaObj **l;
         char b;
+        struct BoaObj *(*fn)(struct BoaObj *);
     } data;
 };
 
+void *boaobj_malloc(size_t size);
 struct BoaObj *create_boa_int(long i);
 struct BoaObj *create_boa_float(double f);
 struct BoaObj *create_boa_string(const char *str);
-struct BoaObj *create_boa_nil();
-void gc_init();
+struct BoaObj *create_boa_nil(void);
+struct BoaObj *create_boa_list(const size_t nmemb, ...);
+void gc_init(void);
 struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b);
 struct BoaObj *perform_mul(const struct BoaObj *a, const struct BoaObj *b);
 struct BoaObj *perform_div(const struct BoaObj *a, const struct BoaObj *b);

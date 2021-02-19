@@ -108,10 +108,10 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     if (!strcmp(boa_cc, "musl-gcc")) {
 #ifdef DEBUG
         const char *fmt = \
-            "%s -Werror -ggdb3 -O0 -fPIC -static -o %s %s libruntime.a";
+            "%s -Werror -ggdb3 -O0 -fPIC -static -o %s %s libboaruntime.a";
 #else
         const char *fmt = \
-            "%s -Werror -s -O2 -fPIC -static -o %s %s libruntime.a";
+            "%s -Werror -s -O2 -fPIC -static -o %s %s libboaruntime.a";
 #endif
         buf = boa_malloc(
             1 +
@@ -130,9 +130,9 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 
     } else {
 #ifdef DEBUG
-        const char *fmt = "%s -ggdb3 -O0 -fPIC -o %s %s libruntime.a";
+        const char *fmt = "%s -ggdb3 -O0 -fPIC -o %s %s libboaruntime.a";
 #else
-        const char *fmt = "%s -s -O2 -fPIC -o %s %s libruntime.a";
+        const char *fmt = "%s -s -O2 -fPIC -o %s %s libboaruntime.a";
 #endif
         buf = boa_malloc(
             1 +
@@ -175,14 +175,13 @@ static int run_program(const char *exe_filename) {
 static void print_usage(const char *prg_name) {
     const char *msg = \
         "        -b    Build only, don't run the boa program\n\n"
-        "        -h\n"
-        "              Display this help menu, then exit\n\n"
+        "        -h    Display this help menu, then exit\n\n"
         "        -o outfile\n"
         "              Instead of the default output filename,\n"
         "              write binary to outfile\n\n"
         ;
 
-    fprintf(stderr, "\n%s: [-b] [-h] [-r] [-o outfile] infile\n\n", prg_name);
+    fprintf(stderr, "\n%s: [-b] [-h] [-o outfile] infile\n\n", prg_name);
     fprintf(stderr, "%s\n", msg);
 }
 
@@ -237,7 +236,7 @@ static int compiler(int argc, char **argv) {
     }
 
     error_code = compile_c(c_filename, exe_filename);
-    /*remove(c_filename);*/
+    remove(c_filename);
     if (error_code) {
         return error_code;
     }
