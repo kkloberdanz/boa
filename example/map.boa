@@ -4,6 +4,13 @@ plus_one = x => {
     -> x + 1
 }
 
+minus_one = x => {
+    -> x - 1
+}
+
 l1 = [1, 2, 3, 4, 5]
+println(l1)
 l2 = map(plus_one, l1)
 println(l2)
+l3 = map(minus_one, l1)
+println(l3)

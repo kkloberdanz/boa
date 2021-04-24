@@ -21,11 +21,15 @@
 #include "codegen.h"
 #include "typeinfo.h"
 #include "ast.h"
+#include "bst.h"
 #include "../util/util.h"
+
+char *strdup(const char *);
 
 struct CodegenState {
     FILE *outf;
     unsigned long reg;
+    struct BST *globals;
 };
 
 static void codegen_node(struct CodegenState *state, ASTNode *ast);
@@ -253,25 +257,27 @@ static void emit_return_stmt(struct CodegenState *state, ASTNode *ast) {
 static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
     char *load_func = NULL;
     switch (ast->obj->kind) {
-        case AST_ID:
+        case AST_ID: {
             /* TODO: if it's an AST_ID, check if it is a C function
              * If it's a C function, then first assign a boa object
              * to hold the function pointer of the C function */
             /* TODO: when declaring a function, add its name to the list
              * of C functions */
-            if (strcmp(ast->obj->repr, "plus_one") == 0) {
-                printf("I GOT IT: %s\n", ast->obj->repr);
+            const char *id_name = ast->obj->repr;
+            struct BST *found = bst_find(state->globals, id_name);
+            if (found) {
                 state->reg++;
                 fprintf(
                     state->outf,
                     "struct BoaObj *r%ld = create_boa_func(%s);\n",
                     state->reg,
-                    ast->obj->repr
+                    id_name
                 );
                 goto done;
             }
             load_func = "";
             break;
+        }
 
         case AST_INT:
             load_func = "create_boa_int";
@@ -358,11 +364,13 @@ static void codegen_node(struct CodegenState *state, ASTNode *ast) {
 
 static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
     ASTNode *params = ast->left;
+    const char *func_name = ast->obj->repr;
+    bst_insert(state->globals, strdup(func_name), 1);
     if (params == NULL) {
         fprintf(
             state->outf,
             "static struct BoaObj *%s() {\n",
-            ast->obj->repr
+            func_name
         );
     } else {
         char params_str[255];
@@ -389,7 +397,7 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
         fprintf(
             state->outf,
             "static struct BoaObj *%s(%s) {\n",
-            ast->obj->repr,
+            func_name,
             params_str
         );
     }
@@ -433,10 +441,12 @@ int emit(FILE *output_file, ASTNode *ast) {
     struct CodegenState state;
     state.outf = output_file;
     state.reg = 0;
+    state.globals = bst_new(strdup("main"), 1);
     write_start(&state);
     codegen_defs(&state, ast);
     write_main(&state);
     codegen(&state, ast);
     write_end(&state);
+    bst_destroy(state.globals);
     return 0;
 }
