@@ -53,18 +53,30 @@ COMPILER_INC=$(wildcard compiler/*.h) $(wildcard util/*.h)
 UTIL_SRC=$(wildcard util/*.c)
 UTIL_OBJ=$(patsubst util/%.c,obj/util/%.o,$(UTIL_SRC))
 UTIL_INC=$(wildcard util/*.h) $(wildcard util/*.h)
-COMPILER_DEPS = $(COMPILER_OBJ) $(UTIL_OBJ) y.tab.o lex.yy.o
+COMPILER_DEPS = $(COMPILER_OBJ) $(UTIL_OBJ) obj/grammar/y.tab.o obj/grammar/lex.yy.o
 
-y.tab.o: grammar/grammar.y util/*.h
-	yacc -y -d grammar/grammar.y
-	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -c y.tab.c -o y.tab.o
+RUNTIME_SRC=$(wildcard runtime/*.c)
+RUNTIME_OBJ=$(patsubst runtime/%.c,obj/runtime/%.o,$(RUNTIME_SRC))
+RUNTIME_INC=$(wildcard runtime/*.h) $(wildcard runtime/*.h)
+RUNTIME_DEPS = $(RUNTIME_OBJ) $(UTIL_OBJ)
 
-lex.yy.o: y.tab.o grammar/tokens.l
-	lex grammar/tokens.l
-	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -c lex.yy.c -o lex.yy.o
+obj/grammar/y.tab.o: grammar/grammar.y util/*.h
+	yacc -o obj/grammar/y.tab.c -y -d grammar/grammar.y
+	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) \
+		-c obj/grammar/y.tab.c \
+		-o obj/grammar/y.tab.o
 
-boa: $(COMPILER_DEPS)
-	$(CC) -std=$(STD) $(WARN_FLAGS) -o boa $(COMPILER_DEPS) $(OPTIM_FLAGS) $(CFLAGS)
+obj/grammar/lex.yy.o: obj/grammar/y.tab.o grammar/tokens.l
+	lex -o obj/grammar/lex.yy.c grammar/tokens.l
+	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) \
+		-c obj/grammar/lex.yy.c \
+		-o obj/grammar/lex.yy.o -I obj/grammar
+
+bin/boa: $(COMPILER_DEPS)
+	$(CC) -std=$(STD) $(WARN_FLAGS) -o bin/boa $(COMPILER_DEPS) $(OPTIM_FLAGS) $(CFLAGS)
+
+lib/libboaruntime.a: $(RUNTIME_DEPS)
+	ar rcs lib/libboaruntime.a $(RUNTIME_DEPS)
 
 obj/compiler/%.o: compiler/%.c $(COMPILER_INC)
 	$(CC) -o $@ -c $< -std=$(STD) $(CFLAGS) $(OPTIM_FLAGS) $(WARN_FLAGS)
@@ -72,19 +84,11 @@ obj/compiler/%.o: compiler/%.c $(COMPILER_INC)
 obj/util/%.o: util/%.c $(UTIL_INC)
 	$(CC) -o $@ -c $< -std=$(STD) $(CFLAGS) $(OPTIM_FLAGS) $(WARN_FLAGS)
 
-runtime/runtime.o: runtime/runtime.c runtime/runtime.h
-	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
-		-c runtime/runtime.c -o runtime/runtime.o
-
-runtime/boaobj.o: runtime/boaobj.c runtime/boaobj.h
-	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
-		-c runtime/boaobj.c -o runtime/boaobj.o
-
-libboaruntime.a: runtime/runtime.o runtime/boaobj.o
-	ar rcs libboaruntime.a runtime/*.o
+obj/runtime/%.o: runtime/%.c $(RUNTIME_INC)
+	$(BOA_CC) -o $@ -c $< -std=$(STD) $(CFLAGS) $(OPTIM_FLAGS) $(WARN_FLAGS)
 
 .PHONY: build
-build: boa libboaruntime.a
+build: bin/boa lib/libboaruntime.a
 
 .PHONY: run-valgrind
 run-valgrind: build
@@ -92,9 +96,11 @@ run-valgrind: build
 
 .PHONY: clean
 clean:
-	rm -rf bin/*
+	rm -f bin/*
+	rm -f lib/*
 	rm -f boa
 	rm -f libboaruntime.a runtime.o
+	rm -f runtime/*.o
 	rm -f y.tab.h y.tab.c lex.yy.c lex.yy.o y.tab.o
 	rm -f core
 	rm -f vgcore*
@@ -107,4 +113,4 @@ clean:
 	rm -f hello
 	rm -f example/hello
 	rm -f runtime/*.o
-	rm -f obj/*.o obj/compiler/*.o obj/util/*.o
+	rm -f obj/*.o obj/compiler/*.o obj/util/*.o obj/grammar/*

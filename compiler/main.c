@@ -108,10 +108,10 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
     if (!strcmp(boa_cc, "musl-gcc")) {
 #ifdef DEBUG
         const char *fmt = \
-            "%s -Werror -ggdb3 -O0 -fPIC -static -o %s %s libboaruntime.a";
+            "%s -Werror -ggdb3 -O0 -fPIC -static -o %s %s lib/libboaruntime.a";
 #else
         const char *fmt = \
-            "%s -Werror -s -O2 -fPIC -static -o %s %s libboaruntime.a";
+            "%s -Werror -s -O2 -fPIC -static -o %s %s lib/libboaruntime.a";
 #endif
         buf = boa_malloc(
             1 +
@@ -130,9 +130,9 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 
     } else {
 #ifdef DEBUG
-        const char *fmt = "%s -ggdb3 -O0 -fPIC -o %s %s libboaruntime.a";
+        const char *fmt = "%s -ggdb3 -O0 -fPIC -o %s %s lib/libboaruntime.a";
 #else
-        const char *fmt = "%s -s -O2 -fPIC -o %s %s libboaruntime.a";
+        const char *fmt = "%s -s -O2 -fPIC -o %s %s lib/libboaruntime.a";
 #endif
         buf = boa_malloc(
             1 +
