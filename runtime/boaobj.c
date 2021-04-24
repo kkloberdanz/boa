@@ -350,3 +350,34 @@ struct BoaObj *perform_index(
     dst = list->data.l[index];
     return dst;
 }
+
+struct BoaObj *perform_gt(const struct BoaObj *a, const struct BoaObj *b) {
+    struct BoaObj *dst = NULL;
+    if (a->type != b->type) {
+        fprintf(stderr, "mismatched types\n");
+        exit(EXIT_FAILURE);
+    }
+    switch (a->type) {
+        case BOA_NIL:
+            dst = boaobj_malloc(sizeof(struct BoaObj));
+            break;
+
+        case BOA_INT:
+            dst = boaobj_malloc(sizeof(struct BoaObj));
+            dst->data.i = a->data.i > b->data.i;
+            break;
+
+        case BOA_FLOAT:
+            dst = boaobj_malloc(sizeof(struct BoaObj));
+            dst->data.f = a->data.f > b->data.f;
+            break;
+
+        case BOA_STRING:
+        case BOA_LIST:
+        default:
+            fprintf(stderr, "type not supported");
+            exit(EXIT_FAILURE);
+    }
+    dst->type = a->type;
+    return dst;
+}

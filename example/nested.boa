@@ -1,0 +1,19 @@
+#!/usr/bin/env boa
+
+func = x => {
+    if x < 4:
+        if x == 2:
+            -> 1
+        else
+            -> 2
+    else -> 3
+}
+
+rec = i => {
+    if i > 0:
+        println(func(i))
+        rec(i - 1)
+    else -> println(func(i))
+}
+
+rec(6)

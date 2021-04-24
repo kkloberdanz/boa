@@ -185,7 +185,7 @@ static void print_usage(const char *prg_name) {
     fprintf(stderr, "%s\n", msg);
 }
 
-static int run(int argc, char **argv) {
+static int compiler(int argc, char **argv) {
     int error_code = 1;
     char *c_filename = NULL;
     const char *source_filename;
@@ -251,7 +251,7 @@ static int run(int argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
-    int error_code = run(argc, argv);
+    int error_code = compiler(argc, argv);
     boa_free_all();
     return error_code;
 }
