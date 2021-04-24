@@ -64,6 +64,13 @@ struct BoaObj *create_boa_string(const char *str) {
     return obj;
 }
 
+struct BoaObj *create_boa_func(struct BoaObj *(*fn)(struct BoaObj *)) {
+    struct BoaObj *obj = boaobj_malloc(sizeof(struct BoaObj));
+    obj->type = BOA_FUNC;
+    obj->data.fn = fn;
+    return obj;
+}
+
 struct BoaObj *create_boa_list(const size_t nmemb, ...) {
     va_list valist;
     struct BoaObj *obj = boaobj_malloc(sizeof(struct BoaObj));

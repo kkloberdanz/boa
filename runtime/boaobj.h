@@ -38,6 +38,7 @@ void *boaobj_malloc(size_t size);
 struct BoaObj *create_boa_int(long i);
 struct BoaObj *create_boa_float(double f);
 struct BoaObj *create_boa_string(const char *str);
+struct BoaObj *create_boa_func(struct BoaObj *(*fn)(struct BoaObj *));
 struct BoaObj *create_boa_nil(void);
 struct BoaObj *create_boa_list(const size_t nmemb, ...);
 void gc_init(void);

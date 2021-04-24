@@ -109,6 +109,8 @@ struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
         exit(EXIT_FAILURE);
     }
     new_obj = malloc(sizeof(struct BoaObj));
+    new_obj->type = BOA_LIST;
+    new_obj->len = len;
     new_obj->data.l = malloc(len * sizeof(struct BoaObj *));
     for (i = 0; i < len; i++) {
         struct BoaObj *node = list->data.l[i];

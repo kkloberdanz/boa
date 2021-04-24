@@ -254,6 +254,22 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
     char *load_func = NULL;
     switch (ast->obj->kind) {
         case AST_ID:
+            /* TODO: if it's an AST_ID, check if it is a C function
+             * If it's a C function, then first assign a boa object
+             * to hold the function pointer of the C function */
+            /* TODO: when declaring a function, add its name to the list
+             * of C functions */
+            if (strcmp(ast->obj->repr, "plus_one") == 0) {
+                printf("I GOT IT: %s\n", ast->obj->repr);
+                state->reg++;
+                fprintf(
+                    state->outf,
+                    "struct BoaObj *r%ld = create_boa_func(%s);\n",
+                    state->reg,
+                    ast->obj->repr
+                );
+                goto done;
+            }
             load_func = "";
             break;
 
@@ -288,6 +304,8 @@ static void emit_load_stmt(struct CodegenState *state, ASTNode *ast) {
         load_func,
         ast->obj->repr
     );
+done:
+    return;
 }
 
 static void emit_conditional_expr(struct CodegenState *state, ASTNode *ast) {
