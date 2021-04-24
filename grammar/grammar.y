@@ -216,6 +216,14 @@ expr        : expr PLUS expr        {
                                             $3
                                         );
                                     }
+            | expr LBRACK expr RBRACK    {
+                                        debug_puts("making OP_INDEX");
+                                        $$ = make_operator_node(
+                                            OP_INDEX,
+                                            $1,
+                                            $3
+                                        );
+                                    }
             | bool_expr             {$$ = $1;}
             | call_func             {$$ = $1;}
             | LPAREN expr RPAREN    {$$ = $2;}

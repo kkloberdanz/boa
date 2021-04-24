@@ -326,3 +326,27 @@ struct BoaObj *perform_lt(const struct BoaObj *a, const struct BoaObj *b) {
     dst->type = a->type;
     return dst;
 }
+
+struct BoaObj *perform_index(
+    const struct BoaObj *list,
+    const struct BoaObj *idx
+) {
+    struct BoaObj *dst = NULL;
+    size_t index = idx->data.i;
+
+
+    if (list->len < index) {
+        fprintf(stderr, "list index out of range\n");
+        exit(EXIT_FAILURE);
+    }
+    if (list->type != BOA_LIST) {
+        fprintf(stderr, "can only take an index of a list\n");
+        exit(EXIT_FAILURE);
+    }
+    if (idx->type != BOA_INT) {
+        fprintf(stderr, "list index must be an int\n");
+        exit(EXIT_FAILURE);
+    }
+    dst = list->data.l[index];
+    return dst;
+}

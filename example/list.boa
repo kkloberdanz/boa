@@ -15,3 +15,5 @@ println(l5)
 
 append(l5, 12345)
 println(l5)
+i1 = l5[1]
+println(i1)

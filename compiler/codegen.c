@@ -168,6 +168,10 @@ static char *get_operator(Operator op) {
             op_repr = "perform_mod";
             break;
 
+        case OP_INDEX:
+            op_repr = "perform_index";
+            break;
+
         case OP_EQ:
             op_repr = "perform_equ";
             break;

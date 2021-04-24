@@ -101,11 +101,11 @@ struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
     size_t i = 0;
     struct BoaObj *new_obj;
     if (list->type != BOA_LIST) {
-        fprintf(stderr, "append() can only be used on a list");
+        fprintf(stderr, "map() can only be used on a list");
         exit(EXIT_FAILURE);
     }
     if (func->type != BOA_FUNC) {
-        fprintf(stderr, "append() can only be used on a list");
+        fprintf(stderr, "map() can only be used on a list");
         exit(EXIT_FAILURE);
     }
     new_obj = malloc(sizeof(struct BoaObj));
