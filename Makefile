@@ -1,9 +1,6 @@
 STD ?= c89
-
 WARN_FLAGS ?= -Wall -Wextra -Wpedantic -Wno-padded
-
 INCLD ?= -I.
-
 CFLAGS ?= -fPIC
 
 .PHONY: release
@@ -49,10 +46,16 @@ sanitize: export CC ?= cc
 sanitize: export BOA_CC ?= cc
 sanitize: build
 
-COMPILER_SRC = compiler/*.c util/*.c
-COMPILER_DEPS = $(COMPILER_SRC) compiler/*.h util/*.h
+COMPILER_SRC=$(wildcard compiler/*.c)
+COMPILER_OBJ=$(patsubst compiler/%.c,obj/compiler/%.o,$(COMPILER_SRC))
+COMPILER_INC=$(wildcard compiler/*.h) $(wildcard util/*.h)
 
-y.tab.o: grammar/grammar.y
+UTIL_SRC=$(wildcard util/*.c)
+UTIL_OBJ=$(patsubst util/%.c,obj/util/%.o,$(UTIL_SRC))
+UTIL_INC=$(wildcard util/*.h) $(wildcard util/*.h)
+COMPILER_DEPS = $(COMPILER_OBJ) $(UTIL_OBJ) y.tab.o lex.yy.o
+
+y.tab.o: grammar/grammar.y util/*.h
 	yacc -y -d grammar/grammar.y
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -c y.tab.c -o y.tab.o
 
@@ -60,10 +63,14 @@ lex.yy.o: y.tab.o grammar/tokens.l
 	lex grammar/tokens.l
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) -c lex.yy.c -o lex.yy.o
 
-boa: y.tab.o lex.yy.o $(COMPILER_DEPS)
-	$(CC) -std=$(STD) $(WARN_FLAGS) -o boa \
-		$(COMPILER_SRC) lex.yy.o y.tab.o \
-		$(OPTIM_FLAGS) $(CFLAGS) $(INCLD)
+boa: $(COMPILER_DEPS)
+	$(CC) -std=$(STD) $(WARN_FLAGS) -o boa $(COMPILER_DEPS) $(OPTIM_FLAGS) $(CFLAGS)
+
+obj/compiler/%.o: compiler/%.c $(COMPILER_INC)
+	$(CC) -o $@ -c $< -std=$(STD) $(CFLAGS) $(OPTIM_FLAGS) $(WARN_FLAGS)
+
+obj/util/%.o: util/%.c $(UTIL_INC)
+	$(CC) -o $@ -c $< -std=$(STD) $(CFLAGS) $(OPTIM_FLAGS) $(WARN_FLAGS)
 
 runtime/runtime.o: runtime/runtime.c runtime/runtime.h
 	$(BOA_CC) -std=$(STD) $(WARN_FLAGS) $(OPTIM_FLAGS) $(INCLD) $(CFLAGS) \
@@ -100,3 +107,4 @@ clean:
 	rm -f hello
 	rm -f example/hello
 	rm -f runtime/*.o
+	rm -f obj/*.o obj/compiler/*.o obj/util/*.o
