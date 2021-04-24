@@ -37,6 +37,15 @@ ackermann = m, n => {
         -> ackermann(m - 1, n2)
 }
 
+reassign = x => {
+    y = 0
+    if x > 0:
+        y = 14
+    else
+        y = 16
+    -> y
+}
+
 println(make_even(1111))
 
 println(compare(1, 2))
@@ -64,3 +73,6 @@ println(l2)
 
 l3 = [1 + 2, 3 * 4, 6 / 2]
 println(l3)
+
+println(reassign(2))
+println(reassign(-2))
