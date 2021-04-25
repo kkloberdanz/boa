@@ -143,11 +143,17 @@ struct BoaObj *map(struct BoaObj *args) {
     return new_obj;
 }
 
-#if 0
-struct BoaObj *reduce(struct BoaObj *func, struct BoaObj *list) {
+struct BoaObj *reduce(struct BoaObj *args) {
+    struct BoaObj *func = args->data.l[0];
+    struct BoaObj *list = args->data.l[1];
+    struct BoaObj args_list;
+    struct BoaObj *data[2];
     size_t len = list->len;
     size_t i = 0;
     struct BoaObj *new_obj;
+
+    args_list.data.l = data;
+
     if (list->type != BOA_LIST) {
         fprintf(stderr, "reduce() can only be used on a list\n");
         exit(EXIT_FAILURE);
@@ -161,17 +167,18 @@ struct BoaObj *reduce(struct BoaObj *func, struct BoaObj *list) {
         exit(EXIT_FAILURE);
     }
     new_obj = malloc(sizeof(struct BoaObj));
-    new_obj->type = list->type;
-    memcpy(&new_obj, list->data.l[0], sizeof(new_obj));
-    for (i = 0; i < len; i++) {
+    new_obj->type = list->data.l[0]->type;
+    new_obj->data = list->data.l[0]->data;
+    for (i = 1; i < len; i++) {
         struct BoaObj *node = list->data.l[i];
         /*
          * For this to work, function arguments must be passed in as a list
          * Each C function will recieve 1 and only 1 argument, which will
          * be the arguments list
          */
-        new_obj = func->data.fn(new_obj, node);
+        args_list.data.l[0] = new_obj;
+        args_list.data.l[1] = node;
+        new_obj = func->data.fn(&args_list);
     }
     return new_obj;
 }
-#endif

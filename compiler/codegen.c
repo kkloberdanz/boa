@@ -393,14 +393,14 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
         fprintf(state->outf, "/* emiting func def */\n");
         fprintf(
             state->outf,
-            "static struct BoaObj *%s(struct BoaObj *args) {\n",
+            "static struct BoaObj *%s(struct BoaObj *_boa_args) {\n",
             func_name
         );
         i = num_params;
         for (i = 0; i < num_params; i++) {
             fprintf(
                 state->outf,
-                "struct BoaObj *%s = args->data.l[%lu];\n",
+                "struct BoaObj *%s = _boa_args->data.l[%lu];\n",
                 params_arr[i]->obj->repr,
                 num_params - i - 1
             );
