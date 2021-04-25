@@ -397,12 +397,12 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
             func_name
         );
         i = num_params;
-        while (i --> 0) {
+        for (i = 0; i < num_params; i++) {
             fprintf(
                 state->outf,
                 "struct BoaObj *%s = args->data.l[%lu];\n",
                 params_arr[i]->obj->repr,
-                i
+                num_params - i - 1
             );
         }
     }
