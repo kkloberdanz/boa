@@ -20,18 +20,20 @@ enum BoaType {
     BOA_FUNC
 };
 
+union BoaObjData {
+    long i;
+    double f;
+    char *s;
+    struct BoaObj **l;
+    char b;
+    struct BoaObj *(*fn)(struct BoaObj *);
+};
+
 struct BoaObj {
     enum BoaType type;
     size_t len;
     size_t cap;
-    union {
-        long i;
-        double f;
-        char *s;
-        struct BoaObj **l;
-        char b;
-        struct BoaObj *(*fn)(struct BoaObj *);
-    } data;
+    union BoaObjData data;
 };
 
 void *boaobj_malloc(size_t size);

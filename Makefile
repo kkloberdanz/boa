@@ -9,7 +9,7 @@ release: dynamic
 .PHONY: static
 static: export OPTIM_FLAGS ?= -Os -static -s
 static: export CC := musl-gcc
-static: export BOA_CC := musl-gcc
+static: export BOACC := musl-gcc
 static: build
 
 .PHONY: clang-warn-everything
@@ -19,31 +19,31 @@ clang-warn-everything: export WARN_FLAGS := \
 	-Wno-padded \
 	-Wno-float-equal
 clang-warn-everything: export CC := clang
-clang-warn-everything: export BOA_CC := clang
+clang-warn-everything: export BOACC := clang
 clang-warn-everything: build
 
 .PHONY: dynamic
 dynamic: export OPTIM_FLAGS ?= -Os
 dynamic: export CC ?= cc
-dynamic: export BOA_CC ?= cc
+dynamic: export BOACC ?= cc
 dynamic: build
 
 .PHONY: debug
 debug: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror -DDEBUG
 debug: export CC ?= cc
-debug: export BOA_CC ?= cc
+debug: export BOACC ?= cc
 debug: build
 
 .PHONY: valgrind
 valgrind: export OPTIM_FLAGS ?= -O0 -ggdb3 -Werror
 valgrind: export CC ?= cc
-valgrind: export BOA_CC ?= cc
+valgrind: export BOACC ?= cc
 valgrind: run-valgrind
 
 .PHONY: sanitize
 sanitize: export OPTIM_FLAGS ?= -Os -ggdb3 -Werror -fsanitize=address
 sanitize: export CC ?= cc
-sanitize: export BOA_CC ?= cc
+sanitize: export BOACC ?= cc
 sanitize: build
 
 COMPILER_SRC=$(wildcard compiler/*.c)
@@ -85,7 +85,7 @@ obj/util/%.o: util/%.c $(UTIL_INC)
 	$(CC) -o $@ -c $< -std=$(STD) $(CFLAGS) $(OPTIM_FLAGS) $(WARN_FLAGS)
 
 obj/runtime/%.o: runtime/%.c $(RUNTIME_INC)
-	$(BOA_CC) -o $@ -c $< -std=$(STD) $(CFLAGS) $(OPTIM_FLAGS) $(WARN_FLAGS)
+	$(BOACC) -o $@ -c $< -std=$(STD) $(CFLAGS) $(OPTIM_FLAGS) $(WARN_FLAGS)
 
 .PHONY: build
 build: bin/boa lib/libboaruntime.a

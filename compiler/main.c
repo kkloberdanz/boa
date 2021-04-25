@@ -98,7 +98,7 @@ static int compile_boa(const char *source_filename, char **output_filename) {
 
 static int compile_c(const char *c_filename, const char *exe_filename) {
     int error_code = 0;
-    const char *boa_cc = getenv("BOA_CC");
+    const char *boa_cc = getenv("BOACC");
     char *buf;
 
     if (!boa_cc) {

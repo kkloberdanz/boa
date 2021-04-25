@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "runtime.h"
 #include "boaobj.h"
@@ -111,6 +112,7 @@ struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
     new_obj = malloc(sizeof(struct BoaObj));
     new_obj->type = BOA_LIST;
     new_obj->len = len;
+    new_obj->cap = len;
     new_obj->data.l = malloc(len * sizeof(struct BoaObj *));
     for (i = 0; i < len; i++) {
         struct BoaObj *node = list->data.l[i];
@@ -118,3 +120,36 @@ struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
     }
     return new_obj;
 }
+
+#if 0
+struct BoaObj *reduce(struct BoaObj *func, struct BoaObj *list) {
+    size_t len = list->len;
+    size_t i = 0;
+    struct BoaObj *new_obj;
+    if (list->type != BOA_LIST) {
+        fprintf(stderr, "reduce() can only be used on a list\n");
+        exit(EXIT_FAILURE);
+    }
+    if (func->type != BOA_FUNC) {
+        fprintf(stderr, "reduce() can only be used on a list\n");
+        exit(EXIT_FAILURE);
+    }
+    if (len == 0) {
+        fprintf(stderr, "cannot reduce on empty list\n");
+        exit(EXIT_FAILURE);
+    }
+    new_obj = malloc(sizeof(struct BoaObj));
+    new_obj->type = list->type;
+    memcpy(&new_obj, list->data.l[0], sizeof(new_obj));
+    for (i = 0; i < len; i++) {
+        struct BoaObj *node = list->data.l[i];
+        /*
+         * For this to work, function arguments must be passed in as a list
+         * Each C function will recieve 1 and only 1 argument, which will
+         * be the arguments list
+         */
+        new_obj = func->data.fn(new_obj, node);
+    }
+    return new_obj;
+}
+#endif
