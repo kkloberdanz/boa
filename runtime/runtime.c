@@ -22,13 +22,14 @@
 #include "runtime.h"
 #include "boaobj.h"
 
-struct BoaObj *println(const struct BoaObj *obj) {
-    print(obj);
+struct BoaObj *println(struct BoaObj *args) {
+    print(args);
     printf("\n");
     return create_boa_nil();
 }
 
-struct BoaObj *print(const struct BoaObj *obj) {
+struct BoaObj *print(struct BoaObj *args) {
+    const struct BoaObj *obj = args->data.l[0];
     switch (obj->type) {
         case BOA_NIL:
             printf("Nil");
@@ -57,15 +58,24 @@ struct BoaObj *print(const struct BoaObj *obj) {
         case BOA_LIST: {
             struct BoaObj **list = obj->data.l;
             size_t len = obj->len;
+            struct BoaObj args_list;
+            struct BoaObj *data[1];
+            args_list.data.l = data;
+            args_list.len = 1;
+            args_list.cap = 1;
+            args_list.type = BOA_LIST;
             printf("%s", "[");
             if (list && len) {
                 size_t i;
                 for (i = 0; i < len - 1; i++) {
                     struct BoaObj *node = list[i];
-                    print(node);
+                    args_list.data.l[0] = node;
+
+                    print(&args_list);
                     printf(", ");
                 }
-                print(list[len - 1]);
+                args_list.data.l[0] = list[len - 1];
+                print(&args_list);
             }
             printf("%s", "]");
             break;
@@ -77,7 +87,9 @@ struct BoaObj *print(const struct BoaObj *obj) {
     return create_boa_nil();
 }
 
-struct BoaObj *append(struct BoaObj *list, struct BoaObj *item) {
+struct BoaObj *append(struct BoaObj *args) {
+    struct BoaObj *list = args->data.l[0];
+    struct BoaObj *item = args->data.l[1];
     if (list->type != BOA_LIST) {
         fprintf(stderr, "append() can only be used on a list");
         exit(EXIT_FAILURE);
@@ -97,7 +109,11 @@ struct BoaObj *append(struct BoaObj *list, struct BoaObj *item) {
     return list;
 }
 
-struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
+struct BoaObj *map(struct BoaObj *args) {
+    struct BoaObj *func = args->data.l[0];
+    struct BoaObj *list = args->data.l[1];
+    struct BoaObj args_list;
+    struct BoaObj *data[1];
     size_t len = list->len;
     size_t i = 0;
     struct BoaObj *new_obj;
@@ -114,9 +130,15 @@ struct BoaObj *map(struct BoaObj *func, struct BoaObj *list) {
     new_obj->len = len;
     new_obj->cap = len;
     new_obj->data.l = malloc(len * sizeof(struct BoaObj *));
+
+    args_list.data.l = data;
+    args_list.type = BOA_LIST;
+    args_list.len = 1;
+    args_list.cap = 1;
     for (i = 0; i < len; i++) {
         struct BoaObj *node = list->data.l[i];
-        new_obj->data.l[i] = func->data.fn(node);
+        args_list.data.l[0] = node;
+        new_obj->data.l[i] = func->data.fn(&args_list);
     }
     return new_obj;
 }

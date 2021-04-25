@@ -22,9 +22,9 @@
 
 #include "boaobj.h"
 
-struct BoaObj *println(const struct BoaObj *obj);
-struct BoaObj *print(const struct BoaObj *obj);
-struct BoaObj *append(struct BoaObj *list, struct BoaObj *item);
-struct BoaObj *map(struct BoaObj *func, struct BoaObj *list);
+struct BoaObj *println(struct BoaObj *args);
+struct BoaObj *print(struct BoaObj *args);
+struct BoaObj *append(struct BoaObj *args);
+struct BoaObj *map(struct BoaObj *args);
 
 #endif /* RUNTIME_H */

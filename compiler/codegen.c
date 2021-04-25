@@ -103,10 +103,8 @@ static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
     char *func_name = ast->obj->repr;
     unsigned long argument_regs[20];
     struct ASTNode *args_list = ast->right;
-    char args_str[255] = {0};
-    int num_args = 0;
-    int i = 0;
-    size_t len = 0;
+    size_t num_args = 0;
+    size_t i = 0;
 
     /* solve each argument expression, and store the result in
      * argument_regs */
@@ -116,25 +114,34 @@ static void emit_func_call(struct CodegenState *state, ASTNode *ast) {
         args_list = args_list->sibling;
     }
 
+    state->reg++;
+    fprintf(
+        state->outf,
+        "struct BoaObj *r%lu = create_boa_list(%lu, ",
+        state->reg,
+        num_args
+    );
+
     /* argument_regs contains the result of each argument expr.
      * pass each of the results to the function when calling it */
     i = num_args;
     while (i --> 0) {
         if (i > 0) {
-            sprintf(args_str + len, "r%lu, ", argument_regs[i]);
+            fprintf(state->outf, "r%lu, ", argument_regs[i]);
         } else {
-            sprintf(args_str + len, "r%lu", argument_regs[i]);
+            fprintf(state->outf, "r%lu", argument_regs[i]);
         }
-        len = strlen(args_str);
     }
+    fprintf(state->outf, ");\n");
 
     state->reg++;
+    fprintf(state->outf, "/* emiting func call */\n");
     fprintf(
         state->outf,
-        "struct BoaObj *r%lu = %s(%s);\n",
+        "struct BoaObj *r%lu = %s(r%lu);\n",
         state->reg,
         func_name,
-        args_str
+        state->reg - 1
     );
 }
 
@@ -373,8 +380,6 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
             func_name
         );
     } else {
-        char params_str[255];
-        size_t len = 0;
         size_t num_params = 0;
         size_t i = 0;
         ASTNode *params_arr[20] = {NULL};
@@ -385,21 +390,21 @@ static void emit_func_def(struct CodegenState *state, ASTNode *ast) {
         }
 
         i = num_params;
-        while (i --> 0) {
-            sprintf(
-                params_str + len,
-                "struct BoaObj *%s, ",
-                params_arr[i]->obj->repr
-            );
-            len = strlen(params_str);
-        }
-        params_str[len - 2] = '\0';
+        fprintf(state->outf, "/* emiting func def */\n");
         fprintf(
             state->outf,
-            "static struct BoaObj *%s(%s) {\n",
-            func_name,
-            params_str
+            "static struct BoaObj *%s(struct BoaObj *args) {\n",
+            func_name
         );
+        i = num_params;
+        while (i --> 0) {
+            fprintf(
+                state->outf,
+                "struct BoaObj *%s = args->data.l[%lu];\n",
+                params_arr[i]->obj->repr,
+                i
+            );
+        }
     }
     codegen(state, ast->right);
     fprintf(state->outf, "}\n");
