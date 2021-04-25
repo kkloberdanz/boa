@@ -4,6 +4,9 @@ add = acc, x => {
     -> acc + x
 }
 
-l = [1,2,3,4,5,6,7,8,9]
+l = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 reduction = reduce(add, l)
 println(reduction)
+
+println(reduce(add, [1, 2]))
+println(reduce(add, [1]))
