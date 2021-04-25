@@ -20,7 +20,7 @@ void *boaobj_malloc(size_t size) {
 
 void gc_init() {
     long i;
-    size_t nmemb = (size_t)abs(SMALL_NUMS_START) + (size_t)abs(SMALL_NUMS_END);
+    size_t nmemb = 1 + (size_t)abs(SMALL_NUMS_START) + (size_t)abs(SMALL_NUMS_END);
     size_t sz = nmemb * sizeof(struct BoaObj *);
     nil_obj = boaobj_malloc(sizeof(struct BoaObj));
     nil_obj->type = BOA_NIL;
