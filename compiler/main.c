@@ -236,7 +236,7 @@ static int compiler(int argc, char **argv) {
     }
 
     error_code = compile_c(c_filename, exe_filename);
-    /*remove(c_filename);*/
+    remove(c_filename);
     if (error_code) {
         return error_code;
     }
