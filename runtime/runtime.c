@@ -44,7 +44,7 @@ struct BoaObj *print(struct BoaObj *args) {
             break;
 
         case BOA_STRING:
-            puts(obj->data.s);
+            printf("%s", obj->data.s);
             break;
 
         case BOA_BOOL:
