@@ -22,6 +22,17 @@
 #include "runtime.h"
 #include "boaobj.h"
 
+static void init_argslist(
+    struct BoaObj *args_list,
+    size_t nargs,
+    struct BoaObj **data
+) {
+    args_list->data.l = data;
+    args_list->len = nargs;
+    args_list->cap = nargs;
+    args_list->type = BOA_LIST;
+}
+
 struct BoaObj *println(struct BoaObj *args) {
     print(args);
     printf("\n");
@@ -60,10 +71,7 @@ struct BoaObj *print(struct BoaObj *args) {
             size_t len = obj->len;
             struct BoaObj args_list;
             struct BoaObj *data[1];
-            args_list.data.l = data;
-            args_list.len = 1;
-            args_list.cap = 1;
-            args_list.type = BOA_LIST;
+            init_argslist(&args_list, 1, data);
             printf("%s", "[");
             if (list && len) {
                 size_t i;
@@ -131,10 +139,7 @@ struct BoaObj *map(struct BoaObj *args) {
     new_obj->cap = len;
     new_obj->data.l = malloc(len * sizeof(struct BoaObj *));
 
-    args_list.data.l = data;
-    args_list.type = BOA_LIST;
-    args_list.len = 1;
-    args_list.cap = 1;
+    init_argslist(&args_list, 1, data);
     for (i = 0; i < len; i++) {
         struct BoaObj *node = list->data.l[i];
         args_list.data.l[0] = node;
@@ -152,7 +157,7 @@ struct BoaObj *reduce(struct BoaObj *args) {
     size_t i = 0;
     struct BoaObj *new_obj;
 
-    args_list.data.l = data;
+    init_argslist(&args_list, 2, data);
 
     if (list->type != BOA_LIST) {
         fprintf(stderr, "reduce() can only be used on a list\n");
