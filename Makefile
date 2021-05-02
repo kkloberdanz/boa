@@ -60,13 +60,13 @@ RUNTIME_OBJ=$(patsubst runtime/%.c,obj/runtime/%.o,$(RUNTIME_SRC))
 RUNTIME_INC=$(wildcard runtime/*.h) $(wildcard runtime/*.h)
 RUNTIME_DEPS = $(RUNTIME_OBJ) $(UTIL_OBJ)
 
-obj/grammar/y.tab.o: grammar/grammar.y util/*.h
+obj/grammar/y.tab.o: grammar/grammar.y util/*.h compiler/*.c compiler/*.h
 	yacc -o obj/grammar/y.tab.c -y -d grammar/grammar.y
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) \
 		-c obj/grammar/y.tab.c \
 		-o obj/grammar/y.tab.o
 
-obj/grammar/lex.yy.o: obj/grammar/y.tab.o grammar/tokens.l
+obj/grammar/lex.yy.o: obj/grammar/y.tab.o grammar/tokens.l compiler/*.c compiler/*.h
 	lex -o obj/grammar/lex.yy.c grammar/tokens.l
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) \
 		-c obj/grammar/lex.yy.c \
