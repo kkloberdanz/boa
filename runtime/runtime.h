@@ -24,6 +24,7 @@
 
 struct BoaObj *println(struct BoaObj *args);
 struct BoaObj *print(struct BoaObj *args);
+struct BoaObj *len(struct BoaObj *args);
 struct BoaObj *append(struct BoaObj *args);
 struct BoaObj *map(struct BoaObj *args);
 struct BoaObj *reduce(struct BoaObj *args);

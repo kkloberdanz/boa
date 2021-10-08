@@ -23,7 +23,7 @@ clang-warn-everything: export BOACC := clang
 clang-warn-everything: build
 
 .PHONY: dynamic
-dynamic: export OPTIM_FLAGS ?= -Os
+dynamic: export OPTIM_FLAGS ?= -Os -flto
 dynamic: export CC ?= cc
 dynamic: export BOACC ?= cc
 dynamic: build

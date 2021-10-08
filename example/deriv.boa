@@ -1,0 +1,13 @@
+#!/usr/bin/env boa
+
+deriv = f, x => {
+    h = 1
+    -> (f(x + h) - f(x)) / f(x)
+}
+
+squared = x => {
+    -> x * x
+}
+
+println("derivative of x^2 where x = 10:")
+println(deriv(squared, 10))

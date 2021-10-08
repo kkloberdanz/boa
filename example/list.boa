@@ -17,3 +17,8 @@ append(l5, 12345)
 println(l5)
 i1 = l5[1]
 println(i1)
+print("len(l5) = ")
+println(len(l5))
+
+print("len(l3) = ")
+println(len(l3))

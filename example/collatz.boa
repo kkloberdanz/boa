@@ -22,3 +22,18 @@ collatz = n => {
 }
 
 println(collatz(10))
+
+find_len_collatz = n, length => {
+    ans = collatz(n)
+    the_len = len(ans)
+    if the_len == length:
+        print("found: ")
+        print(n)
+        print(": ")
+        println(ans)
+        find_len_collatz(n + 1, length)
+    else
+        find_len_collatz(n + 1, length)
+}
+
+find_len_collatz(1, 9)

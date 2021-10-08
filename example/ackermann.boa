@@ -10,5 +10,9 @@ ackermann = m, n => {
         -> ackermann(m - 1, n2)
 }
 
+println(ackermann(0, 0))
+println(ackermann(1, 1))
+println(ackermann(2, 2))
+println(ackermann(3, 3))
 println(ackermann(3, 8))
 #println(ackermann(4, 1))

@@ -22,6 +22,9 @@
 #include "runtime.h"
 #include "boaobj.h"
 
+#define MAX(A, B) ((A) > (B) ? (A) : (B))
+#define MIN(A, B) ((A) < (B) ? (A) : (B))
+
 static void init_argslist(
     struct BoaObj *args_list,
     size_t nargs,
@@ -36,6 +39,7 @@ static void init_argslist(
 struct BoaObj *println(struct BoaObj *args) {
     print(args);
     printf("\n");
+    fflush(stdout);
     return create_boa_nil();
 }
 
@@ -93,6 +97,19 @@ struct BoaObj *print(struct BoaObj *args) {
             break;
     }
     return create_boa_nil();
+}
+
+struct BoaObj *len(struct BoaObj *args) {
+    struct BoaObj *list = args->data.l[0];
+    struct BoaObj *new_obj;
+    if (list->type != BOA_LIST) {
+        fprintf(stderr, "len() can only be used on a list");
+        exit(EXIT_FAILURE);
+    }
+    new_obj = malloc(sizeof(struct BoaObj));
+    new_obj->type = BOA_INT;
+    new_obj->data.i = list->len;
+    return new_obj;
 }
 
 struct BoaObj *append(struct BoaObj *args) {
