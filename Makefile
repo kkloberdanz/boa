@@ -1,3 +1,5 @@
+YACC=yacc
+LEX=lex
 STD ?= c89
 WARN_FLAGS ?= -Wall -Wextra -Wpedantic -Wno-padded
 INCLD ?= -I.
@@ -23,7 +25,7 @@ clang-warn-everything: export BOACC := clang
 clang-warn-everything: build
 
 .PHONY: dynamic
-dynamic: export OPTIM_FLAGS ?= -Os -flto
+dynamic: export OPTIM_FLAGS ?= -Os
 dynamic: export CC ?= cc
 dynamic: export BOACC ?= cc
 dynamic: build
@@ -61,13 +63,13 @@ RUNTIME_INC=$(wildcard runtime/*.h) $(wildcard runtime/*.h)
 RUNTIME_DEPS = $(RUNTIME_OBJ) $(UTIL_OBJ)
 
 obj/grammar/y.tab.o: grammar/grammar.y util/*.h compiler/*.c compiler/*.h
-	yacc -o obj/grammar/y.tab.c -y -d grammar/grammar.y
+	$(YACC) -o obj/grammar/y.tab.c -y -d grammar/grammar.y
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) \
 		-c obj/grammar/y.tab.c \
 		-o obj/grammar/y.tab.o
 
 obj/grammar/lex.yy.o: obj/grammar/y.tab.o grammar/tokens.l compiler/*.c compiler/*.h
-	lex -o obj/grammar/lex.yy.c grammar/tokens.l
+	$(LEX) -o obj/grammar/lex.yy.c grammar/tokens.l
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) \
 		-c obj/grammar/lex.yy.c \
 		-o obj/grammar/lex.yy.o -I obj/grammar
@@ -114,3 +116,4 @@ clean:
 	rm -f example/hello
 	rm -f runtime/*.o
 	rm -f obj/*.o obj/compiler/*.o obj/util/*.o obj/grammar/*
+	rm -f obj/runtime/*.o
