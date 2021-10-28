@@ -135,7 +135,7 @@ struct BoaObj *perform_add(const struct BoaObj *a, const struct BoaObj *b) {
 
         case BOA_FUNC:
         case BOA_BOOL:
-            fprintf(stderr, "type not supported");
+            fprintf(stderr, "type not supported\n");
             exit(EXIT_FAILURE);
     }
     dst->type = a->type;
@@ -171,7 +171,7 @@ struct BoaObj *perform_equ(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_STRING:
         case BOA_LIST:
         case BOA_FUNC:
-            fprintf(stderr, "type not supported");
+            fprintf(stderr, "type not supported\n");
             exit(EXIT_FAILURE);
     }
     dst->type = BOA_BOOL;
@@ -203,7 +203,7 @@ struct BoaObj *perform_sub(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_STRING:
         case BOA_LIST:
         case BOA_FUNC:
-            fprintf(stderr, "type not supported");
+            fprintf(stderr, "type not supported\n");
             exit(EXIT_FAILURE);
     }
     dst->type = a->type;
@@ -235,7 +235,7 @@ struct BoaObj *perform_div(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_STRING:
         case BOA_LIST:
         case BOA_FUNC:
-            fprintf(stderr, "type not supported");
+            fprintf(stderr, "type not supported\n");
             exit(EXIT_FAILURE);
     }
     dst->type = a->type;
@@ -267,7 +267,7 @@ struct BoaObj *perform_mul(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_STRING:
         case BOA_LIST:
         case BOA_FUNC:
-            fprintf(stderr, "type not supported");
+            fprintf(stderr, "type not supported\n");
             exit(EXIT_FAILURE);
     }
     dst->type = a->type;
@@ -295,7 +295,7 @@ struct BoaObj *perform_mod(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_LIST:
         case BOA_FUNC:
         case BOA_FLOAT:
-            fprintf(stderr, "type not supported");
+            fprintf(stderr, "type not supported\n");
             exit(EXIT_FAILURE);
     }
     dst->type = a->type;
@@ -327,7 +327,7 @@ struct BoaObj *perform_lt(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_STRING:
         case BOA_LIST:
         case BOA_FUNC:
-            fprintf(stderr, "type not supported");
+            fprintf(stderr, "type not supported\n");
             exit(EXIT_FAILURE);
     }
     dst->type = a->type;
@@ -382,7 +382,7 @@ struct BoaObj *perform_gt(const struct BoaObj *a, const struct BoaObj *b) {
         case BOA_STRING:
         case BOA_LIST:
         default:
-            fprintf(stderr, "type not supported");
+            fprintf(stderr, "type not supported\n");
             exit(EXIT_FAILURE);
     }
     dst->type = a->type;
