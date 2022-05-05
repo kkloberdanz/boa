@@ -243,6 +243,7 @@ expr        : expr PLUS expr        {
             | list_con              {$$ = $1;}
             ;
 
+/*
 type        : TYPE                  {
                                         $$ = make_literal_node(
                                             make_string(token_string),
@@ -250,6 +251,7 @@ type        : TYPE                  {
                                         );
                                     }
             ;
+*/
 
 bool_expr   : expr EQ expr          { $$ = make_operator_node(OP_EQ, $1, $3);}
             | expr LT expr          { $$ = make_operator_node(OP_LT, $1, $3);}
