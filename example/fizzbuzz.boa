@@ -1,0 +1,30 @@
+#!/usr/bin/env boa
+
+get_item = n => {
+    if n % 15 == 0:
+        -> "fizzbuzz"
+    else if n % 3 == 0:
+        -> "fizz"
+    else if n % 5 == 0:
+        -> "buzz"
+    else 
+       -> n
+}
+
+fizzbuzz = n => {
+    println(get_item(n))
+}
+
+rec_range = start, end, acc => {
+    if start >= end:
+        -> acc
+    else
+        acc = append(acc, start)
+        -> rec_range(start + 1, end, acc)
+}
+
+range = start, end => {
+    -> rec_range(start, end, [])
+}
+
+map(fizzbuzz, range(0, 100))
