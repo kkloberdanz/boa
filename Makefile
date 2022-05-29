@@ -1,5 +1,5 @@
-YACC=yacc
-LEX=lex
+YACC=bison
+LEX=flex
 STD ?= c89
 WARN_FLAGS ?= -Wall -Wextra -Wpedantic -Wno-padded
 INCLD ?= -I.
@@ -25,7 +25,7 @@ clang-warn-everything: export BOACC := clang
 clang-warn-everything: build
 
 .PHONY: dynamic
-dynamic: export OPTIM_FLAGS ?= -Os
+dynamic: export OPTIM_FLAGS ?= -Os -flto
 dynamic: export CC ?= cc
 dynamic: export BOACC ?= cc
 dynamic: build
@@ -63,7 +63,7 @@ RUNTIME_INC=$(wildcard runtime/*.h) $(wildcard runtime/*.h)
 RUNTIME_DEPS = $(RUNTIME_OBJ) $(UTIL_OBJ)
 
 obj/grammar/y.tab.o: grammar/grammar.y util/*.h compiler/*.c compiler/*.h
-	$(YACC) -o obj/grammar/y.tab.c -y -d grammar/grammar.y
+	$(YACC) -o obj/grammar/y.tab.c -y -d grammar/grammar.y -Wno-yacc
 	$(CC) -std=$(STD) $(OPTIM_FLAGS) $(CFLAGS) $(INCLD) \
 		-c obj/grammar/y.tab.c \
 		-o obj/grammar/y.tab.o

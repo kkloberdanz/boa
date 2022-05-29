@@ -56,5 +56,6 @@ struct BoaObj *perform_index(
     const struct BoaObj *idx
 );
 struct BoaObj *perform_gt(const struct BoaObj *a, const struct BoaObj *b);
+struct BoaObj *perform_gte(const struct BoaObj *a, const struct BoaObj *b);
 
 #endif /* BOAOBJ_H */
