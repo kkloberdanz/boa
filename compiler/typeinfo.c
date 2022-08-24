@@ -14,7 +14,7 @@ char *builtin_types[] = {
     NULL
 };
 
-static char *c_types[] = {
+static const char *c_types[] = {
     "void",
     "long",
     "double",
@@ -36,7 +36,7 @@ TypeId string_repr_to_type_id(char *repr, char *all_types[]) {
     return TYPE_NOT_CHECKED;
 }
 
-char *boa_type_to_c_type(TypeId type_id) {
+const char *boa_type_to_c_type(TypeId type_id) {
     if (type_id < TYPE_LASTTYPE) {
         return c_types[type_id];
     } else {

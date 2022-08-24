@@ -12,7 +12,7 @@ char *make_string(const char *str) {
     return buf;
 }
 
-void debug_puts(char *str) {
+void debug_puts(const char *str) {
     UNUSED(str);
 #ifdef DEBUG
     puts(str);

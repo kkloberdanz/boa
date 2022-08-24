@@ -25,7 +25,7 @@ struct boaType {
 
 TypeId string_repr_to_type_id(char *repr, char *all_types[]);
 
-char *boa_type_to_c_type(TypeId type_id);
+const char *boa_type_to_c_type(TypeId type_id);
 
 TypeId *new_type(TypeId t);
 

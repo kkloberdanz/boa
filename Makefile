@@ -3,7 +3,7 @@ LEX=flex
 STD ?= c89
 WARN_FLAGS ?= -Wall -Wextra -Wpedantic -Wno-padded
 INCLD ?= -I.
-CFLAGS ?= -fPIC
+CFLAGS ?= -fPIC -pipe
 
 .PHONY: release
 release: dynamic
@@ -25,7 +25,7 @@ clang-warn-everything: export BOACC := clang
 clang-warn-everything: build
 
 .PHONY: dynamic
-dynamic: export OPTIM_FLAGS ?= -Os -flto
+dynamic: export OPTIM_FLAGS ?= -Os -flto -fstack-protector-all -D_FORTIFY_SOURCE=2
 dynamic: export CC ?= cc
 dynamic: export BOACC ?= cc
 dynamic: build
