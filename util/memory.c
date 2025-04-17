@@ -37,6 +37,6 @@ void *boa_realloc(void *ptr, size_t size) {
     return bytes;
 }
 
-void boa_free_all() {
+void boa_free_all(void) {
     kk_track_free(&memory);
 }

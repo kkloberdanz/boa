@@ -111,7 +111,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
             "%s -Werror -ggdb3 -O0 -fPIC -static -o %s %s $HOME/.boa/libboaruntime.a";
 #else
         const char *fmt = \
-            "%s -Werror -s -O2 -fPIC -static -o %s %s $HOME/.boa/libboaruntime.a";
+            "%s -Werror -O2 -fPIC -static -o %s %s $HOME/.boa/libboaruntime.a";
 #endif
         buf = boa_malloc(
             1 +
@@ -132,7 +132,7 @@ static int compile_c(const char *c_filename, const char *exe_filename) {
 #ifdef DEBUG
         const char *fmt = "%s -ggdb3 -O0 -fPIC -o %s %s $HOME/.boa/libboaruntime.a";
 #else
-        const char *fmt = "%s -s -O2 -fPIC -o %s %s $HOME/.boa/libboaruntime.a";
+        const char *fmt = "%s -O2 -fPIC -o %s %s $HOME/.boa/libboaruntime.a";
 #endif
         buf = boa_malloc(
             1 +

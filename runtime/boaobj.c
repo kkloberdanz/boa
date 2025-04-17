@@ -18,7 +18,7 @@ void *boaobj_malloc(size_t size) {
     return malloc(size);
 }
 
-void gc_init() {
+void gc_init(void) {
     long i;
     size_t nmemb = 1 + (size_t)abs(SMALL_NUMS_START) + (size_t)abs(SMALL_NUMS_END);
     size_t sz = nmemb * sizeof(struct BoaObj *);
