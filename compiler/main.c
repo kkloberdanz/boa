@@ -28,6 +28,14 @@
 #include "../util/memory.h"
 #include "typecheck.h"
 
+static char is_boa_src_file(const char *filename) {
+    size_t len = strlen(filename) - 1;
+    if (len < 5) {
+        return 0;
+    }
+    return strcmp(filename + (len - 3), ".boa") == 0;
+}
+
 static void c_filename_to_exe_filename(char **filename) {
     char *ptr;
 
@@ -53,6 +61,10 @@ static int compile_boa(const char *source_filename, char **output_filename) {
     int error_code = 1;
     ASTNode *tree = NULL;
 
+    if (!is_boa_src_file(source_filename)) {
+        fprintf(stderr, "not a boa source file: %s\n", source_filename);
+        return 2;
+    }
     source_file = fopen(source_filename, "r");
     if (source_file == NULL) {
         fprintf(stderr, "no such file:%s\n", source_filename);
