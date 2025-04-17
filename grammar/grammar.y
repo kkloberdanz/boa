@@ -125,7 +125,8 @@ maybe_newlines  : newlines
                 ;
 
 stmt        : expr newlines                   {$$ = $1;}
-            | if_stmt                         {$$ = $1;}
+            | if_else_stmt                    {$$ = $1;}
+            | if_stmt                    {$$ = $1;}
             | assign_stmt                     {$$ = $1;}
             | decl_func                       {$$ = $1;}
             | SLIM_ARROW expr maybe_newlines  {$$ = make_return_node($2);}
@@ -171,10 +172,15 @@ assign_stmt : id ASSIGN expr newlines
                                     }
             ;
 
-if_stmt     : IF expr COLON maybe_newlines
+if_else_stmt: IF expr LBRACE maybe_newlines
                   stmts
-              ELSE maybe_newlines
-                  stmts             {$$ = make_conditional_node($2, $5, $8);}
+              RBRACE ELSE LBRACE maybe_newlines
+                  stmts             
+              RBRACE                {$$ = make_conditional_node($2, $5, $8);}
+
+if_stmt     : IF expr LBRACE maybe_newlines
+                  stmts
+              RBRACE maybe_newlines {$$ = make_conditional_node($2, $5, NULL);}
 
 expr        : expr PLUS expr        {
                                         debug_puts("making OP_PLUS");

@@ -1,0 +1,17 @@
+if 2 > 1 {
+    print("hi\n");
+} else {
+    print("bye\n");
+}
+
+if 2 > 1 {
+    print("hi 2\n");
+}
+
+# if 2 > 1 {
+#     print("3\n");
+# } elif {
+#     print("4\n");
+# } else {
+#     print("5\n");
+# }
